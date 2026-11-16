@@ -223,10 +223,11 @@ input::placeholder {
 
   <div class="top">
     <span class="prompt">Solve the equation for x.</span>
-    <button class="theme-btn" id="themeBtn"
-      type="button" onclick="toggleTheme()">
-      Light mode
-    </button>
+   
+<button class="theme-btn" id="themeBtn"
+  type="button" onclick="toggleTheme()">
+  ☀ Light mode
+</button>
   </div>
 
   <div class="math-panel">
@@ -578,8 +579,9 @@ function toggleSolution() {
 
 function toggleTheme() {
   const light = document.body.classList.toggle("light");
-  $("themeBtn").textContent =
-    light ? "Dark mode" : "Light mode";
+
+  document.getElementById("themeBtn").textContent =
+    light ? "☾ Dark mode" : "☀ Light mode";
 }
 
 $("answer").addEventListener("keydown", function(e) {
