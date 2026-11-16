@@ -1,0 +1,508 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solving Proportions</title>
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']]
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+
+<style>
+* { box-sizing: border-box; }
+
+:root {
+  --bg: #0f1728;
+  --panel: #1d2b46;
+  --field: #182741;
+  --text: #f5f7ff;
+  --muted: #b7c5dd;
+  --border: #40577d;
+  --accent: #8b70ff;
+  --button: #2b4064;
+  --success: #7ce6b0;
+  --error: #ff9da9;
+}
+
+body.light {
+  --bg: #ffffff;
+  --panel: #f0f2ff;
+  --field: #ffffff;
+  --text: #17233b;
+  --muted: #58657e;
+  --border: #c8d1e5;
+  --accent: #6954e9;
+  --button: #e4e9f7;
+  --success: #16764b;
+  --error: #bd3045;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 14px Arial, sans-serif;
+  padding: 10px;
+  transition: background .2s, color .2s;
+}
+
+.activity {
+  max-width: 780px;
+  margin: auto;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.prompt {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 12px;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  transition: filter .2s, transform .15s;
+}
+
+button:hover { filter: brightness(1.1); }
+button:active { transform: scale(.98); }
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme-btn {
+  background: var(--button);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 7px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.math-panel {
+  background: linear-gradient(135deg, var(--panel), var(--field));
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  min-height: 120px;
+  padding: 16px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.equation {
+  width: 100%;
+  font-size: 26px;
+}
+
+.solution {
+  display: none;
+  width: 100%;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.solution-title {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.solution-step {
+  margin: 9px 0;
+}
+
+.answer-label {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+input {
+  display: block;
+  width: 100%;
+  background: var(--field);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  font: inherit;
+}
+
+input::placeholder {
+  color: var(--muted);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.primary {
+  background: linear-gradient(120deg, #9362f5, #6358ed);
+  color: white;
+}
+
+.secondary {
+  background: linear-gradient(120deg, #38619d, #294778);
+  color: white;
+}
+
+.solution-btn {
+  display: block;
+  width: 100%;
+  margin-top: 9px;
+  background: var(--button);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.feedback {
+  min-height: 18px;
+  margin-top: 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.correct { color: var(--success); }
+.incorrect { color: var(--error); }
+
+@media (max-width: 420px) {
+  body { padding: 7px; }
+  .math-panel { min-height: 105px; padding: 12px 8px; }
+  .equation { font-size: 22px; }
+  button { padding: 10px 8px; font-size: 13px; }
+  .theme-btn { font-size: 11px; }
+  input { font-size: 14px; }
+}
+</style>
+</head>
+
+<body>
+<div class="activity">
+
+  <div class="top">
+    <span class="prompt">
+      Solve the following proportion for x.
+    </span>
+
+    <button id="themeBtn" class="theme-btn"
+      type="button" onclick="toggleTheme()">
+      ☀ Light mode
+    </button>
+  </div>
+
+  <div class="math-panel">
+    <div id="equation" class="equation"></div>
+    <div id="solution" class="solution"></div>
+  </div>
+
+  <label class="answer-label" for="answer">
+    Your answer
+  </label>
+
+  <input id="answer" type="text"
+    placeholder="Enter an integer or simplified fraction"
+    autocomplete="off"
+    spellcheck="false">
+
+  <div class="actions">
+    <button class="primary" type="button"
+      onclick="checkAnswer()">Submit</button>
+
+    <button class="secondary" type="button"
+      onclick="newProblem()">Try Similar</button>
+  </div>
+
+  <button class="solution-btn" id="solutionBtn"
+    type="button" onclick="toggleSolution()">
+    Show Answer
+  </button>
+
+  <div class="feedback" id="feedback"
+    aria-live="polite"></div>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let problems = [];
+let currentIndex = -1;
+let currentProblem = null;
+let showingSolution = false;
+
+function rand(min, max) {
+  return Math.floor(Math.random() * (max-min+1)) + min;
+}
+
+function gcd(a, b) {
+  a = Math.abs(a);
+  b = Math.abs(b);
+
+  while (b !== 0) {
+    const t = b;
+    b = a % b;
+    a = t;
+  }
+
+  return a || 1;
+}
+
+function simplify(n, d) {
+  if (d < 0) {
+    n = -n;
+    d = -d;
+  }
+
+  const g = gcd(n, d);
+
+  return {
+    n: n / g,
+    d: d / g
+  };
+}
+
+function texFraction(n, d) {
+  const f = simplify(n, d);
+
+  if (f.d === 1) return String(f.n);
+
+  const sign = f.n < 0 ? "-" : "";
+
+  return sign + "\\frac{" +
+    Math.abs(f.n) + "}{" + f.d + "}";
+}
+
+function math(s) {
+  return "\\(" + s + "\\)";
+}
+
+function typeset() {
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise().catch(console.error);
+  }
+}
+
+function generateProblems() {
+  problems = [];
+  const used = new Set();
+
+  // Exactly 25 positive-only problems and
+  // 25 problems with at least one negative value.
+  for (let i = 0; i < 50; i++) {
+    let a, b, d, key;
+    const useNegative = i >= 25;
+
+    do {
+      a = rand(2, 15);
+      b = rand(3, 20);
+      d = rand(2, 20);
+
+      if (useNegative) {
+        // Randomly negate one or more values.
+        if (Math.random() < 0.5) a = -a;
+        if (Math.random() < 0.5) b = -b;
+        if (Math.random() < 0.5) d = -d;
+
+        // Ensure at least one negative.
+        if (a > 0 && b > 0 && d > 0) {
+          a = -a;
+        }
+      }
+
+      key = a + "," + b + "," + d;
+
+    } while (
+      used.has(key) ||
+      Math.abs(a) === Math.abs(b) ||
+      Math.abs(b) === Math.abs(d)
+    );
+
+    used.add(key);
+
+    problems.push({
+      a: a,
+      b: b,
+      d: d,
+      answer: simplify(a*d, b)
+    });
+  }
+}
+
+function newProblem() {
+  if (problems.length === 0) generateProblems();
+
+  let index;
+
+  do {
+    index = rand(0, problems.length-1);
+  } while (
+    index === currentIndex &&
+    problems.length > 1
+  );
+
+  currentIndex = index;
+  currentProblem = problems[index];
+  showingSolution = false;
+
+  const p = currentProblem;
+
+  $("equation").style.display = "block";
+  $("solution").style.display = "none";
+
+  $("equation").innerHTML = math(
+    "\\frac{" + p.a + "}{" + p.b + "}" +
+    "=\\frac{x}{" + p.d + "}"
+  );
+
+  $("solution").innerHTML = "";
+  $("solutionBtn").textContent = "Show Answer";
+  $("answer").value = "";
+  $("feedback").textContent = "";
+  $("feedback").className = "feedback";
+
+  typeset();
+}
+
+function checkAnswer() {
+  const value = $("answer").value.trim().replace(/\s+/g, "");
+  const feedback = $("feedback");
+
+  let n, d;
+
+  if (/^[+-]?\d+$/.test(value)) {
+    n = Number(value);
+    d = 1;
+  } else {
+    const match = value.match(
+      /^([+-]?\d+)\/(\d+)$/
+    );
+
+    if (!match) {
+      feedback.textContent =
+        "Enter an integer or simplified fraction.";
+      feedback.className = "feedback incorrect";
+      return;
+    }
+
+    n = Number(match[1]);
+    d = Number(match[2]);
+
+    if (d === 0 || gcd(n, d) !== 1) {
+      feedback.textContent =
+        "Enter your fraction in simplified form.";
+      feedback.className = "feedback incorrect";
+      return;
+    }
+  }
+
+  const correct = currentProblem.answer;
+
+  if (n === correct.n && d === correct.d) {
+    feedback.textContent = "Correct!";
+    feedback.className = "feedback correct";
+  } else {
+    feedback.textContent = "Not quite. Try again.";
+    feedback.className = "feedback incorrect";
+  }
+}
+
+function toggleSolution() {
+  showingSolution = !showingSolution;
+
+  if (showingSolution) {
+    const p = currentProblem;
+    const product = p.a * p.d;
+
+    $("equation").style.display = "none";
+    $("solution").style.display = "block";
+
+    $("solution").innerHTML =
+      '<div class="solution-title">Answer and solution</div>' +
+
+      '<div class="solution-step">' +
+      math("\\frac{" + p.a + "}{" + p.b + "}" +
+           "=\\frac{x}{" + p.d + "}") +
+      '</div>' +
+
+      '<div class="solution-step">Cross multiply:</div>' +
+
+      '<div class="solution-step">' +
+      math(p.b + "x=(" + p.a + ")(" + p.d + ")") +
+      '</div>' +
+
+      '<div class="solution-step">' +
+      math(p.b + "x=" + product) +
+      '</div>' +
+
+      '<div class="solution-step">Divide by ' + p.b + ':</div>' +
+
+      '<div class="solution-step">' +
+      math("x=\\frac{" + product + "}{" + p.b + "}") +
+      '</div>' +
+
+      '<div class="solution-step"><strong>' +
+      math("x=" + texFraction(product, p.b)) +
+      '</strong></div>';
+
+    $("solutionBtn").textContent = "Hide Answer";
+    typeset();
+
+  } else {
+    $("equation").style.display = "block";
+    $("solution").style.display = "none";
+    $("solutionBtn").textContent = "Show Answer";
+  }
+}
+
+function toggleTheme() {
+  const light = document.body.classList.toggle("light");
+
+  $("themeBtn").textContent =
+    light ? "☾ Dark mode" : "☀ Light mode";
+}
+
+$("answer").addEventListener("keydown", e => {
+  if (e.key === "Enter") checkAnswer();
+});
+
+generateProblems();
+newProblem();
+</script>
+</body>
+</html>
