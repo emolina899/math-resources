@@ -1,0 +1,709 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Net Cash Flow</title>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+
+<style>
+* { box-sizing: border-box; }
+
+:root {
+  --bg: #101827;
+  --panel: #1c2942;
+  --field: #17243a;
+  --text: #f5f7ff;
+  --muted: #b9c6dc;
+  --border: #3e5074;
+  --accent: #8b70ff;
+  --soft: #293d60;
+  --table-alt: #152138;
+  --good: #82e5ae;
+  --bad: #ff9eaa;
+}
+
+body.light {
+  --bg: #ffffff;
+  --panel: #f0f3fc;
+  --field: #ffffff;
+  --text: #18243b;
+  --muted: #56647b;
+  --border: #c5cee0;
+  --accent: #6554e9;
+  --soft: #e4eaf7;
+  --table-alt: #f7f9fe;
+  --good: #17734c;
+  --bad: #bb3049;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 14px Arial, sans-serif;
+  padding: 12px;
+  transition: background .2s, color .2s;
+}
+
+.app {
+  max-width: 800px;
+  margin: auto;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.heading {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover { filter: brightness(1.08); }
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme {
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 8px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.question-card {
+  background: linear-gradient(
+    135deg, var(--panel), var(--field)
+  );
+  border: 1px solid var(--accent);
+  border-radius: 15px;
+  padding: 16px;
+}
+
+.intro {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  background: var(--soft);
+  padding: 9px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+td {
+  padding: 10px;
+  border: 1px solid var(--border);
+  vertical-align: top;
+  width: 50%;
+  line-height: 1.5;
+}
+
+tbody tr:nth-child(even) {
+  background: var(--table-alt);
+}
+
+.table-title {
+  text-align: center;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.question-section {
+  margin-top: 15px;
+}
+
+.question-section label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.money-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.money-input span {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+input, select {
+  background: var(--field);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 11px;
+  font: inherit;
+}
+
+input {
+  width: 100%;
+}
+
+select {
+  width: 100%;
+  cursor: pointer;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.submit {
+  color: white;
+  background: linear-gradient(
+    110deg, #925df6, #6358ed
+  );
+}
+
+.next {
+  color: white;
+  background: linear-gradient(
+    110deg, #365e99, #294879
+  );
+}
+
+.reveal {
+  width: 100%;
+  margin-top: 10px;
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.feedback {
+  margin-top: 10px;
+  min-height: 20px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.good { color: var(--good); }
+.bad { color: var(--bad); }
+
+.solution {
+  display: none;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 16px;
+  margin-top: 12px;
+  line-height: 1.7;
+}
+
+.solution h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
+.solution-step {
+  margin: 12px 0;
+}
+
+.mathline {
+  overflow-x: auto;
+  padding: 6px 0;
+  font-size: 16px;
+}
+
+@media(max-width: 480px) {
+  body { padding: 7px; }
+  .question-card { padding: 12px; }
+  td, th { padding: 7px; font-size: 12px; }
+  button { padding: 10px 8px; font-size: 13px; }
+}
+</style>
+</head>
+
+<body>
+<main class="app">
+
+  <div class="top">
+    <span class="heading">
+      Annual Net Cash Flow
+    </span>
+
+    <button id="theme" class="theme" type="button">
+      ☀ Light mode
+    </button>
+  </div>
+
+  <section class="question-card">
+
+    <p id="intro" class="intro"></p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th colspan="2" class="table-title">
+              Net Cash Flow
+            </th>
+          </tr>
+          <tr>
+            <th>Income</th>
+            <th>Expenses</th>
+          </tr>
+        </thead>
+        <tbody id="cashRows"></tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <div class="question-section">
+    <label for="income">
+      What is the annual income?
+    </label>
+    <div class="money-input">
+      <span>$</span>
+      <input id="income" type="text"
+        inputmode="decimal"
+        placeholder="Annual income">
+    </div>
+  </div>
+
+  <div class="question-section">
+    <label for="expenses">
+      What are the annual expenses?
+    </label>
+    <div class="money-input">
+      <span>$</span>
+      <input id="expenses" type="text"
+        inputmode="decimal"
+        placeholder="Annual expenses">
+    </div>
+  </div>
+
+  <div class="question-section">
+    <label for="net">
+      What is the annual net cash flow?
+    </label>
+    <div class="money-input">
+      <span>$</span>
+      <input id="net" type="text"
+        inputmode="decimal"
+        placeholder="Annual net cash flow">
+    </div>
+  </div>
+
+  <div class="question-section">
+    <label for="budget">
+      What conclusion can be reached about the budget?
+    </label>
+    <select id="budget">
+      <option value="">Select an answer</option>
+      <option value="surplus">
+        Good budget — income exceeds expenses
+      </option>
+      <option value="deficit">
+        Poor budget — expenses exceed income
+      </option>
+      <option value="balanced">
+        Balanced budget — income equals expenses
+      </option>
+    </select>
+  </div>
+
+  <div class="actions">
+    <button id="submit" class="submit" type="button">
+      Submit
+    </button>
+    <button id="next" class="next" type="button">
+      Try Similar
+    </button>
+  </div>
+
+  <button id="reveal" class="reveal" type="button">
+    Show Solution
+  </button>
+
+  <div id="feedback" class="feedback"
+    aria-live="polite"></div>
+
+  <section id="solution" class="solution">
+    <h3>Step-by-step solution</h3>
+    <div id="steps"></div>
+  </section>
+
+</main>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+function rand(min, max) {
+  return Math.floor(
+    Math.random() * (max - min + 1)
+  ) + min;
+}
+
+function money(n) {
+  return "$" + n.toLocaleString("en-US");
+}
+
+function math(s) {
+  return "\\(" + s + "\\)";
+}
+
+const names = [
+  "Malachi", "Jordan", "Taylor", "Alex",
+  "Morgan", "Cameron", "Riley", "Avery",
+  "Casey", "Jamie"
+];
+
+let problems = [];
+let current = null;
+let index = -1;
+let showing = false;
+
+function generateProblems() {
+  const used = new Set();
+
+  while (problems.length < 50) {
+    const job = rand(90, 200) * 10;
+    const family = rand(20, 90) * 10;
+    const scholarship = rand(20, 75) * 100;
+
+    const rent = rand(70, 170) * 10;
+    const groceries = rand(40, 110) * 10;
+    const tuition = rand(25, 65) * 100;
+    const insurance = rand(5, 20) * 10;
+    const entertainment = rand(4, 22) * 10;
+    const phone = rand(5, 15) * 10;
+
+    const name = names[rand(0, names.length - 1)];
+
+    // 12 months, 52 weeks, 2 long semesters.
+    const annualIncome =
+      job * 12 +
+      family * 12 +
+      scholarship;
+
+    const annualExpenses =
+      rent * 12 +
+      groceries * 52 +
+      tuition * 2 +
+      insurance * 12 +
+      entertainment * 12 +
+      phone * 12;
+
+    const net = annualIncome - annualExpenses;
+
+    const budget =
+      net > 0 ? "surplus" :
+      net < 0 ? "deficit" : "balanced";
+
+    const key = [
+      job, family, scholarship, rent,
+      groceries, tuition, insurance,
+      entertainment, phone
+    ].join("-");
+
+    if (used.has(key)) continue;
+    used.add(key);
+
+    problems.push({
+      name,
+      job,
+      family,
+      scholarship,
+      rent,
+      groceries,
+      tuition,
+      insurance,
+      entertainment,
+      phone,
+      annualIncome,
+      annualExpenses,
+      net,
+      budget
+    });
+  }
+}
+
+function newProblem() {
+  let next;
+
+  do {
+    next = rand(0, problems.length - 1);
+  } while (next === index && problems.length > 1);
+
+  index = next;
+  current = problems[index];
+  showing = false;
+
+  const p = current;
+
+  $("intro").textContent =
+    p.name +
+    ", a college student, reviews their finances " +
+    "and organizes their income and expenses " +
+    "in the table below.";
+
+  const rows = [
+    [
+      "Part-time Job: " + money(p.job) + "/month",
+      "Rent: " + money(p.rent) + "/month"
+    ],
+    [
+      "College fund from grandparents: " +
+      money(p.family) + "/month",
+      "Groceries: " + money(p.groceries) + "/week"
+    ],
+    [
+      "Scholarship: " + money(p.scholarship) + "/year",
+      "Tuition and fees: " +
+      money(p.tuition) + "/long semester"
+    ],
+    [
+      "",
+      "Health Insurance: " +
+      money(p.insurance) + "/month"
+    ],
+    [
+      "",
+      "Entertainment: " +
+      money(p.entertainment) + "/month"
+    ],
+    [
+      "",
+      "Phone: " + money(p.phone) + "/month"
+    ]
+  ];
+
+  $("cashRows").replaceChildren();
+
+  rows.forEach(pair => {
+    const tr = document.createElement("tr");
+
+    pair.forEach(value => {
+      const td = document.createElement("td");
+      td.textContent = value;
+      tr.appendChild(td);
+    });
+
+    $("cashRows").appendChild(tr);
+  });
+
+  ["income", "expenses", "net"].forEach(id => {
+    $(id).value = "";
+  });
+
+  $("budget").value = "";
+  $("feedback").replaceChildren();
+  $("solution").style.display = "none";
+  $("steps").replaceChildren();
+  $("reveal").textContent = "Show Solution";
+}
+
+function parseMoney(value) {
+  const cleaned = value.trim().replace(/[$,\s]/g, "");
+
+  if (
+    cleaned === "" ||
+    !/^-?\d+(?:\.\d{1,2})?$/.test(cleaned)
+  ) return null;
+
+  const number = Number(cleaned);
+  return Number.isFinite(number) ? number : null;
+}
+
+function checkAnswer() {
+  const p = current;
+
+  const fields = [
+    ["income", p.annualIncome, "Annual income"],
+    ["expenses", p.annualExpenses, "Annual expenses"],
+    ["net", p.net, "Net cash flow"]
+  ];
+
+  const feedback = $("feedback");
+  feedback.replaceChildren();
+
+  let correct = 0;
+
+  fields.forEach(([id, expected, label]) => {
+    const value = parseMoney($(id).value);
+    const isCorrect =
+      value !== null &&
+      Math.abs(value - expected) < 0.005;
+
+    if (isCorrect) correct++;
+
+    const line = document.createElement("div");
+    line.className = isCorrect ? "good" : "bad";
+    line.textContent =
+      label + ": " +
+      (isCorrect ? "Correct" : "Try again");
+    feedback.appendChild(line);
+  });
+
+  const budgetCorrect =
+    $("budget").value === p.budget;
+
+  if (budgetCorrect) correct++;
+
+  const line = document.createElement("div");
+  line.className = budgetCorrect ? "good" : "bad";
+  line.textContent =
+    "Budget conclusion: " +
+    (budgetCorrect ? "Correct" : "Try again");
+
+  feedback.appendChild(line);
+
+  const summary = document.createElement("div");
+  summary.style.marginTop = "6px";
+  summary.textContent =
+    correct + " of 4 responses correct.";
+  feedback.appendChild(summary);
+}
+
+function addStep(label, latex) {
+  const block = document.createElement("div");
+  block.className = "solution-step";
+
+  const caption = document.createElement("strong");
+  caption.textContent = label;
+  block.appendChild(caption);
+
+  if (latex) {
+    const expression = document.createElement("div");
+    expression.className = "mathline";
+    expression.textContent = math(latex);
+    block.appendChild(expression);
+  }
+
+  $("steps").appendChild(block);
+}
+
+let renderQueue = Promise.resolve();
+
+function renderMath() {
+  renderQueue = renderQueue.then(async () => {
+    if (window.MathJax &&
+        MathJax.typesetPromise) {
+      await MathJax.typesetPromise([$("steps")]);
+    }
+  }).catch(console.error);
+}
+
+function toggleSolution() {
+  showing = !showing;
+
+  $("solution").style.display =
+    showing ? "block" : "none";
+
+  $("reveal").textContent =
+    showing ? "Hide Solution" : "Show Solution";
+
+  if (!showing) return;
+
+  const p = current;
+  $("steps").replaceChildren();
+
+  addStep("1. Annual income",
+    "(" + p.job + "\\times12)+" +
+    "(" + p.family + "\\times12)+" +
+    p.scholarship +
+    "=" + p.annualIncome);
+
+  addStep("2. Annual expenses",
+    "(" + p.rent + "\\times12)+" +
+    "(" + p.groceries + "\\times52)+" +
+    "(" + p.tuition + "\\times2)+" +
+    "(" + p.insurance + "\\times12)+" +
+    "(" + p.entertainment + "\\times12)+" +
+    "(" + p.phone + "\\times12)" +
+    "=" + p.annualExpenses);
+
+  addStep("3. Annual net cash flow",
+    p.annualIncome + "-" +
+    p.annualExpenses +
+    "=" + p.net);
+
+  const conclusion = document.createElement("p");
+  conclusion.style.fontWeight = "bold";
+
+  conclusion.textContent =
+    p.budget === "surplus"
+      ? "Conclusion: Income exceeds expenses. The budget has a surplus."
+      : p.budget === "deficit"
+      ? "Conclusion: Expenses exceed income. The budget has a deficit."
+      : "Conclusion: Income equals expenses. The budget is balanced.";
+
+  $("steps").appendChild(conclusion);
+
+  renderMath();
+}
+
+$("theme").addEventListener("click", () => {
+  const light = document.body.classList.toggle("light");
+  $("theme").textContent =
+    light ? "☾ Dark mode" : "☀ Light mode";
+});
+
+$("submit").addEventListener("click", checkAnswer);
+$("next").addEventListener("click", newProblem);
+$("reveal").addEventListener("click", toggleSolution);
+
+generateProblems();
+newProblem();
+</script>
+</body>
+</html>
