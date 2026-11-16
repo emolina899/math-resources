@@ -1,0 +1,489 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Property Tax Proportions</title>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+
+<style>
+* { box-sizing: border-box; }
+
+:root {
+  --bg: #101827;
+  --panel: #1d2b46;
+  --field: #192840;
+  --text: #f5f7ff;
+  --muted: #b9c6dc;
+  --border: #40577d;
+  --accent: #8b70ff;
+  --soft: #2b4064;
+  --good: #86e6b3;
+  --bad: #ff9eaa;
+}
+
+body.light {
+  --bg: #ffffff;
+  --panel: #f0f2ff;
+  --field: #ffffff;
+  --text: #19243b;
+  --muted: #56647b;
+  --border: #c4cee3;
+  --accent: #6554e9;
+  --soft: #e4e9f6;
+  --good: #17734c;
+  --bad: #b82c46;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 15px Arial, sans-serif;
+  padding: 12px;
+}
+
+.app {
+  max-width: 850px;
+  margin: auto;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.heading {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover { filter: brightness(1.08); }
+
+.theme {
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 8px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.question {
+  background: linear-gradient(135deg,
+    var(--panel), var(--field));
+  border: 1px solid var(--accent);
+  border-radius: 15px;
+  padding: 19px;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.answer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.answer-row label {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.answer-row input {
+  min-width: 0;
+  flex: 1;
+  padding: 12px;
+  background: var(--field);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font: inherit;
+}
+
+input::placeholder { color: var(--muted); }
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.submit {
+  color: white;
+  background: linear-gradient(110deg,
+    #935bf6, #6359ec);
+}
+
+.next {
+  color: white;
+  background: linear-gradient(110deg,
+    #365f9c, #274675);
+}
+
+.reveal {
+  width: 100%;
+  margin-top: 10px;
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.feedback {
+  min-height: 18px;
+  margin-top: 9px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.good { color: var(--good); }
+.bad { color: var(--bad); }
+
+.solution {
+  display: none;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  margin-top: 12px;
+  line-height: 1.7;
+}
+
+.solution h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.step { margin: 10px 0; }
+
+.mathline {
+  padding: 5px 0;
+  font-size: 18px;
+  overflow-x: auto;
+}
+
+.final {
+  color: var(--good);
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+@media(max-width: 480px) {
+  body { padding: 8px; }
+  .question { padding: 14px; font-size: 14px; }
+  .answer-row { flex-wrap: wrap; }
+  .answer-row input { flex-basis: 60%; }
+  button { padding: 10px 8px; font-size: 13px; }
+}
+</style>
+</head>
+
+<body>
+<main class="app">
+
+  <div class="top">
+    <span class="heading">
+      Solve the following ratio application.
+    </span>
+    <button id="theme" class="theme"
+      type="button">☀ Light mode</button>
+  </div>
+
+  <div id="question" class="question"></div>
+
+  <div class="answer-row">
+    <label for="answer">Answer: $</label>
+    <input id="answer" type="text"
+      inputmode="decimal"
+      placeholder="Enter your answer"
+      autocomplete="off">
+  </div>
+
+  <div class="actions">
+    <button id="submit" class="submit"
+      type="button">Submit</button>
+    <button id="next" class="next"
+      type="button">Try Similar</button>
+  </div>
+
+  <button id="reveal" class="reveal"
+    type="button">Show Solution</button>
+
+  <div id="feedback" class="feedback"
+    aria-live="polite"></div>
+
+  <section id="solution" class="solution">
+    <h3>Step-by-step solution</h3>
+    <div id="steps"></div>
+  </section>
+
+</main>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+function rand(a, b) {
+  return Math.floor(Math.random() * (b-a+1)) + a;
+}
+
+function money(n) {
+  return n.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function dollars(n) {
+  return "$" + money(n);
+}
+
+function wholeDollars(n) {
+  return "$" + n.toLocaleString("en-US");
+}
+
+const cities = [
+  "San Francisco",
+  "Houston",
+  "Dallas",
+  "Austin",
+  "Denver",
+  "Phoenix",
+  "Seattle",
+  "Chicago",
+  "San Antonio",
+  "Portland"
+];
+
+let problems = [];
+let current = null;
+let index = -1;
+let showing = false;
+
+function generateProblems() {
+  const seen = new Set();
+
+  while (problems.length < 50) {
+    // Assessed values are multiples of $5,000.
+    const baseValue = rand(30, 110) * 5000;
+    const newValue = rand(35, 145) * 5000;
+
+    // Tax rate: 1.00% to 3.50%.
+    // Store as basis points for accurate arithmetic.
+    const rateBP = rand(100, 350);
+
+    const city = cities[rand(0, cities.length - 1)];
+
+    if (baseValue === newValue) continue;
+
+    const key = [
+      baseValue, newValue, rateBP, city
+    ].join("-");
+
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    // Rate basis points / 10,000.
+    const baseTax = baseValue * rateBP / 10000;
+    const newTax = newValue * rateBP / 10000;
+
+    problems.push({
+      city,
+      baseValue,
+      newValue,
+      baseTax,
+      answer: newTax
+    });
+  }
+}
+
+function math(s) {
+  return "\\(" + s + "\\)";
+}
+
+// Queue MathJax rendering.
+let renderQueue = Promise.resolve();
+
+function renderMath() {
+  renderQueue = renderQueue.then(async () => {
+    if (window.MathJax &&
+        MathJax.typesetPromise) {
+      await MathJax.typesetPromise([$("steps")]);
+    }
+  }).catch(console.error);
+}
+
+function newProblem() {
+  let next;
+
+  do {
+    next = rand(0, problems.length - 1);
+  } while (next === index && problems.length > 1);
+
+  index = next;
+  current = problems[index];
+  showing = false;
+
+  const p = current;
+
+  $("question").textContent =
+    "In " + p.city +
+    ", property taxes are calculated in proportion " +
+    "to a property's assessed value. " +
+    "A property assessed at " +
+    wholeDollars(p.baseValue) +
+    " has an annual property tax of " +
+    dollars(p.baseTax) + ". " +
+    "Suppose another property in the same city " +
+    "is assessed at " +
+    wholeDollars(p.newValue) +
+    " and is taxed at the same rate. " +
+    "How much would the annual property tax " +
+    "be on the second property?";
+
+  $("answer").value = "";
+  $("feedback").textContent = "";
+  $("feedback").className = "feedback";
+  $("solution").style.display = "none";
+  $("steps").replaceChildren();
+  $("reveal").textContent = "Show Solution";
+}
+
+function checkAnswer() {
+  const raw = $("answer").value.trim();
+  const cleaned = raw.replace(/[$,\s]/g, "");
+  const number = Number(cleaned);
+
+  if (cleaned === "" ||
+      !/^\d+(?:\.\d{1,2})?$/.test(cleaned) ||
+      !Number.isFinite(number)) {
+    $("feedback").textContent =
+      "Enter a valid dollar amount.";
+    $("feedback").className = "feedback bad";
+    return;
+  }
+
+  if (Math.abs(number - current.answer) < 0.005) {
+    $("feedback").textContent = "Correct!";
+    $("feedback").className = "feedback good";
+  } else {
+    $("feedback").textContent =
+      "Not quite. Try again.";
+    $("feedback").className = "feedback bad";
+  }
+}
+
+function addStep(label, latex) {
+  const block = document.createElement("div");
+  block.className = "step";
+
+  if (label) {
+    const caption = document.createElement("div");
+    caption.textContent = label;
+    block.appendChild(caption);
+  }
+
+  if (latex) {
+    const expression = document.createElement("div");
+    expression.className = "mathline";
+    expression.textContent = math(latex);
+    block.appendChild(expression);
+  }
+
+  $("steps").appendChild(block);
+}
+
+function toggleSolution() {
+  showing = !showing;
+
+  $("solution").style.display =
+    showing ? "block" : "none";
+
+  $("reveal").textContent =
+    showing ? "Hide Solution" : "Show Solution";
+
+  if (!showing) return;
+
+  const p = current;
+
+  $("steps").replaceChildren();
+
+  addStep("Set up a proportion:",
+    "\\frac{" + p.baseTax +
+    "}{" + p.baseValue +
+    "}=\\frac{x}{" + p.newValue + "}");
+
+  addStep("Cross multiply:",
+    p.baseValue + "x=" +
+    p.baseTax + "\\cdot" + p.newValue);
+
+  const product = p.baseTax * p.newValue;
+
+  addStep("Multiply:",
+    p.baseValue + "x=" + product);
+
+  addStep("Divide both sides:",
+    "x=\\frac{" + product +
+    "}{" + p.baseValue + "}");
+
+  addStep("Simplify:",
+    "\\boxed{x=" + p.answer.toFixed(2) + "}");
+
+  const final = document.createElement("div");
+  final.className = "final";
+  final.textContent =
+    "Answer: " + dollars(p.answer);
+  $("steps").appendChild(final);
+
+  renderMath();
+}
+
+$("theme").addEventListener("click", () => {
+  const light = document.body.classList.toggle("light");
+  $("theme").textContent =
+    light ? "☾ Dark mode" : "☀ Light mode";
+});
+
+$("submit").addEventListener("click", checkAnswer);
+$("next").addEventListener("click", newProblem);
+$("reveal").addEventListener("click", toggleSolution);
+
+$("answer").addEventListener("keydown", e => {
+  if (e.key === "Enter") checkAnswer();
+});
+
+generateProblems();
+newProblem();
+</script>
+</body>
+</html>
