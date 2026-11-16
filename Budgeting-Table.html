@@ -1,0 +1,611 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monthly Budget Percentages</title>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #101827;
+  --panel: #1c2942;
+  --field: #17243a;
+  --text: #f5f7ff;
+  --muted: #b9c6dc;
+  --border: #3e5074;
+  --accent: #8b70ff;
+  --soft: #293d60;
+  --table-alt: #152138;
+  --good: #82e5ae;
+  --bad: #ff9eaa;
+}
+
+body.light {
+  --bg: #ffffff;
+  --panel: #f0f3fc;
+  --field: #ffffff;
+  --text: #18243b;
+  --muted: #56647b;
+  --border: #c5cee0;
+  --accent: #6554e9;
+  --soft: #e4eaf7;
+  --table-alt: #f7f9fe;
+  --good: #17734c;
+  --bad: #bb3049;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 14px Arial, sans-serif;
+  padding: 12px;
+  transition: background .2s, color .2s;
+}
+
+.app {
+  max-width: 780px;
+  margin: auto;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.heading {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.08);
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme {
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 8px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.question-card {
+  background: linear-gradient(
+    135deg,
+    var(--panel),
+    var(--field)
+  );
+  border: 1px solid var(--accent);
+  border-radius: 15px;
+  padding: 18px;
+}
+
+.intro {
+  margin: 0 0 14px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th {
+  background: var(--soft);
+  color: var(--text);
+  text-align: left;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+tbody tr:nth-child(even) {
+  background: var(--table-alt);
+}
+
+td:last-child,
+th:last-child {
+  text-align: right;
+}
+
+.total-row {
+  font-weight: bold;
+  border-top: 2px solid var(--accent);
+}
+
+.total-row td {
+  padding-top: 11px;
+  border-bottom: 0;
+}
+
+.question-text {
+  margin: 15px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.answer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 13px;
+}
+
+.answer-row label {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+input {
+  width: 160px;
+  max-width: 100%;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--field);
+  color: var(--text);
+  font: inherit;
+}
+
+input::placeholder {
+  color: var(--muted);
+}
+
+.percent {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.submit {
+  background: linear-gradient(
+    110deg, #925df6, #6358ed
+  );
+  color: white;
+}
+
+.next {
+  background: linear-gradient(
+    110deg, #365e99, #294879
+  );
+  color: white;
+}
+
+.reveal {
+  width: 100%;
+  margin-top: 10px;
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.feedback {
+  min-height: 18px;
+  text-align: center;
+  margin-top: 9px;
+  font-weight: bold;
+}
+
+.good { color: var(--good); }
+.bad { color: var(--bad); }
+
+.solution {
+  display: none;
+  margin-top: 12px;
+  padding: 17px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--panel);
+  line-height: 1.7;
+}
+
+.solution h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
+.step {
+  margin: 10px 0;
+}
+
+.mathline {
+  padding: 5px 0;
+  font-size: 17px;
+  overflow-x: auto;
+}
+
+.final {
+  color: var(--good);
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+@media(max-width: 480px) {
+  body { padding: 7px; }
+  .question-card { padding: 12px; }
+  .intro, .question-text { font-size: 14px; }
+  th, td { padding: 7px 9px; }
+  button { font-size: 13px; padding: 10px 8px; }
+  input { width: 120px; }
+}
+</style>
+</head>
+
+<body>
+<main class="app">
+
+  <div class="top">
+    <span class="heading">
+      Monthly Budget Percentages
+    </span>
+
+    <button id="theme" class="theme" type="button">
+      ☀ Light mode
+    </button>
+  </div>
+
+  <section class="question-card">
+
+    <p class="intro">
+      A couple's monthly budget is shown below.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="budgetRows"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td>Total</td>
+            <td id="totalAmount"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <p id="questionText" class="question-text"></p>
+
+  </section>
+
+  <div class="answer-row">
+    <label for="answer">Answer:</label>
+    <input
+      id="answer"
+      type="text"
+      inputmode="decimal"
+      placeholder="e.g. 12.7"
+      autocomplete="off">
+    <span class="percent">%</span>
+  </div>
+
+  <div class="actions">
+    <button id="submit" class="submit" type="button">
+      Submit
+    </button>
+
+    <button id="next" class="next" type="button">
+      Try Similar
+    </button>
+  </div>
+
+  <button id="reveal" class="reveal" type="button">
+    Show Solution
+  </button>
+
+  <div id="feedback" class="feedback"
+    aria-live="polite"></div>
+
+  <section id="solution" class="solution">
+    <h3>Step-by-step solution</h3>
+    <div id="steps"></div>
+  </section>
+
+</main>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+function rand(min, max) {
+  return Math.floor(
+    Math.random() * (max - min + 1)
+  ) + min;
+}
+
+function formatMoney(n) {
+  return "$" + n.toLocaleString("en-US");
+}
+
+function math(s) {
+  return "\\(" + s + "\\)";
+}
+
+const categories = [
+  "Rent and Utilities",
+  "Groceries",
+  "Restaurants",
+  "Shopping",
+  "Entertainment",
+  "Other"
+];
+
+let problems = [];
+let current = null;
+let currentIndex = -1;
+let showingSolution = false;
+
+function generateProblems() {
+  const used = new Set();
+
+  while (problems.length < 50) {
+    const amounts = [
+      rand(90, 190) * 10,
+      rand(20, 65) * 10,
+      rand(10, 45) * 10,
+      rand(5, 35) * 10,
+      rand(4, 25) * 10,
+      rand(3, 20) * 10
+    ];
+
+    const targetIndex = rand(0, categories.length - 1);
+
+    const total = amounts.reduce(
+      (sum, amount) => sum + amount, 0
+    );
+
+    const targetAmount = amounts[targetIndex];
+
+    const percent =
+      (targetAmount / total) * 100;
+
+    const rounded =
+      Math.round((percent + Number.EPSILON) * 10) / 10;
+
+    const key = amounts.join("-") + "-" + targetIndex;
+
+    if (used.has(key)) continue;
+    used.add(key);
+
+    problems.push({
+      amounts,
+      total,
+      targetIndex,
+      targetAmount,
+      percent,
+      answer: rounded
+    });
+  }
+}
+
+function newProblem() {
+  let index;
+
+  do {
+    index = rand(0, problems.length - 1);
+  } while (
+    index === currentIndex &&
+    problems.length > 1
+  );
+
+  currentIndex = index;
+  current = problems[index];
+  showingSolution = false;
+
+  const rows = $("budgetRows");
+  rows.replaceChildren();
+
+  categories.forEach((category, i) => {
+    const tr = document.createElement("tr");
+
+    const name = document.createElement("td");
+    name.textContent = category;
+
+    const amount = document.createElement("td");
+    amount.textContent =
+      formatMoney(current.amounts[i]);
+
+    tr.append(name, amount);
+    rows.appendChild(tr);
+  });
+
+  $("totalAmount").textContent =
+    formatMoney(current.total);
+
+  $("questionText").textContent =
+    "What percent of their total monthly budget " +
+    "did the couple spend on " +
+    categories[current.targetIndex] +
+    "? Round your answer to one decimal place.";
+
+  $("answer").value = "";
+  $("feedback").textContent = "";
+  $("feedback").className = "feedback";
+
+  $("solution").style.display = "none";
+  $("steps").replaceChildren();
+  $("reveal").textContent = "Show Solution";
+}
+
+function checkAnswer() {
+  const raw = $("answer").value.trim();
+  const cleaned = raw.replace(/%/g, "").trim();
+
+  const value = Number(cleaned);
+
+  if (
+    cleaned === "" ||
+    !/^\d+(?:\.\d+)?$/.test(cleaned) ||
+    !Number.isFinite(value)
+  ) {
+    $("feedback").textContent =
+      "Enter a valid percentage.";
+    $("feedback").className = "feedback bad";
+    return;
+  }
+
+  // Require the final answer rounded to one decimal.
+  if (Math.abs(value - current.answer) < 0.000001) {
+    $("feedback").textContent = "Correct!";
+    $("feedback").className = "feedback good";
+  } else {
+    $("feedback").textContent =
+      "Not quite. Divide the category amount " +
+      "by the total budget, then multiply by 100.";
+    $("feedback").className = "feedback bad";
+  }
+}
+
+function addStep(label, latex) {
+  const block = document.createElement("div");
+  block.className = "step";
+
+  if (label) {
+    const caption = document.createElement("div");
+    caption.textContent = label;
+    block.appendChild(caption);
+  }
+
+  if (latex) {
+    const expression = document.createElement("div");
+    expression.className = "mathline";
+    expression.textContent = math(latex);
+    block.appendChild(expression);
+  }
+
+  $("steps").appendChild(block);
+}
+
+let renderQueue = Promise.resolve();
+
+function renderMath() {
+  renderQueue = renderQueue.then(async () => {
+    if (window.MathJax &&
+        MathJax.typesetPromise) {
+      await MathJax.typesetPromise([$("steps")]);
+    }
+  }).catch(console.error);
+}
+
+function toggleSolution() {
+  showingSolution = !showingSolution;
+
+  $("solution").style.display =
+    showingSolution ? "block" : "none";
+
+  $("reveal").textContent =
+    showingSolution ? "Hide Solution" : "Show Solution";
+
+  if (!showingSolution) return;
+
+  const p = current;
+
+  $("steps").replaceChildren();
+
+  addStep("Use the percentage formula:",
+    "\\text{Percent}=" +
+    "\\frac{\\text{Category Amount}}" +
+    "{\\text{Total Budget}}\\times100");
+
+  addStep("Substitute the values:",
+    "\\frac{" + p.targetAmount +
+    "}{" + p.total + "}\\times100");
+
+  addStep("Calculate the percentage:",
+    p.percent.toFixed(3) + "\\%");
+
+  addStep("Round to one decimal place:",
+    "\\boxed{" + p.answer.toFixed(1) + "\\%}");
+
+  const final = document.createElement("div");
+  final.className = "final";
+
+  final.textContent =
+    "Answer: " + p.answer.toFixed(1) + "%";
+
+  $("steps").appendChild(final);
+
+  renderMath();
+}
+
+$("theme").addEventListener("click", () => {
+  const light = document.body.classList.toggle("light");
+
+  $("theme").textContent =
+    light ? "☾ Dark mode" : "☀ Light mode";
+});
+
+$("submit").addEventListener("click", checkAnswer);
+$("next").addEventListener("click", newProblem);
+$("reveal").addEventListener("click", toggleSolution);
+
+$("answer").addEventListener("keydown", e => {
+  if (e.key === "Enter") checkAnswer();
+});
+
+generateProblems();
+newProblem();
+</script>
+</body>
+</html>
