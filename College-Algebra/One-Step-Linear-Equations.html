@@ -1,60 +1,52 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>One-Step Linear Equations</title>
-
-<script>
-window.MathJax = {
-  tex: { inlineMath: [['\\(', '\\)']] },
-  svg: { fontCache: 'global' }
-};
-</script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-
 <style>
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 :root {
   --bg: #101827;
-  --panel: #19263b;
-  --field: #152137;
-  --text: #f1f5ff;
-  --muted: #b9c5d8;
-  --border: #354660;
-  --button: #293b59;
-  --accent: #706cf3;
-  --success: #80e0aa;
-  --error: #ff9d9d;
+  --panel: #192743;
+  --field: #16243b;
+  --text: #f5f7ff;
+  --muted: #b8c6de;
+  --border: #3b5279;
+  --button: #293d60;
+  --accent: #7367f5;
+  --success: #7ce6b0;
+  --error: #ff9aab;
 }
 
 body.light {
   --bg: #ffffff;
-  --panel: #eef2fa;
+  --panel: #f0f3ff;
   --field: #ffffff;
-  --text: #172238;
-  --muted: #526179;
-  --border: #c6cfdd;
-  --button: #dfe6f2;
-  --accent: #514bd7;
-  --success: #167447;
-  --error: #b42332;
+  --text: #1b2540;
+  --muted: #56637b;
+  --border: #c4cdea;
+  --button: #e2e8f7;
+  --accent: #6254e5;
+  --success: #15764c;
+  --error: #bd3045;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
 }
 
 body {
-  margin: 0;
-  padding: 8px;
   background: var(--bg);
   color: var(--text);
-  font: 15px Arial, sans-serif;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  padding: 10px;
+  transition: background .2s, color .2s;
 }
 
 .activity {
   max-width: 780px;
-  margin: auto;
+  margin: 0 auto;
 }
 
 .top {
@@ -62,58 +54,82 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  margin-bottom: 9px;
+  margin-bottom: 10px;
 }
 
 .prompt {
-  color: var(--muted);
   font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
 }
 
 button {
-  border: 0;
-  border-radius: 9px;
-  padding: 11px 12px;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 14px;
   font: inherit;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
+  transition: filter .2s, transform .15s;
+}
+
+button:hover {
+  filter: brightness(1.12);
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .theme-btn {
-  padding: 7px 11px;
   background: var(--button);
   color: var(--text);
+  padding: 7px 12px;
   font-size: 12px;
   white-space: nowrap;
+  border: 1px solid var(--border);
+  border-radius: 20px;
 }
 
 .math-panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 11px;
-  padding: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--panel),
+    var(--field)
+  );
+  border: 1px solid var(--accent);
+  border-radius: 14px;
   min-height: 105px;
+  padding: 12px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   text-align: center;
+  box-shadow: inset 0 0 22px rgba(110, 95, 240, .08);
 }
 
 .equation {
-  font-size: 23px;
   width: 100%;
+  font-size: 25px;
+  font-weight: 600;
 }
 
 .solution {
   width: 100%;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .solution-title {
-  font-weight: bold;
-  color: var(--muted);
   font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
   margin-bottom: 7px;
 }
 
@@ -121,380 +137,112 @@ button {
   margin: 5px 0;
 }
 
-.solution math {
-  font-size: 15px;
-}
-
 .answer-label {
   display: block;
+  margin: 12px 0 6px;
   font-size: 13px;
-  font-weight: bold;
-  margin: 11px 0 6px;
+  font-weight: 700;
 }
 
 input {
+  display: block;
   width: 100%;
-  padding: 11px 12px;
   background: var(--field);
-  border: 1px solid var(--border);
-  border-radius: 9px;
   color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
   font: inherit;
-  outline: none;
 }
 
 input:focus {
   border-color: var(--accent);
+  outline: 2px solid rgba(115, 103, 245, .2);
 }
 
 input::placeholder {
   color: var(--muted);
-  opacity: 0.85;
 }
 
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 9px;
   margin-top: 10px;
 }
 
 .primary {
-  background: var(--accent);
+  background: linear-gradient(
+    120deg,
+    #8c5cf5,
+    #6258eb
+  );
   color: white;
+  box-shadow: 0 3px 10px rgba(100, 80, 235, .2);
 }
 
 .secondary {
-  background: var(--button);
-  color: var(--text);
+  background: linear-gradient(
+    120deg,
+    #335b98,
+    #254578
+  );
+  color: white;
 }
 
 .solution-btn {
-  display: block;
   width: 100%;
-  margin-top: 8px;
+  margin-top: 9px;
   background: var(--button);
   color: var(--text);
+  border: 1px solid var(--border);
 }
 
 .feedback {
+  margin-top: 7px;
   min-height: 18px;
-  margin-top: 8px;
   text-align: center;
   font-size: 13px;
-  font-weight: bold;
+  font-weight: 700;
 }
 
-.correct { color: var(--success); }
-.incorrect { color: var(--error); }
+.correct {
+  color: var(--success);
+}
 
-@media(max-width: 420px) {
-  body { padding: 6px; }
-  .math-panel { padding: 9px; min-height: 95px; }
-  .equation { font-size: 20px; }
-  button { padding: 10px 8px; font-size: 13px; }
-  .theme-btn { font-size: 11px; }
-  input { font-size: 14px; }
+.incorrect {
+  color: var(--error);
+}
+
+@media (max-width: 420px) {
+  body {
+    padding: 7px;
+  }
+
+  .prompt {
+    font-size: 13px;
+  }
+
+  .math-panel {
+    min-height: 90px;
+    padding: 10px;
+  }
+
+  .equation {
+    font-size: 21px;
+  }
+
+  button {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+
+  .theme-btn {
+    font-size: 11px;
+  }
+
+  input {
+    font-size: 14px;
+  }
 }
 </style>
-</head>
-
-<body>
-<div class="activity">
-
-  <div class="top">
-    <span class="prompt">Solve the equation for x.</span>
-    <button class="theme-btn" id="themeBtn"
-      onclick="toggleTheme()">Light mode</button>
-  </div>
-
-  <div class="math-panel">
-    <div id="equation" class="equation"></div>
-    <div id="solution" class="solution"
-      style="display:none"></div>
-  </div>
-
-  <label class="answer-label" for="answer">
-    Your answer
-  </label>
-
-  <input id="answer"
-    type="text"
-    placeholder="Enter an integer or fraction"
-    autocomplete="off"
-    spellcheck="false">
-
-  <div class="actions">
-    <button class="primary" onclick="checkAnswer()">
-      Submit
-    </button>
-    <button class="secondary" onclick="newProblem()">
-      Try Similar
-    </button>
-  </div>
-
-  <button class="solution-btn" id="solutionBtn"
-    onclick="toggleSolution()">
-    Show Solution
-  </button>
-
-  <div id="feedback" class="feedback"
-    aria-live="polite"></div>
-
-</div>
-
-<script>
-let problem = null;
-let showingSolution = false;
-let previousSignature = "";
-
-function rand(min, max) {
-  return Math.floor(Math.random() * (max-min+1)) + min;
-}
-
-function nonzero(min, max) {
-  let n;
-  do { n = rand(min, max); } while (n === 0);
-  return n;
-}
-
-function gcd(a, b) {
-  a = Math.abs(a);
-  b = Math.abs(b);
-  while (b) {
-    [a, b] = [b, a % b];
-  }
-  return a;
-}
-
-function fraction(n, d = 1) {
-  if (d < 0) {
-    n = -n;
-    d = -d;
-  }
-  const g = gcd(n, d) || 1;
-  return { n: n/g, d: d/g };
-}
-
-function texFraction(f) {
-  if (f.d === 1) return String(f.n);
-  if (f.n < 0)
-    return "-\\frac{" + Math.abs(f.n) + "}{" + f.d + "}";
-  return "\\frac{" + f.n + "}{" + f.d + "}";
-}
-
-function texConstant(n) {
-  return String(n);
-}
-
-function math(s) {
-  return "\\(" + s + "\\)";
-}
-
-function typeset() {
-  if (window.MathJax && MathJax.typesetPromise) {
-    MathJax.typesetPromise().catch(console.error);
-  }
-}
-
-function makeProblem() {
-  const type = rand(0, 3);
-  let a, b, x, answer, equation, steps;
-
-  // Types 0 and 1: ax = b or x/a = b
-  // Types 2 and 3: x + a = b or x - a = b
-
-  if (type === 0) {
-    a = nonzero(-12, 12);
-    const numerator = nonzero(-15, 15);
-    const denominator = rand(1, 9);
-    x = fraction(numerator, denominator);
-    b = fraction(a*x.n, x.d);
-    answer = x;
-
-    equation = texConstant(a) + "x=" + texFraction(b);
-
-    steps = [
-      "Divide both sides by " + a + ".",
-      math("x=\\frac{" + texFraction(b) +
-        "}{" + a + "}"),
-      math("x=" + texFraction(answer))
-    ];
-  }
-
-  if (type === 1) {
-    a = rand(2, 12);
-    b = nonzero(-12, 12);
-    answer = fraction(a*b);
-
-    equation = "\\frac{x}{" + a + "}=" + b;
-
-    steps = [
-      "Multiply both sides by " + a + ".",
-      math("x=" + a + "\\left(" + b + "\\right)"),
-      math("x=" + texFraction(answer))
-    ];
-  }
-
-  if (type === 2) {
-    a = nonzero(-20, 20);
-    x = nonzero(-20, 20);
-    b = x + a;
-    answer = fraction(x);
-
-    equation = "x" + (a < 0 ? "" : "+") + a + "=" + b;
-
-    steps = [
-      (a > 0 ? "Subtract " + a :
-        "Add " + Math.abs(a)) + " to both sides.",
-      math("x=" + b + (a > 0 ? "-" + a :
-        "+" + Math.abs(a))),
-      math("x=" + texFraction(answer))
-    ];
-  }
-
-  if (type === 3) {
-    a = rand(1, 20);
-    x = nonzero(-20, 20);
-    b = x-a;
-    answer = fraction(x);
-
-    equation = "x-" + a + "=" + b;
-
-    steps = [
-      "Add " + a + " to both sides.",
-      math("x=" + b + "+" + a),
-      math("x=" + texFraction(answer))
-    ];
-  }
-
-  return { equation, answer, steps };
-}
-
-function newProblem() {
-  let next;
-  let attempts = 0;
-
-  do {
-    next = makeProblem();
-    attempts++;
-  } while (
-    next.equation === previousSignature &&
-    attempts < 20
-  );
-
-  problem = next;
-  previousSignature = next.equation;
-  showingSolution = false;
-
-  document.getElementById("equation").style.display = "block";
-  document.getElementById("solution").style.display = "none";
-  document.getElementById("equation").innerHTML =
-    math(problem.equation);
-
-  document.getElementById("solutionBtn").textContent =
-    "Show Solution";
-
-  document.getElementById("answer").value = "";
-  document.getElementById("feedback").textContent = "";
-  document.getElementById("feedback").className = "feedback";
-
-  typeset();
-}
-
-function parseAnswer(value) {
-  const s = value.trim().replace(/\s+/g, "");
-
-  if (/^[+-]?\d+$/.test(s)) {
-    return { ...fraction(Number(s)), valid: true };
-  }
-
-  const match = s.match(/^([+-]?\d+)\/([+-]?\d+)$/);
-
-  if (!match) return { valid: false };
-
-  const n = Number(match[1]);
-  const d = Number(match[2]);
-
-  if (d === 0) return { valid: false };
-
-  const reduced = fraction(n, d);
-
-  // Require simplified fractions and positive denominators.
-  if (d < 0 || gcd(n, d) !== 1 ||
-      (d !== 1 && n === 0)) {
-    return { valid: false, simplify: true };
-  }
-
-  return { ...reduced, valid: true };
-}
-
-function checkAnswer() {
-  const value = document.getElementById("answer").value;
-  const result = parseAnswer(value);
-  const feedback = document.getElementById("feedback");
-
-  if (!result.valid) {
-    feedback.textContent = result.simplify
-      ? "Enter your answer in simplified form."
-      : "Enter a valid integer or simplified fraction.";
-    feedback.className = "feedback incorrect";
-    return;
-  }
-
-  if (result.n === problem.answer.n &&
-      result.d === problem.answer.d) {
-    feedback.textContent = "Correct!";
-    feedback.className = "feedback correct";
-  } else {
-    feedback.textContent = "Not quite. Try again.";
-    feedback.className = "feedback incorrect";
-  }
-}
-
-function toggleSolution() {
-  showingSolution = !showingSolution;
-
-  const equation = document.getElementById("equation");
-  const solution = document.getElementById("solution");
-  const button = document.getElementById("solutionBtn");
-
-  if (showingSolution) {
-    equation.style.display = "none";
-    solution.style.display = "block";
-
-    solution.innerHTML =
-      '<div class="solution-title">Step-by-step solution</div>' +
-      '<div class="solution-step">' +
-      math(problem.equation) + '</div>' +
-      problem.steps.map(step =>
-        '<div class="solution-step">' +
-        step + '</div>'
-      ).join("");
-
-    button.textContent = "Hide Solution";
-    typeset();
-  } else {
-    equation.style.display = "block";
-    solution.style.display = "none";
-    button.textContent = "Show Solution";
-  }
-}
-
-function toggleTheme() {
-  const light = document.body.classList.toggle("light");
-  document.getElementById("themeBtn").textContent =
-    light ? "Dark mode" : "Light mode";
-}
-
-document.getElementById("answer").addEventListener(
-  "keydown",
-  function(e) {
-    if (e.key === "Enter") checkAnswer();
-  }
-);
-
-newProblem();
-</script>
-</body>
-</html>
