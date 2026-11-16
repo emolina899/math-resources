@@ -1,0 +1,494 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ratio Mixtures</title>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+
+<style>
+* { box-sizing: border-box; }
+
+:root {
+  --bg: #101827;
+  --panel: #1d2b46;
+  --field: #192840;
+  --text: #f5f7ff;
+  --muted: #b9c6dc;
+  --border: #40577d;
+  --accent: #8b70ff;
+  --soft: #2b4064;
+  --good: #86e6b3;
+  --bad: #ff9eaa;
+}
+
+body.light {
+  --bg: #ffffff;
+  --panel: #f0f2ff;
+  --field: #ffffff;
+  --text: #19243b;
+  --muted: #56647b;
+  --border: #c4cee3;
+  --accent: #6554e9;
+  --soft: #e4e9f6;
+  --good: #17734c;
+  --bad: #b82c46;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 15px Arial, sans-serif;
+  padding: 12px;
+}
+
+.app {
+  max-width: 850px;
+  margin: auto;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.heading {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover { filter: brightness(1.08); }
+
+.theme {
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 8px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.question {
+  background: linear-gradient(135deg,
+    var(--panel), var(--field));
+  border: 1px solid var(--accent);
+  border-radius: 15px;
+  padding: 19px;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.answer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.answer-row label {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.answer-row input {
+  min-width: 0;
+  flex: 1;
+  padding: 12px;
+  background: var(--field);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font: inherit;
+}
+
+input::placeholder { color: var(--muted); }
+
+.unit {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.submit {
+  color: white;
+  background: linear-gradient(110deg,
+    #935bf6, #6359ec);
+}
+
+.next {
+  color: white;
+  background: linear-gradient(110deg,
+    #365f9c, #274675);
+}
+
+.reveal {
+  width: 100%;
+  margin-top: 10px;
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.feedback {
+  min-height: 18px;
+  margin-top: 9px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.good { color: var(--good); }
+.bad { color: var(--bad); }
+
+.solution {
+  display: none;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  margin-top: 12px;
+  line-height: 1.7;
+}
+
+.solution h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.step { margin: 10px 0; }
+
+.mathline {
+  padding: 5px 0;
+  font-size: 18px;
+  overflow-x: auto;
+}
+
+.final {
+  color: var(--good);
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+@media(max-width: 480px) {
+  body { padding: 8px; }
+  .question { padding: 14px; font-size: 14px; }
+  .answer-row { flex-wrap: wrap; }
+  .answer-row input { flex-basis: 60%; }
+  button { padding: 10px 8px; font-size: 13px; }
+}
+</style>
+</head>
+
+<body>
+<main class="app">
+
+  <div class="top">
+    <span class="heading">
+      Solve the following ratio application.
+    </span>
+    <button id="theme" class="theme"
+      type="button">☀ Light mode</button>
+  </div>
+
+  <div id="question" class="question"></div>
+
+  <div class="answer-row">
+    <label for="answer">Answer:</label>
+    <input id="answer" type="text"
+      inputmode="decimal"
+      placeholder="Enter your answer"
+      autocomplete="off">
+    <span class="unit">pounds</span>
+  </div>
+
+  <div class="actions">
+    <button id="submit" class="submit"
+      type="button">Submit</button>
+    <button id="next" class="next"
+      type="button">Try Similar</button>
+  </div>
+
+  <button id="reveal" class="reveal"
+    type="button">Show Solution</button>
+
+  <div id="feedback" class="feedback"
+    aria-live="polite"></div>
+
+  <section id="solution" class="solution">
+    <h3>Step-by-step solution</h3>
+    <div id="steps"></div>
+  </section>
+
+</main>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+function rand(a, b) {
+  return Math.floor(Math.random() * (b-a+1)) + a;
+}
+
+const contexts = [
+  {
+    place: "coffee distributor",
+    first: "Arabian Mocha coffee",
+    second: "Queen City coffee",
+    result: "specialty coffee blend"
+  },
+  {
+    place: "bakery",
+    first: "bread flour",
+    second: "whole wheat flour",
+    result: "signature bread mixture"
+  },
+  {
+    place: "animal shelter",
+    first: "dry pet food",
+    second: "wet pet food",
+    result: "special feeding mixture"
+  },
+  {
+    place: "garden supply store",
+    first: "potting soil",
+    second: "compost",
+    result: "planting mixture"
+  },
+  {
+    place: "food production company",
+    first: "roasted peanuts",
+    second: "cashews",
+    result: "mixed nut blend"
+  },
+  {
+    place: "restaurant",
+    first: "white rice",
+    second: "brown rice",
+    result: "rice blend"
+  }
+];
+
+let problems = [];
+let current = null;
+let index = -1;
+let showing = false;
+
+function generateProblems() {
+  const seen = new Set();
+
+  while (problems.length < 50) {
+    const ratioA = rand(2, 12);
+    const ratioB = rand(2, 12);
+    const oldScale = rand(4, 12);
+    const newScale = rand(2, 10);
+    const contextIndex = rand(0, contexts.length - 1);
+
+    if (ratioA === ratioB ||
+        oldScale === newScale) continue;
+
+    const key = [
+      ratioA, ratioB,
+      oldScale, newScale, contextIndex
+    ].join("-");
+
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    problems.push({
+      context: contexts[contextIndex],
+      a: ratioA * oldScale,
+      b: ratioB * oldScale,
+      c: ratioA * newScale,
+      answer: ratioB * newScale
+    });
+  }
+}
+
+function math(s) {
+  return "\\(" + s + "\\)";
+}
+
+// Run MathJax after it has loaded.
+let renderQueue = Promise.resolve();
+
+function renderMath() {
+  renderQueue = renderQueue.then(async () => {
+    if (window.MathJax &&
+        MathJax.typesetPromise) {
+      await MathJax.typesetPromise([$("steps")]);
+    }
+  }).catch(console.error);
+}
+
+function newProblem() {
+  let next;
+
+  do {
+    next = rand(0, problems.length - 1);
+  } while (next === index && problems.length > 1);
+
+  index = next;
+  current = problems[index];
+  showing = false;
+
+  const p = current;
+  const c = p.context;
+
+  $("question").textContent =
+    "Suppose you work for a " + c.place +
+    " that prepares a " + c.result +
+    " using " + c.first + " and " +
+    c.second + ". " +
+    "Yesterday, you combined " + p.a +
+    " pounds of " + c.first + " with " +
+    p.b + " pounds of " + c.second +
+    ". " +
+    "Today, you have " + p.c +
+    " pounds of " + c.first +
+    " available and must maintain the same ratio. " +
+    "How many pounds of " + c.second +
+    " should you add?";
+
+  $("answer").value = "";
+  $("feedback").textContent = "";
+  $("feedback").className = "feedback";
+  $("solution").style.display = "none";
+  $("steps").replaceChildren();
+  $("reveal").textContent = "Show Solution";
+}
+
+function checkAnswer() {
+  const value = $("answer").value.trim();
+  const number = Number(value);
+
+  if (value === "" || !Number.isFinite(number)) {
+    $("feedback").textContent =
+      "Enter a valid numerical answer.";
+    $("feedback").className = "feedback bad";
+    return;
+  }
+
+  if (Math.abs(number - current.answer) < 0.000001) {
+    $("feedback").textContent = "Correct!";
+    $("feedback").className = "feedback good";
+  } else {
+    $("feedback").textContent =
+      "Not quite. Try again.";
+    $("feedback").className = "feedback bad";
+  }
+}
+
+function addStep(label, latex) {
+  const block = document.createElement("div");
+  block.className = "step";
+
+  if (label) {
+    const caption = document.createElement("div");
+    caption.textContent = label;
+    block.appendChild(caption);
+  }
+
+  if (latex) {
+    const expression = document.createElement("div");
+    expression.className = "mathline";
+    expression.textContent = math(latex);
+    block.appendChild(expression);
+  }
+
+  $("steps").appendChild(block);
+}
+
+function toggleSolution() {
+  showing = !showing;
+
+  $("solution").style.display =
+    showing ? "block" : "none";
+
+  $("reveal").textContent =
+    showing ? "Hide Solution" : "Show Solution";
+
+  if (!showing) return;
+
+  const p = current;
+  const product = p.b * p.c;
+
+  $("steps").replaceChildren();
+
+  addStep("Set up a proportion:",
+    "\\frac{" + p.a + "}{" + p.b +
+    "}=\\frac{" + p.c + "}{x}");
+
+  addStep("Cross multiply:",
+    p.a + "x=" + p.b + "\\cdot" + p.c);
+
+  addStep("Multiply:",
+    p.a + "x=" + product);
+
+  addStep("Divide both sides:",
+    "x=\\frac{" + product + "}{" + p.a + "}");
+
+  addStep("Simplify:",
+    "\\boxed{x=" + p.answer + "}");
+
+  const final = document.createElement("div");
+  final.className = "final";
+  final.textContent =
+    "Answer: " + p.answer + " pounds";
+  $("steps").appendChild(final);
+
+  renderMath();
+}
+
+$("theme").addEventListener("click", () => {
+  const light = document.body.classList.toggle("light");
+  $("theme").textContent =
+    light ? "☾ Dark mode" : "☀ Light mode";
+});
+
+$("submit").addEventListener("click", checkAnswer);
+$("next").addEventListener("click", newProblem);
+$("reveal").addEventListener("click", toggleSolution);
+
+$("answer").addEventListener("keydown", e => {
+  if (e.key === "Enter") checkAnswer();
+});
+
+generateProblems();
+newProblem();
+</script>
+</body>
+</html>
