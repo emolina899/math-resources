@@ -11,9 +11,7 @@ window.MathJax = {
   tex: {
     inlineMath: [['\\(', '\\)']]
   },
-  svg: {
-    fontCache: 'global'
-  }
+  svg: { fontCache: 'global' }
 };
 </script>
 <script defer
@@ -21,9 +19,7 @@ window.MathJax = {
 </script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 :root {
   --bg: #101827;
@@ -89,11 +85,10 @@ button {
   padding: 11px;
   font: inherit;
   font-weight: bold;
+  transition: filter .2s;
 }
 
-button:hover {
-  filter: brightness(1.08);
-}
+button:hover { filter: brightness(1.08); }
 
 button:focus-visible,
 input:focus-visible {
@@ -112,11 +107,7 @@ input:focus-visible {
 }
 
 .panel {
-  background: linear-gradient(
-    130deg,
-    var(--panel),
-    var(--field)
-  );
+  background: linear-gradient(130deg, var(--panel), var(--field));
   border: 1px solid var(--accent);
   border-radius: 15px;
   min-height: 125px;
@@ -146,9 +137,7 @@ input:focus-visible {
   margin-bottom: 12px;
 }
 
-.solution-step {
-  margin: 10px 0;
-}
+.solution-step { margin: 10px 0; }
 
 .final {
   color: var(--good);
@@ -174,9 +163,7 @@ input {
   font: inherit;
 }
 
-input::placeholder {
-  color: var(--muted);
-}
+input::placeholder { color: var(--muted); }
 
 .actions {
   display: grid;
@@ -187,16 +174,12 @@ input::placeholder {
 
 .submit {
   color: white;
-  background: linear-gradient(
-    110deg, #935bf6, #6359ec
-  );
+  background: linear-gradient(110deg, #935bf6, #6359ec);
 }
 
 .next {
   color: white;
-  background: linear-gradient(
-    110deg, #365f9c, #274675
-  );
+  background: linear-gradient(110deg, #365f9c, #274675);
 }
 
 .reveal {
@@ -216,36 +199,15 @@ input::placeholder {
   font-size: 13px;
 }
 
-.feedback.good {
-  color: var(--good);
-}
-
-.feedback.bad {
-  color: var(--bad);
-}
+.feedback.good { color: var(--good); }
+.feedback.bad { color: var(--bad); }
 
 @media(max-width: 420px) {
-  body {
-    padding: 7px;
-  }
-
-  .panel {
-    min-height: 110px;
-    padding: 12px;
-  }
-
-  .equation {
-    font-size: 23px;
-  }
-
-  .prompt {
-    font-size: 13px;
-  }
-
-  button {
-    font-size: 13px;
-    padding: 10px;
-  }
+  body { padding: 7px; }
+  .panel { min-height: 110px; padding: 12px; }
+  .equation { font-size: 23px; }
+  .prompt { font-size: 13px; }
+  button { font-size: 13px; padding: 10px; }
 }
 </style>
 </head>
@@ -258,8 +220,7 @@ input::placeholder {
       Solve the following proportion for x.
     </span>
 
-    <button id="theme" class="theme"
-      type="button">
+    <button id="theme" class="theme" type="button">
       ☀ Light mode
     </button>
   </div>
@@ -271,27 +232,22 @@ input::placeholder {
 
   <label for="answer">Your answer</label>
 
-  <input
-    id="answer"
-    type="text"
+  <input id="answer" type="text"
     placeholder="Enter an integer or simplified fraction"
     autocomplete="off"
     spellcheck="false">
 
   <div class="actions">
-    <button id="submit" class="submit"
-      type="button">
+    <button id="submit" class="submit" type="button">
       Submit
     </button>
 
-    <button id="next" class="next"
-      type="button">
+    <button id="next" class="next" type="button">
       Try Similar
     </button>
   </div>
 
-  <button id="reveal" class="reveal"
-    type="button">
+  <button id="reveal" class="reveal" type="button">
     Show Answer
   </button>
 
@@ -316,9 +272,9 @@ function gcd(a, b) {
   b = Math.abs(b);
 
   while (b !== 0) {
-    const temp = b;
+    const t = b;
     b = a % b;
-    a = temp;
+    a = t;
   }
 
   return a || 1;
@@ -332,21 +288,12 @@ function reduce(n, d) {
 
   const g = gcd(n, d);
 
-  return {
-    n: n / g,
-    d: d / g
-  };
+  return { n: n / g, d: d / g };
 }
 
 function signedNumber() {
   const value = rand(2, 18);
-  return Math.random() < 0.30
-    ? -value
-    : value;
-}
-
-function latexNumber(n) {
-  return n < 0 ? "(" + n + ")" : String(n);
+  return Math.random() < 0.30 ? -value : value;
 }
 
 function latexAnswer(f) {
@@ -354,24 +301,22 @@ function latexAnswer(f) {
 
   const sign = f.n < 0 ? "-" : "";
 
-  return sign +
-    "\\frac{" + Math.abs(f.n) +
-    "}{" + f.d + "}";
+  return sign + "\\frac{" +
+    Math.abs(f.n) + "}{" + f.d + "}";
 }
 
 function wrapMath(s) {
   return "\\(" + s + "\\)";
 }
 
-// Build 50 distinct problems.
-// The variable cycles through all four positions.
+// Generate 50 unique problems.
+// Positions are assigned in a repeating 0,1,2,3 pattern.
 
 const problems = [];
 const seen = new Set();
 
 for (let i = 0; i < 50; i++) {
-  let problem;
-  let key;
+  let p, key;
 
   do {
     const a = signedNumber();
@@ -381,108 +326,77 @@ for (let i = 0; i < 50; i++) {
 
     const position = i % 4;
 
-    let numerator;
-    let denominator;
+    let numerator, denominator;
 
     if (position === 0) {
-      // x/b = c/d
       numerator = b * c;
       denominator = d;
     } else if (position === 1) {
-      // a/x = c/d
       numerator = a * d;
       denominator = c;
     } else if (position === 2) {
-      // a/b = x/d
       numerator = a * d;
       denominator = b;
     } else {
-      // a/b = c/x
       numerator = b * c;
       denominator = a;
     }
 
-    const answer = reduce(
-      numerator,
-      denominator
-    );
-
-    key = [a, b, c, d, position].join(",");
-
-    problem = {
+    p = {
       a, b, c, d,
       position,
-      answer
+      answer: reduce(numerator, denominator)
     };
+
+    key = [a, b, c, d, position].join(",");
 
   } while (seen.has(key));
 
   seen.add(key);
-  problems.push(problem);
+  problems.push(p);
 }
 
 let currentIndex = -1;
 let showingSolution = false;
+let nextPosition = -1;
 
-// Convert each proportion to MathJax notation.
 function equationLatex(p) {
-  const topLeft =
-    p.position === 0 ? "x" : String(p.a);
+  const A = p.position === 0 ? "x" : String(p.a);
+  const B = p.position === 1 ? "x" : String(p.b);
+  const C = p.position === 2 ? "x" : String(p.c);
+  const D = p.position === 3 ? "x" : String(p.d);
 
-  const bottomLeft =
-    p.position === 1 ? "x" : String(p.b);
-
-  const topRight =
-    p.position === 2 ? "x" : String(p.c);
-
-  const bottomRight =
-    p.position === 3 ? "x" : String(p.d);
-
-  return "\\frac{" + topLeft +
-    "}{" + bottomLeft + "}" +
-    "=" +
-    "\\frac{" + topRight +
-    "}{" + bottomRight + "}";
+  return "\\frac{" + A + "}{" + B + "}" +
+    "=\\frac{" + C + "}{" + D + "}";
 }
 
-// Queue MathJax rendering to avoid overlap.
-let renderQueue = Promise.resolve();
-
-function renderMath() {
-  renderQueue = renderQueue.then(async () => {
-    if (!window.MathJax ||
-        !MathJax.typesetPromise) {
-      return;
-    }
-
-    if (MathJax.typesetClear) {
-      MathJax.typesetClear([
-        el("equation"),
-        el("solution")
-      ]);
-    }
-
-    await MathJax.typesetPromise([
+function typeset() {
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([
       el("equation"),
       el("solution")
-    ]);
-  }).catch(console.error);
+    ]).catch(console.error);
+  }
 }
 
 function newProblem() {
-  let index;
+  // Move x to a different position every time.
+  nextPosition = (nextPosition + 1) % 4;
 
-  do {
-    index = rand(0, problems.length - 1);
-  } while (
-    index === currentIndex &&
-    problems.length > 1
-  );
+  const matching = [];
 
-  currentIndex = index;
+  for (let i = 0; i < problems.length; i++) {
+    if (problems[i].position === nextPosition) {
+      matching.push(i);
+    }
+  }
+
+  const randomIndex = rand(0, matching.length - 1);
+  currentIndex = matching[randomIndex];
+
   showingSolution = false;
 
-  const p = problems[index];
+  const p = problems[currentIndex];
 
   el("equation").style.display = "block";
   el("solution").style.display = "none";
@@ -491,13 +405,13 @@ function newProblem() {
     wrapMath(equationLatex(p));
 
   el("solution").innerHTML = "";
-
   el("reveal").textContent = "Show Answer";
+
   el("answer").value = "";
   el("feedback").textContent = "";
   el("feedback").className = "feedback";
 
-  renderMath();
+  typeset();
 }
 
 function checkAnswer() {
@@ -547,8 +461,7 @@ function checkAnswer() {
     feedback.textContent = "Correct!";
     feedback.className = "feedback good";
   } else {
-    feedback.textContent =
-      "Not quite. Try again.";
+    feedback.textContent = "Not quite. Try again.";
     feedback.className = "feedback bad";
   }
 }
@@ -565,43 +478,33 @@ function toggleSolution() {
 
   const p = problems[currentIndex];
 
-  let coefficient;
-  let productLeft;
-  let productRight;
+  let coefficient, factor1, factor2;
 
-  // Cross multiplication depends on x position.
   if (p.position === 0) {
     coefficient = p.d;
-    productLeft = p.b;
-    productRight = p.c;
+    factor1 = p.b;
+    factor2 = p.c;
   } else if (p.position === 1) {
     coefficient = p.c;
-    productLeft = p.a;
-    productRight = p.d;
+    factor1 = p.a;
+    factor2 = p.d;
   } else if (p.position === 2) {
     coefficient = p.b;
-    productLeft = p.a;
-    productRight = p.d;
+    factor1 = p.a;
+    factor2 = p.d;
   } else {
     coefficient = p.a;
-    productLeft = p.b;
-    productRight = p.c;
+    factor1 = p.b;
+    factor2 = p.c;
   }
 
-  const product = productLeft * productRight;
-
-  const equation = equationLatex(p);
+  const product = factor1 * factor2;
 
   const step1 =
-    latexNumber(coefficient) +
-    "x=" +
-    latexNumber(productLeft) +
-    "\\cdot" +
-    latexNumber(productRight);
+    coefficient + "x=(" + factor1 +
+    ")(" + factor2 + ")";
 
-  const step2 =
-    latexNumber(coefficient) +
-    "x=" + product;
+  const step2 = coefficient + "x=" + product;
 
   const step3 =
     "x=\\frac{" + product +
@@ -619,12 +522,10 @@ function toggleSolution() {
     '</div>' +
 
     '<div class="solution-step">' +
-      wrapMath(equation) +
+      wrapMath(equationLatex(p)) +
     '</div>' +
 
-    '<div class="solution-step">' +
-      'Cross multiply:' +
-    '</div>' +
+    '<div class="solution-step">Cross multiply:</div>' +
 
     '<div class="solution-step">' +
       wrapMath(step1) +
@@ -634,10 +535,8 @@ function toggleSolution() {
       wrapMath(step2) +
     '</div>' +
 
-    '<div class="solution-step">' +
-      'Divide both sides by ' +
-      coefficient + ':' +
-    '</div>' +
+    '<div class="solution-step">Divide by ' +
+      coefficient + ':</div>' +
 
     '<div class="solution-step">' +
       wrapMath(step3) +
@@ -648,11 +547,9 @@ function toggleSolution() {
     '</div>';
 
   el("reveal").textContent = "Hide Answer";
-
-  renderMath();
+  typeset();
 }
 
-// Dark/light mode.
 el("theme").addEventListener("click", () => {
   const light = document.body.classList.toggle("light");
 
@@ -661,26 +558,15 @@ el("theme").addEventListener("click", () => {
     : "☀ Light mode";
 });
 
-// Button events.
-el("submit").addEventListener(
-  "click", checkAnswer
-);
-
-el("next").addEventListener(
-  "click", newProblem
-);
-
-el("reveal").addEventListener(
-  "click", toggleSolution
-);
+el("submit").addEventListener("click", checkAnswer);
+el("next").addEventListener("click", newProblem);
+el("reveal").addEventListener("click", toggleSolution);
 
 el("answer").addEventListener("keydown", e => {
   if (e.key === "Enter") checkAnswer();
 });
 
-// Display the first question immediately.
 newProblem();
-
 </script>
 </body>
 </html>
