@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hard Order of Operations</title>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']]},
+ svg:{fontCache:'global'}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+*{box-sizing:border-box}
+:root{
+ --bg:#101827;--panel:#1c2a45;--field:#192841;
+ --text:#f6f7ff;--border:#425679;--soft:#2c4165;
+ --good:#86e9b7;--bad:#ff9ea9
+}
+body.light{
+ --bg:#fff;--panel:#eff2ff;--field:#fff;
+ --text:#18243c;--border:#c5cfe2;--soft:#e4eafa;
+ --good:#167447;--bad:#b82f45
+}
+body{margin:0;padding:12px;background:var(--bg);
+ color:var(--text);font:15px Arial,sans-serif}
+.app{max-width:780px;margin:auto}
+.top{display:flex;justify-content:space-between;
+ align-items:center;gap:10px;margin-bottom:12px}
+button{border:0;border-radius:10px;padding:12px;
+ font:inherit;font-weight:bold;cursor:pointer}
+.theme{background:var(--soft);color:var(--text);
+ border:1px solid var(--border);font-size:12px;
+ padding:8px 12px;border-radius:25px}
+.problem{background:var(--panel);border:1px solid #8772ff;
+ border-radius:15px;min-height:130px;padding:24px 12px;
+ display:flex;justify-content:center;align-items:center;
+ font-size:24px;text-align:center;overflow-x:auto}
+.answer{margin:14px 0 10px}
+label{display:block;font-weight:bold;margin-bottom:7px}
+input{width:100%;padding:12px;border:1px solid var(--border);
+ border-radius:10px;background:var(--field);color:var(--text);
+ font:inherit}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.submit{background:linear-gradient(100deg,#905cf6,#6258ed);color:white}
+.next{background:#31568d;color:white}
+.reveal{margin-top:9px;width:100%;background:var(--soft);
+ color:var(--text);border:1px solid var(--border)}
+.feedback{margin:10px 0;font-weight:bold;min-height:16px}
+.solution{display:none;margin-top:12px;padding:15px;
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:12px;line-height:1.8}
+.good{color:var(--good)}.bad{color:var(--bad)}
+@media(max-width:480px){
+ body{padding:8px}.problem{font-size:19px;min-height:105px}
+ button{padding:10px 7px;font-size:13px}
+}
+</style>
+</head>
+<body>
+<main class="app">
+ <div class="top">
+  <strong>Evaluate the expression.</strong>
+  <button id="theme" class="theme">☀ Light mode</button>
+ </div>
+ <div id="problem" class="problem"></div>
+ <div class="answer">
+  <label for="answer">Your answer</label>
+  <input id="answer"
+   placeholder="Integer or simplified fraction"
+   autocomplete="off">
+ </div>
+ <div class="actions">
+  <button id="submit" class="submit">Submit</button>
+  <button id="next" class="next">Try Similar</button>
+ </div>
+ <button id="reveal" class="reveal">Show Solution</button>
+ <div id="feedback" class="feedback" aria-live="polite"></div>
+ <div id="solution" class="solution"></div>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const tex=s=>'\\('+s+'\\)';
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+function fraction(n,d=1){
+ if(d===0)throw Error('Zero denominator');
+ if(d<0){n=-n;d=-d}
+ const g=gcd(n,d);
+ return [n/g,d/g];
+}
+const fmt=(n,d=1)=>d===1?String(n):
+ `\\frac{${n}}{${d}}`;
+const add=(x,y)=>fraction(x[0]*y[1]+y[0]*x[1],x[1]*y[1]);
+const sub=(x,y)=>fraction(x[0]*y[1]-y[0]*x[1],x[1]*y[1]);
+const mul=(x,y)=>fraction(x[0]*y[0],x[1]*y[1]);
+const div=(x,y)=>fraction(x[0]*y[1],x[1]*y[0]);
+
+let problems=[],current,last=-1,shown=false;
+
+function generate(){
+ const seen=new Set();
+ while(problems.length<50){
+  const a=rand(2,6),b=rand(2,6);
+  const c=rand(2,5),d=rand(2,7);
+  const e=rand(2,8),type=rand(0,4);
+  let expression,answer,steps;
+
+  if(type===0){
+   // Fraction multiplied by a nested expression.
+   const denominator=rand(3,8);
+   const numerator=rand(1,denominator-1);
+   const inside=b*b+c*(d-a);
+   answer=sub(
+    mul(fraction(numerator,denominator),fraction(inside)),
+    fraction(e)
+   );
+   expression=
+    `\\frac{${numerator}}{${denominator}}
+     [${b}^{2}+${c}(${d}-${a})]-${e}`;
+   steps=[
+    `${d}-${a}=${d-a}`,
+    `${b}^{2}=${b*b}`,
+    `${b*b}+${c}(${d-a})=${inside}`,
+    `\\frac{${numerator}}{${denominator}}
+     \\times${inside}=${fmt(...mul(
+       fraction(numerator,denominator),fraction(inside)))}`,
+    `${fmt(...mul(
+      fraction(numerator,denominator),fraction(inside)))}
+     -${e}=${fmt(...answer)}`
+   ];
+  }else if(type===1){
+   // Division by a fraction.
+   const denominator=rand(3,8);
+   const numerator=rand(1,denominator-1);
+   const inside=a*a-b*(d-c);
+   answer=div(fraction(inside),
+    fraction(numerator,denominator));
+   expression=
+    `[${a}^{2}-${b}(${d}-${c})]
+     \\div\\frac{${numerator}}{${denominator}}`;
+   steps=[
+    `${d}-${c}=${d-c}`,
+    `${a}^{2}=${a*a}`,
+    `${a*a}-${b*(d-c)}=${inside}`,
+    `${inside}\\div\\frac{${numerator}}{${denominator}}
+     =${inside}\\times\\frac{${denominator}}{${numerator}}`,
+    `=${fmt(...answer)}`
+   ];
+  }else if(type===2){
+   // Exponents with a fraction term.
+   const denominator=rand(3,7);
+   const numerator=rand(1,denominator-1);
+   const inside=d+c;
+   const product=mul(fraction(numerator,denominator),
+    fraction(inside));
+   answer=sub(add(fraction(a*a),product),fraction(b*b));
+   expression=
+    `${a}^{2}+\\frac{${numerator}}{${denominator}}
+     (${d}+${c})-${b}^{2}`;
+   steps=[
+    `${d}+${c}=${inside}`,
+    `${a}^{2}=${a*a},\\quad${b}^{2}=${b*b}`,
+    `\\frac{${numerator}}{${denominator}}
+     \\times${inside}=${fmt(...product)}`,
+    `${a*a}+${fmt(...product)}-${b*b}
+     =${fmt(...answer)}`
+   ];
+  }else if(type===3){
+   // Nested brackets with fraction division.
+   const denominator=rand(3,8);
+   const numerator=rand(1,denominator-1);
+   const inside=b*(c+d)-a*a;
+   const quotient=div(fraction(inside),
+    fraction(numerator,denominator));
+   answer=add(quotient,fraction(e));
+   expression=
+    `[${b}(${c}+${d})-${a}^{2}]
+     \\div\\frac{${numerator}}{${denominator}}+${e}`;
+   steps=[
+    `${c}+${d}=${c+d}`,
+    `${b}(${c+d})=${b*(c+d)}`,
+    `${b*(c+d)}-${a*a}=${inside}`,
+    `${inside}\\div\\frac{${numerator}}{${denominator}}
+     =${fmt(...quotient)}`,
+    `${fmt(...quotient)}+${e}=${fmt(...answer)}`
+   ];
+  }else{
+   // Two fractions with exponents and parentheses.
+   const den1=rand(3,7),num1=rand(1,den1-1);
+   const den2=rand(3,7),num2=rand(1,den2-1);
+   const inside=a*a-b*(d-c);
+   const first=mul(fraction(num1,den1),fraction(inside));
+   const second=mul(fraction(num2,den2),fraction(e));
+   answer=sub(first,second);
+   expression=
+    `\\frac{${num1}}{${den1}}
+     [${a}^{2}-${b}(${d}-${c})]
+     -\\frac{${num2}}{${den2}}(${e})`;
+   steps=[
+    `${d}-${c}=${d-c}`,
+    `${a}^{2}=${a*a}`,
+    `${a*a}-${b*(d-c)}=${inside}`,
+    `\\frac{${num1}}{${den1}}(${inside})
+     =${fmt(...first)}`,
+    `\\frac{${num2}}{${den2}}(${e})
+     =${fmt(...second)}`,
+    `${fmt(...first)}-${fmt(...second)}
+     =${fmt(...answer)}`
+   ];
+  }
+
+  if(seen.has(expression))continue;
+  seen.add(expression);
+  problems.push({expression,answer,steps});
+ }
+}
+
+async function render(el){
+ if(window.MathJax?.typesetPromise)
+  await MathJax.typesetPromise([el]);
+}
+
+function newProblem(){
+ let i;
+ do{i=rand(0,problems.length-1)}while(i===last);
+ last=i;current=problems[i];shown=false;
+ $('problem').textContent=tex(current.expression);
+ $('answer').value='';
+ $('feedback').textContent='';
+ $('solution').style.display='none';
+ $('solution').replaceChildren();
+ $('reveal').textContent='Show Solution';
+ render($('problem'));
+}
+
+function parseFraction(raw){
+ const s=raw.trim();
+ if(!/^-?\d+(\/[1-9]\d*)?$/.test(s))return null;
+ const parts=s.split('/').map(Number);
+ if(!parts.every(Number.isSafeInteger))return null;
+ return fraction(parts[0],parts[1]||1);
+}
+
+function check(){
+ const value=parseFraction($('answer').value);
+ const correct=value&&
+  value[0]===current.answer[0]&&
+  value[1]===current.answer[1];
+ $('feedback').textContent=correct?
+  'Correct!':'Not quite. Try again.';
+ $('feedback').className='feedback '+(correct?'good':'bad');
+}
+
+function showSolution(){
+ shown=!shown;
+ $('solution').style.display=shown?'block':'none';
+ $('reveal').textContent=shown?'Hide Solution':'Show Solution';
+ if(!shown)return;
+ const el=$('solution');el.replaceChildren();
+ const heading=document.createElement('strong');
+ heading.textContent='Step-by-step solution';
+ el.append(heading);
+ current.steps.forEach((s,i)=>{
+  const div=document.createElement('div');
+  div.textContent=`Step ${i+1}: `+tex(s);
+  el.append(div);
+ });
+ const final=document.createElement('div');
+ final.className='good';
+ final.textContent='Answer: '+tex(fmt(...current.answer));
+ el.append(final);render(el);
+}
+
+$('theme').onclick=()=>{
+ const light=document.body.classList.toggle('light');
+ $('theme').textContent=light?'☾ Dark mode':'☀ Light mode';
+};
+$('submit').onclick=check;
+$('next').onclick=newProblem;
+$('reveal').onclick=showSolution;
+$('answer').onkeydown=e=>{if(e.key==='Enter')check()};
+generate();newProblem();
+</script>
+</body>
+</html>
