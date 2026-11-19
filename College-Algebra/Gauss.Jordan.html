@@ -34,4 +34,483 @@ body{
  color:var(--text);font:15px Arial,sans-serif
 }
 .app{max-width:780px;margin:auto}
-Download Alternative Formats
+.top{
+ display:flex;justify-content:space-between;
+ align-items:center;gap:10px;margin-bottom:12px
+}
+button{
+ border:0;border-radius:10px;padding:12px;
+ font:inherit;font-weight:bold;cursor:pointer
+}
+.theme{
+ background:var(--soft);color:var(--text);
+ border:1px solid var(--border);font-size:12px;
+ padding:8px 12px;border-radius:25px;white-space:nowrap
+}
+.problem{
+ background:var(--panel);border:1px solid #8772ff;
+ border-radius:15px;padding:25px 12px;text-align:center
+}
+.equations{font-size:23px;overflow-x:auto}
+.answers{
+ display:grid;grid-template-columns:1fr 1fr;
+ gap:12px;margin:15px 0
+}
+label{display:block;font-weight:bold;margin-bottom:7px}
+input{
+ width:100%;padding:12px;border:1px solid var(--border);
+ border-radius:10px;background:var(--field);
+ color:var(--text);font:inherit
+}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.submit{
+ background:linear-gradient(100deg,#905cf6,#6258ed);
+ color:white
+}
+.next{background:#31568d;color:white}
+.reveal{
+ margin-top:9px;width:100%;background:var(--soft);
+ color:var(--text);border:1px solid var(--border)
+}
+.feedback{
+ margin:10px 0;font-weight:bold;min-height:16px
+}
+.solution{
+ display:none;margin-top:12px;padding:15px;
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:12px
+}
+.step{
+ padding:14px 0;border-bottom:1px solid var(--border)
+}
+.step:last-child{border-bottom:0}
+.step-label{
+ font-weight:bold;line-height:1.6;margin-bottom:10px
+}
+.operation{
+ text-align:center;font-size:19px;margin:8px 0;
+ overflow-x:auto
+}
+.step-matrix{
+ text-align:center;padding:6px 0;font-size:19px;
+ overflow-x:auto;overflow-y:visible
+}
+.step-matrix mjx-container{
+ margin:8px 0!important
+}
+.good{color:var(--good)}.bad{color:var(--bad)}
+@media(max-width:480px){
+ body{padding:8px}
+ .equations{font-size:19px}
+ .step-matrix,.operation{font-size:16px}
+ button{padding:10px 7px;font-size:13px}
+}
+</style>
+</head>
+
+<body>
+<main class="app">
+
+<div class="top">
+ <strong>Solve using Gauss–Jordan elimination.</strong>
+ <button id="theme" class="theme">☀ Light mode</button>
+</div>
+
+<div class="problem">
+ <div id="equations" class="equations"></div>
+</div>
+
+<div class="answers">
+ <div>
+  <label for="xAnswer">Value of x</label>
+  <input id="xAnswer"
+   placeholder="Integer or fraction" autocomplete="off">
+ </div>
+ <div>
+  <label for="yAnswer">Value of y</label>
+  <input id="yAnswer"
+   placeholder="Integer or fraction" autocomplete="off">
+ </div>
+</div>
+
+<div class="actions">
+ <button id="submit" class="submit">Submit</button>
+ <button id="next" class="next">Try Similar</button>
+</div>
+
+<button id="reveal" class="reveal">Show Solution</button>
+<div id="feedback" class="feedback" aria-live="polite"></div>
+<div id="solution" class="solution"></div>
+
+</main>
+
+<script>
+"use strict";
+
+const $=id=>document.getElementById(id);
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+
+function gcd(a,b){
+ return b?gcd(b,a%b):Math.abs(a);
+}
+
+function F(n,d=1){
+ if(d===0)throw Error("Zero denominator");
+ if(d<0){n=-n;d=-d}
+ if(n===0)return [0,1];
+ const g=gcd(n,d);
+ return [n/g,d/g];
+}
+
+const add=(a,b)=>F(
+ a[0]*b[1]+b[0]*a[1],a[1]*b[1]
+);
+const sub=(a,b)=>F(
+ a[0]*b[1]-b[0]*a[1],a[1]*b[1]
+);
+const mul=(a,b)=>F(a[0]*b[0],a[1]*b[1]);
+const div=(a,b)=>F(a[0]*b[1],a[1]*b[0]);
+
+function fmt(a){
+ return a[1]===1?
+  String(a[0]):
+  `\\frac{${a[0]}}{${a[1]}}`;
+}
+
+function wrap(s){
+ return "\\("+s+"\\)";
+}
+
+function matrixTex(M){
+ return `\\left[
+ \\begin{array}{cc|c}
+ ${fmt(M[0][0])}&${fmt(M[0][1])}&${fmt(M[0][2])}\\\\
+ ${fmt(M[1][0])}&${fmt(M[1][1])}&${fmt(M[1][2])}
+ \\end{array}
+ \\right]`;
+}
+
+function eqTex(a,b,c){
+ const first=a===1?"x":a===-1?"-x":`${a}x`;
+ const sign=b<0?"-":"+";
+ const mag=Math.abs(b);
+ const second=mag===1?"y":`${mag}y`;
+ return `${first}${sign}${second}=${c}`;
+}
+
+let problems=[];
+let current=null;
+let last=-1;
+let shown=false;
+
+function generate(){
+ const seen=new Set();
+ let attempts=0;
+
+ while(problems.length<50 && attempts<100000){
+  attempts++;
+
+  const a=rand(-7,7);
+  const b=rand(-7,7);
+  const c=rand(-7,7);
+  const d=rand(-7,7);
+
+  if(!a||!b||!c||!d)continue;
+  if(a*d-b*c===0)continue;
+
+  let x,y;
+
+  if(Math.random()<0.35){
+   const denominator=rand(2,5);
+   x=F(rand(-12,12),denominator);
+   y=F(rand(-12,12),denominator);
+  }else{
+   x=F(rand(-6,6));
+   y=F(rand(-6,6));
+  }
+
+  const e=add(mul(F(a),x),mul(F(b),y));
+  const f=add(mul(F(c),x),mul(F(d),y));
+
+  if(e[1]!==1||f[1]!==1)continue;
+
+  const key=[a,b,e[0],c,d,f[0]].join(",");
+  if(seen.has(key))continue;
+
+  seen.add(key);
+  problems.push({
+   a,b,c,d,e:e[0],f:f[0],x,y
+  });
+ }
+
+ if(problems.length<50){
+  throw Error("Unable to generate enough systems");
+ }
+}
+
+function copyMatrix(M){
+ return M.map(row=>row.map(v=>[...v]));
+}
+
+function isOne(v){
+ return v[0]===1&&v[1]===1;
+}
+
+function isZero(v){
+ return v[0]===0;
+}
+
+// Format addition notation with destination row last.
+// Example: -4R1 + R2 -> R2
+function addNotation(k,source,target){
+ const coefficient=fmt(k);
+ const prefix=isOne(k)?"":(
+  k[0]===-1&&k[1]===1?"-":coefficient
+ );
+ return `${prefix}R_{${source}}+R_{${target}}
+ \\rightarrow R_{${target}}`;
+}
+
+function scaleNotation(k,row){
+ const coefficient=fmt(k);
+ return `${coefficient}R_{${row}}
+ \\rightarrow R_{${row}}`;
+}
+
+function solveSteps(p){
+ let M=[
+  [F(p.a),F(p.b),F(p.e)],
+  [F(p.c),F(p.d),F(p.f)]
+ ];
+
+ const steps=[];
+
+ function save(label,operation=null){
+  steps.push({
+   label,operation,matrix:copyMatrix(M)
+  });
+ }
+
+ function swapRows(){
+  [M[0],M[1]]=[M[1],M[0]];
+  save(
+   "Swap rows",
+   "R_{1}\\leftrightarrow R_{2}"
+  );
+ }
+
+ function scaleRow(row,k){
+  M[row]=M[row].map(v=>mul(k,v));
+  save(
+   `Multiply row ${row+1}`,
+   scaleNotation(k,row+1)
+  );
+ }
+
+ function addRows(source,target,k){
+  M[target]=M[target].map((v,j)=>
+   add(v,mul(k,M[source][j]))
+  );
+  save(
+   `Add a multiple of row ${source+1} to row ${target+1}`,
+   addNotation(k,source+1,target+1)
+  );
+ }
+
+ save("Initial augmented matrix");
+
+ // Choose a convenient first pivot.
+ // Swap if row 2 begins with 1 or -1
+ // and row 1 does not.
+ if(
+  Math.abs(M[1][0][0])===1 &&
+  M[1][0][1]===1 &&
+  !(Math.abs(M[0][0][0])===1&&M[0][0][1]===1)
+ ){
+  swapRows();
+ }
+
+ // Create the first leading 1.
+ if(!isOne(M[0][0])){
+  scaleRow(0,div(F(1),M[0][0]));
+ }
+
+ // Eliminate the first entry in row 2.
+ if(!isZero(M[1][0])){
+  const k=mul(F(-1),M[1][0]);
+  addRows(0,1,k);
+ }
+
+ // Create the second leading 1.
+ if(!isOne(M[1][1])){
+  scaleRow(1,div(F(1),M[1][1]));
+ }
+
+ // Eliminate the second entry in row 1.
+ if(!isZero(M[0][1])){
+  const k=mul(F(-1),M[0][1]);
+  addRows(1,0,k);
+ }
+
+ return steps;
+}
+
+async function typeset(el){
+ if(!window.MathJax)return;
+ try{
+  if(MathJax.startup?.promise){
+   await MathJax.startup.promise;
+  }
+  if(MathJax.typesetPromise){
+   await MathJax.typesetPromise([el]);
+  }
+ }catch(err){
+  console.error("MathJax error:",err);
+ }
+}
+
+function newProblem(){
+ let i;
+ do{
+  i=rand(0,problems.length-1);
+ }while(i===last);
+
+ last=i;
+ current=problems[i];
+ shown=false;
+
+ const p=current;
+
+ $("equations").textContent=wrap(
+  `\\begin{cases}
+  ${eqTex(p.a,p.b,p.e)}\\\\[8pt]
+  ${eqTex(p.c,p.d,p.f)}
+  \\end{cases}`
+ );
+
+ $("xAnswer").value="";
+ $("yAnswer").value="";
+ $("feedback").textContent="";
+ $("feedback").className="feedback";
+ $("solution").style.display="none";
+ $("solution").replaceChildren();
+ $("reveal").textContent="Show Solution";
+
+ typeset($("equations"));
+}
+
+function parseFraction(raw){
+ const s=raw.trim();
+
+ if(!/^-?\d+(\/[1-9]\d*)?$/.test(s)){
+  return null;
+ }
+
+ const parts=s.split("/").map(Number);
+ if(!parts.every(Number.isSafeInteger))return null;
+
+ return F(parts[0],parts[1]||1);
+}
+
+function same(a,b){
+ return a!==null &&
+  a[0]===b[0] &&
+  a[1]===b[1];
+}
+
+function check(){
+ const x=parseFraction($("xAnswer").value);
+ const y=parseFraction($("yAnswer").value);
+
+ const xc=same(x,current.x);
+ const yc=same(y,current.y);
+ const feedback=$("feedback");
+
+ if(xc&&yc){
+  feedback.textContent=
+   "Correct! Both values are correct.";
+  feedback.className="feedback good";
+ }else{
+  feedback.textContent=
+   `x: ${xc?"Correct":"Incorrect"} | `+
+   `y: ${yc?"Correct":"Incorrect"}`;
+  feedback.className="feedback bad";
+ }
+}
+
+function showSolution(){
+ shown=!shown;
+
+ const el=$("solution");
+ el.style.display=shown?"block":"none";
+ $("reveal").textContent=
+  shown?"Hide Solution":"Show Solution";
+
+ if(!shown)return;
+
+ el.replaceChildren();
+
+ const heading=document.createElement("strong");
+ heading.textContent=
+  "Step-by-step Gauss–Jordan elimination";
+ el.append(heading);
+
+ const steps=solveSteps(current);
+
+ steps.forEach((step,i)=>{
+  const section=document.createElement("div");
+  section.className="step";
+
+  const label=document.createElement("div");
+  label.className="step-label";
+  label.textContent=`Step ${i+1}: ${step.label}`;
+
+  section.append(label);
+
+  if(step.operation){
+   const op=document.createElement("div");
+   op.className="operation";
+   op.textContent=wrap(step.operation);
+   section.append(op);
+  }
+
+  const matrix=document.createElement("div");
+  matrix.className="step-matrix";
+  matrix.textContent=wrap(matrixTex(step.matrix));
+  section.append(matrix);
+
+  el.append(section);
+ });
+
+ const final=document.createElement("div");
+ final.className="good";
+ final.style.marginTop="16px";
+ final.style.fontWeight="bold";
+ final.textContent=
+  wrap(`x=${fmt(current.x)},\\quad y=${fmt(current.y)}`);
+
+ el.append(final);
+ typeset(el);
+}
+
+$("theme").onclick=()=>{
+ const light=document.body.classList.toggle("light");
+ $("theme").textContent=
+  light?"☾ Dark mode":"☀ Light mode";
+};
+
+$("submit").onclick=check;
+$("next").onclick=newProblem;
+$("reveal").onclick=showSolution;
+
+["xAnswer","yAnswer"].forEach(id=>{
+ $(id).onkeydown=e=>{
+  if(e.key==="Enter")check();
+ };
+});
+
+generate();
+newProblem();
+</script>
+</body>
+</html>
