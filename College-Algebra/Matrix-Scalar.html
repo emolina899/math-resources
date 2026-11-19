@@ -1,0 +1,578 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matrix Scalar Operations</title>
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']]
+  },
+  svg: {fontCache:'global'}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+*{box-sizing:border-box}
+:root{
+ --bg:#101827;--panel:#1c2a45;--field:#192841;
+ --text:#f6f7ff;--muted:#b5c4df;--border:#425679;
+ --soft:#2c4165;--good:#86e9b7;--bad:#ff9ea9;
+ --accent:#8772ff
+}
+body.light{
+ --bg:#fff;--panel:#eff2ff;--field:#fff;
+ --text:#18243c;--muted:#52627e;--border:#c5cfe2;
+ --soft:#e4eafa;--good:#167447;--bad:#b82f45
+}
+body{
+ margin:0;padding:12px;background:var(--bg);
+ color:var(--text);font:15px Arial,sans-serif
+}
+.app{max-width:800px;margin:auto}
+.top{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:10px;margin-bottom:12px
+}
+button{
+ border:0;border-radius:10px;padding:12px;
+ font:inherit;font-weight:bold;cursor:pointer
+}
+.theme{
+ background:var(--soft);color:var(--text);
+ border:1px solid var(--border);border-radius:25px;
+ font-size:12px;padding:8px 12px;white-space:nowrap
+}
+.problem{
+ background:var(--panel);border:1px solid var(--accent);
+ border-radius:15px;padding:20px 12px;text-align:center
+}
+.prompt{color:var(--muted);font-size:13px;margin-bottom:12px}
+.matrices{
+ display:flex;align-items:center;justify-content:center;
+ flex-wrap:wrap;gap:20px;font-size:18px
+}
+.matrix-card{min-width:0}
+.expression{
+ margin-top:17px;padding-top:12px;
+ border-top:1px solid var(--border);
+ font-size:23px;font-weight:bold
+}
+.answer-area{margin:16px 0;text-align:center}
+.answer-title{font-weight:bold;margin-bottom:12px}
+.matrix-input{
+ display:grid;gap:7px;width:max-content;max-width:100%;
+ margin:0 auto;padding:8px 12px;
+ border-left:3px solid var(--accent);
+ border-right:3px solid var(--accent);
+ border-radius:12px
+}
+.matrix-input input{
+ width:58px;height:42px;text-align:center;
+ border:1px solid var(--border);border-radius:8px;
+ background:var(--field);color:var(--text);font:inherit
+}
+.matrix-input input.correct{border-color:var(--good)}
+.matrix-input input.incorrect{border-color:var(--bad)}
+.not-possible{
+ display:flex;align-items:center;justify-content:center;
+ gap:9px;margin:15px 0 12px;cursor:pointer
+}
+.not-possible input{
+ width:18px;height:18px;accent-color:var(--accent)
+}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.submit{
+ background:linear-gradient(100deg,#905cf6,#6258ed);
+ color:white
+}
+.next{background:#31568d;color:white}
+.reveal{
+ width:100%;margin-top:9px;background:var(--soft);
+ color:var(--text);border:1px solid var(--border)
+}
+.feedback{
+ margin:10px 0;min-height:16px;
+ font-weight:bold;text-align:center
+}
+.solution{
+ display:none;margin-top:12px;padding:15px;
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:12px;line-height:1.8
+}
+.step{
+ padding:12px 0;border-bottom:1px solid var(--border)
+}
+.step:last-child{border-bottom:0}
+.work{margin-top:8px;text-align:center;overflow-x:auto}
+.good{color:var(--good)}.bad{color:var(--bad)}
+@media(max-width:480px){
+ body{padding:8px}
+ .matrices{font-size:15px;gap:10px}
+ .expression{font-size:20px}
+ .matrix-input{gap:5px;padding:7px 9px}
+ .matrix-input input{
+  width:clamp(39px,11vw,50px);
+  height:39px;font-size:14px
+ }
+ button{padding:10px 7px;font-size:13px}
+}
+</style>
+</head>
+
+<body>
+<main class="app">
+
+<div class="top">
+ <strong>Perform the indicated matrix operation.</strong>
+ <button id="theme" class="theme">☀ Light mode</button>
+</div>
+
+<div class="problem">
+ <div class="prompt">Evaluate the expression, if possible.</div>
+
+ <div class="matrices">
+  <div id="matrixA" class="matrix-card"></div>
+  <div id="matrixB" class="matrix-card"></div>
+ </div>
+
+ <div id="expression" class="expression"></div>
+</div>
+
+<div class="answer-area">
+ <div class="answer-title">Enter the resulting matrix.</div>
+ <div id="matrixInput" class="matrix-input"></div>
+
+ <label class="not-possible">
+  <input type="checkbox" id="impossible">
+  Not Possible
+ </label>
+</div>
+
+<div class="actions">
+ <button id="submit" class="submit">Submit</button>
+ <button id="next" class="next">Try Similar</button>
+</div>
+
+<button id="reveal" class="reveal">Show Solution</button>
+<div id="feedback" class="feedback" aria-live="polite"></div>
+<div id="solution" class="solution"></div>
+
+</main>
+
+<script>
+"use strict";
+
+const $=id=>document.getElementById(id);
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const tex=s=>"\\("+s+"\\)";
+
+let problems=[];
+let current=null;
+let last=-1;
+let shown=false;
+
+// MATRIX UTILITIES
+
+function nonzero(a,b){
+ let n;
+ do{n=rand(a,b)}while(n===0);
+ return n;
+}
+
+function randomMatrix(rows,cols){
+ return Array.from({length:rows},()=>
+  Array.from({length:cols},()=>rand(-8,8))
+ );
+}
+
+function matrixTex(M){
+ return "\\begin{bmatrix}"+
+  M.map(row=>row.join("&")).join("\\\\")+
+  "\\end{bmatrix}";
+}
+
+function compatible(A,B){
+ return A.length===B.length &&
+  A[0].length===B[0].length;
+}
+
+function scale(M,k){
+ return M.map(row=>row.map(v=>k*v));
+}
+
+function combine(A,B,sign){
+ return A.map((row,i)=>
+  row.map((v,j)=>v+sign*B[i][j])
+ );
+}
+
+function scalarTex(k){
+ if(k===1)return "";
+ if(k===-1)return "-";
+ return String(k);
+}
+
+// EXPRESSION FORMATTING
+
+function expressionTex(p){
+ const {k,m,type,swap}=p;
+
+ const firstName=swap?"B":"A";
+ const secondName=swap?"A":"B";
+ const first=scalarTex(k)+firstName;
+
+ if(type===2 || type===3){
+  const op=type===2?"+":"-";
+  return scalarTex(k)+
+   `(${firstName}${op}${secondName})`;
+ }
+
+ let secondCoefficient;
+
+ switch(type){
+  case 0: secondCoefficient=1;break;
+  case 1: secondCoefficient=-1;break;
+  case 4: secondCoefficient=m;break;
+  case 5: secondCoefficient=-m;break;
+ }
+
+ const sign=secondCoefficient<0?"-":"+";
+ const magnitude=Math.abs(secondCoefficient);
+ const second=(magnitude===1?"":magnitude)+secondName;
+
+ return first+sign+second;
+}
+
+// PROBLEM GENERATION
+
+function generate(){
+ const seen=new Set();
+
+ while(problems.length<50){
+  const rows=rand(2,4);
+  const cols=rand(2,4);
+
+  const A=randomMatrix(rows,cols);
+
+  // Approximately 25% incompatible dimensions.
+  const makeImpossible=Math.random()<0.25;
+  let rowsB=rows,colsB=cols;
+
+  if(makeImpossible){
+   do{
+    rowsB=rand(2,4);
+    colsB=rand(2,4);
+   }while(rowsB===rows&&colsB===cols);
+  }
+
+  const B=randomMatrix(rowsB,colsB);
+  const k=nonzero(-5,5);
+  const m=nonzero(-4,4);
+  const type=rand(0,5);
+  const swap=Math.random()<0.5;
+
+  const first=swap?B:A;
+  const second=swap?A:B;
+  const possible=compatible(A,B);
+
+  let intermediate=null;
+  let answer=null;
+
+  if(possible){
+   switch(type){
+    case 0:
+     intermediate=scale(first,k);
+     answer=combine(intermediate,second,1);
+     break;
+    case 1:
+     intermediate=scale(first,k);
+     answer=combine(intermediate,second,-1);
+     break;
+    case 2:
+     intermediate=combine(first,second,1);
+     answer=scale(intermediate,k);
+     break;
+    case 3:
+     intermediate=combine(first,second,-1);
+     answer=scale(intermediate,k);
+     break;
+    case 4:
+     intermediate=scale(first,k);
+     answer=combine(intermediate,scale(second,m),1);
+     break;
+    case 5:
+     intermediate=scale(first,k);
+     answer=combine(intermediate,scale(second,m),-1);
+     break;
+   }
+  }
+
+  const key=JSON.stringify([A,B,k,m,type,swap]);
+  if(seen.has(key))continue;
+  seen.add(key);
+
+  problems.push({
+   A,B,k,m,type,swap,first,second,
+   possible,intermediate,answer
+  });
+ }
+}
+
+// MATHJAX
+
+async function typeset(el){
+ if(!window.MathJax)return;
+ try{
+  await MathJax.startup.promise;
+  await MathJax.typesetPromise([el]);
+ }catch(e){console.error(e)}
+}
+
+// ANSWER INPUTS
+
+function buildInputs(rows,cols){
+ const box=$("matrixInput");
+ box.replaceChildren();
+ box.style.gridTemplateColumns=`repeat(${cols},minmax(0,1fr))`;
+
+ for(let i=0;i<rows;i++){
+  for(let j=0;j<cols;j++){
+   const input=document.createElement("input");
+   input.type="text";
+   input.inputMode="numeric";
+   input.autocomplete="off";
+   input.dataset.row=i;
+   input.dataset.col=j;
+   input.setAttribute("aria-label",`Row ${i+1}, column ${j+1}`);
+   input.addEventListener("keydown",e=>{
+    if(e.key==="Enter")check();
+   });
+   box.append(input);
+  }
+ }
+}
+
+// NEW PROBLEM
+
+function newProblem(){
+ let i;
+ do{i=rand(0,problems.length-1)}
+ while(i===last);
+
+ last=i;
+ current=problems[i];
+ shown=false;
+
+ // Always display A first and B second.
+ $("matrixA").textContent=tex(
+  "A="+matrixTex(current.A)
+ );
+ $("matrixB").textContent=tex(
+  "B="+matrixTex(current.B)
+ );
+
+ // Randomize only the order in the expression.
+ $("expression").textContent=tex(
+  expressionTex(current)
+ );
+
+ buildInputs(
+  current.A.length,
+  current.A[0].length
+ );
+
+ $("impossible").checked=false;
+ $("matrixInput").style.opacity="1";
+ $("matrixInput").querySelectorAll("input")
+  .forEach(input=>input.disabled=false);
+
+ $("feedback").textContent="";
+ $("feedback").className="feedback";
+ $("solution").style.display="none";
+ $("solution").replaceChildren();
+ $("reveal").textContent="Show Solution";
+
+ typeset(document.querySelector(".problem"));
+}
+
+// CHECK ANSWER
+
+function check(){
+ const fb=$("feedback");
+
+ if($("impossible").checked){
+  const correct=!current.possible;
+  fb.textContent=correct?
+   "Correct! The operation is not possible.":
+   "Incorrect. The matrices have matching dimensions.";
+  fb.className="feedback "+(correct?"good":"bad");
+  return;
+ }
+
+ if(!current.possible){
+  fb.textContent="Incorrect. Check the matrix dimensions.";
+  fb.className="feedback bad";
+  return;
+ }
+
+ const inputs=[...$("matrixInput").querySelectorAll("input")];
+ let correctEntries=0,completed=true;
+
+ inputs.forEach(input=>{
+  const raw=input.value.trim();
+  const i=Number(input.dataset.row);
+  const j=Number(input.dataset.col);
+
+  if(raw==="")completed=false;
+
+  const correct=/^-?\d+$/.test(raw) &&
+   Number(raw)===current.answer[i][j];
+
+  input.classList.remove("correct","incorrect");
+  input.classList.add(correct?"correct":"incorrect");
+
+  if(correct)correctEntries++;
+ });
+
+ if(!completed){
+  fb.textContent="Complete every entry in the matrix.";
+  fb.className="feedback bad";
+ }else if(correctEntries===inputs.length){
+  fb.textContent="Correct! All matrix entries are correct.";
+  fb.className="feedback good";
+ }else{
+  fb.textContent=
+   `${correctEntries} of ${inputs.length} entries correct.`;
+  fb.className="feedback bad";
+ }
+}
+
+// WORKED SOLUTION
+
+function addStep(container,label,math){
+ const step=document.createElement("div");
+ step.className="step";
+
+ const heading=document.createElement("strong");
+ heading.textContent=label;
+
+ const work=document.createElement("div");
+ work.className="work";
+ work.textContent=tex(math);
+
+ step.append(heading,work);
+ container.append(step);
+}
+
+function showSolution(){
+ shown=!shown;
+ const el=$("solution");
+ el.style.display=shown?"block":"none";
+ $("reveal").textContent=shown?
+  "Hide Solution":"Show Solution";
+
+ if(!shown)return;
+ el.replaceChildren();
+
+ const heading=document.createElement("strong");
+ heading.textContent="Step-by-step solution";
+ el.append(heading);
+
+ const {
+  A,B,k,m,type,swap,first,second,
+  possible,intermediate,answer
+ }=current;
+
+ if(!possible){
+  const explanation=document.createElement("div");
+  explanation.className="step";
+  explanation.textContent=
+   `Matrix A has dimensions ${A.length} × ${A[0].length}, `+
+   `while matrix B has dimensions ${B.length} × ${B[0].length}. `+
+   `Scalar multiplication does not change dimensions. `+
+   `Addition and subtraction require identical dimensions. `+
+   `Therefore, the operation is Not Possible.`;
+  el.append(explanation);
+  return;
+ }
+
+ if(type===0||type===1){
+  const op=type===0?"+":"-";
+
+  addStep(el,"Step 1: Multiply the first matrix by its scalar.",
+   `${k}${matrixTex(first)}=${matrixTex(intermediate)}`);
+
+  addStep(el,"Step 2: Combine corresponding entries.",
+   `${matrixTex(intermediate)}${op}${matrixTex(second)}
+    =${matrixTex(answer)}`);
+ }
+ else if(type===2||type===3){
+  const op=type===2?"+":"-";
+
+  addStep(el,"Step 1: Evaluate inside parentheses.",
+   `${matrixTex(first)}${op}${matrixTex(second)}
+    =${matrixTex(intermediate)}`);
+
+  addStep(el,"Step 2: Multiply every entry by the scalar.",
+   `${k}${matrixTex(intermediate)}=${matrixTex(answer)}`);
+ }
+ else{
+  const scaledFirst=scale(first,k);
+  const scaledSecond=scale(second,m);
+  const op=type===4?"+":"-";
+
+  addStep(el,"Step 1: Multiply the first matrix by its scalar.",
+   `${k}${matrixTex(first)}=${matrixTex(scaledFirst)}`);
+
+  addStep(el,"Step 2: Multiply the second matrix by its scalar.",
+   `${m}${matrixTex(second)}=${matrixTex(scaledSecond)}`);
+
+  addStep(el,"Step 3: Combine corresponding entries.",
+   `${matrixTex(scaledFirst)}${op}${matrixTex(scaledSecond)}
+    =${matrixTex(answer)}`);
+ }
+
+ const final=document.createElement("div");
+ final.className="good";
+ final.style.fontWeight="bold";
+ final.style.marginTop="14px";
+ final.textContent="Final answer:";
+ el.append(final);
+
+ const result=document.createElement("div");
+ result.className="work";
+ result.textContent=tex(matrixTex(answer));
+ el.append(result);
+
+ typeset(el);
+}
+
+// EVENTS
+
+$("impossible").onchange=()=>{
+ const disabled=$("impossible").checked;
+ $("matrixInput").style.opacity=disabled?"0.4":"1";
+ $("matrixInput").querySelectorAll("input")
+  .forEach(input=>input.disabled=disabled);
+};
+
+$("theme").onclick=()=>{
+ const light=document.body.classList.toggle("light");
+ $("theme").textContent=light?
+  "☾ Dark mode":"☀ Light mode";
+};
+
+$("submit").onclick=check;
+$("next").onclick=newProblem;
+$("reveal").onclick=showSolution;
+
+generate();
+newProblem();
+</script>
+</body>
+</html>
