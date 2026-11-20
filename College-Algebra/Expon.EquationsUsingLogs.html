@@ -1,85 +1,79 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Exponential Equations Using Logarithms</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Exponential Equations Practice</title>
 
 <script>
 window.MathJax = {
   tex: {
-    inlineMath: [['\\(', '\\)']],
-    displayMath: [['\\[', '\\]']]
+    inlineMath: [['\\(','\\)']],
+    displayMath: [['\\[','\\]']]
   },
   options: { enableMenu: false }
 };
 </script>
-<script defer
- src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
 <style>
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font: 16px/1.5 Arial, sans-serif;
-  background: transparent;
+  font: 16px/1.45 system-ui, Arial, sans-serif;
 }
 
-#practice {
-  --bg: #101827;
-  --panel: #1c2b43;
-  --field: #142139;
-  --text: #f7f9ff;
-  --muted: #c8d4e8;
-  --border: #7285a6;
-  --button: #334e79;
-  --accent: #7657e9;
-  --good: #7af0b1;
-  --bad: #ff9fa6;
-
+#app {
+  --bg: #111827;
+  --panel: #1f2937;
+  --field: #111827;
+  --text: #f9fafb;
+  --muted: #d1d5db;
+  --border: #9ca3af;
+  --primary: #6246db;
+  --good: #86efac;
+  --bad: #fda4af;
   background: var(--bg);
   color: var(--text);
-  max-width: 780px;
+  max-width: 760px;
   margin: auto;
   padding: 16px;
   border-radius: 12px;
 }
 
-#practice.light {
-  --bg: #ffffff;
-  --panel: #edf2fa;
-  --field: #ffffff;
-  --text: #17243a;
-  --muted: #394b65;
-  --border: #6d7d96;
-  --button: #304c76;
-  --accent: #5a36c8;
+#app.light {
+  --bg: #fff;
+  --panel: #edf2f9;
+  --field: #fff;
+  --text: #172033;
+  --muted: #45536b;
+  --border: #64748b;
+  --primary: #5134bd;
   --good: #08683c;
-  --bad: #a51f30;
+  --bad: #a11b30;
 }
 
 button, input { font: inherit; }
 
 button {
-  border: 0;
-  border-radius: 9px;
-  padding: 10px 13px;
   min-height: 44px;
-  color: #ffffff;
-  background: var(--button);
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: #36537c;
+  color: white;
   font-weight: 650;
   cursor: pointer;
 }
 
-button:hover { filter: brightness(1.12); }
+button:hover { filter: brightness(1.1); }
 
 button:focus-visible,
 input:focus-visible {
   outline: 3px solid #e9a845;
-  outline-offset: 3px;
+  outline-offset: 2px;
 }
 
 .top {
@@ -87,105 +81,93 @@ input:focus-visible {
   justify-content: flex-end;
 }
 
-.equation {
+.problem {
+  margin: 10px 0 14px;
+  padding: 14px 8px;
+  text-align: center;
   background: var(--panel);
   border-radius: 10px;
-  padding: 14px 10px;
-  margin: 10px 0 14px;
-  text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.18rem;
   overflow-x: auto;
 }
 
-.section { margin-top: 12px; }
-
-.section label {
+.label {
   display: block;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin: 12px 0 6px;
 }
 
-.hint {
-  font-size: .83rem;
-  color: var(--muted);
-  margin: 6px 0 8px;
-}
-
-.mathbar {
+.tools {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
   margin-bottom: 8px;
 }
 
-.mathbar button {
-  min-width: 44px;
-  padding: 7px 11px;
+.tools button { min-width: 44px; }
+
+.tools .fraction-button {
+  background: var(--primary);
 }
 
-.mathbar button:last-child {
-  margin-left: auto;
-}
-
-.fraction {
-  display: grid;
-  grid-template-rows: auto 2px auto;
-  gap: 4px;
-  max-width: 460px;
-  margin: auto;
-  padding: 8px 12px;
+.answer-box {
   background: var(--panel);
+  padding: 10px;
   border: 1px solid var(--border);
   border-radius: 10px;
 }
 
-.fraction input {
-  text-align: center;
-  min-height: 42px;
-  padding: 8px;
+.entry {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 12px;
   background: var(--field);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 7px;
-  width: 100%;
 }
 
-.bar {
+.fraction-entry {
+  width: min(100%, 460px);
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+}
+
+.fraction-line {
   height: 2px;
   background: var(--text);
-  margin: 0 12px;
+  margin: 0 8px;
 }
 
-.preview {
-  margin-top: 7px;
-  text-align: center;
-  min-height: 35px;
-  overflow-x: auto;
-}
+.fraction-entry input { text-align: center; }
 
-.preview-label {
-  font-size: .8rem;
+.fraction-help {
+  font-size: .82rem;
   color: var(--muted);
-}
-
-.decimal {
-  width: 100%;
-  padding: 11px;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: var(--field);
-  color: var(--text);
+  margin: 6px 0 0;
 }
 
 .feedback {
-  min-height: 23px;
+  min-height: 22px;
   margin: 6px 0;
-  font-weight: 700;
+  font-weight: 650;
   font-size: .9rem;
 }
 
 .good { color: var(--good); }
 .bad { color: var(--bad); }
+
+.good-field {
+  border: 2px solid var(--good) !important;
+}
+
+.bad-field {
+  border: 2px solid var(--bad) !important;
+}
 
 .actions {
   display: grid;
@@ -194,27 +176,21 @@ input:focus-visible {
   margin-top: 14px;
 }
 
-.actions #submit { background: var(--accent); }
-.actions #toggle { grid-column: 1 / -1; }
+.actions #submit { background: var(--primary); }
+.actions #show { grid-column: 1/-1; }
 
 .solution {
+  margin-top: 12px;
   background: var(--panel);
+  padding: 14px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 14px;
-  margin-top: 12px;
   overflow-x: auto;
 }
 
-.solution p { margin: 8px 0; }
+.solution p { margin: 7px 0; }
 
-.solution hr {
-  border: 0;
-  border-top: 1px solid var(--border);
-  margin: 12px 0;
-}
-
-.sr-only {
+.sr {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -222,118 +198,98 @@ input:focus-visible {
   clip-path: inset(50%);
 }
 
-.field-error {
-  border: 2px solid var(--bad) !important;
-}
+[hidden] { display: none !important; }
 
-.field-good {
-  border: 2px solid var(--good) !important;
-}
-
-@media(max-width:420px) {
-  #practice { padding: 12px; }
-  .mathbar button {
-    min-width: 40px;
-    padding: 7px 9px;
-  }
-  .actions { gap: 6px; }
+@media(max-width:450px) {
+  #app { padding: 12px; }
+  .tools button { padding: 8px 9px; }
 }
 </style>
 </head>
 
 <body>
-<main id="practice">
+<main id="app">
 
 <div class="top">
-  <button id="theme" type="button"
-    aria-label="Switch to light mode">
-    ☀ Light mode
-  </button>
+  <button id="theme" type="button">Light mode</button>
 </div>
 
-<div id="equation" class="equation"
-  aria-label="Solve the exponential equation"></div>
+<div class="problem" id="problem"
+  aria-label="Exponential equation to solve"></div>
 
-<section class="section" aria-labelledby="exact-heading">
-  <label id="exact-heading" for="numerator">
-    Exact Solution
-  </label>
+<label class="label" id="exact-label" for="plain">
+  Exact Solution
+</label>
 
-  <div class="mathbar" role="group"
-    aria-label="Insert mathematical symbols">
-    <button type="button" data-symbol="ln()">ln</button>
-    <button type="button" data-symbol="log()">log</button>
-    <button type="button" data-symbol="()">( )</button>
-    <button type="button" data-symbol="+">+</button>
-    <button type="button" data-symbol="-">−</button>
-    <button type="button" data-symbol="*">×</button>
-    <button type="button" id="backspace"
-      aria-label="Delete previous character">⌫</button>
-    <button type="button" id="clear">Clear</button>
+<div class="tools" role="group" aria-label="Math entry tools">
+  <button type="button" id="fraction-toggle"
+    class="fraction-button" aria-pressed="false">a/b</button>
+  <button type="button" data-insert="ln()">ln</button>
+  <button type="button" data-insert="log()">log</button>
+  <button type="button" data-insert="()">( )</button>
+  <button type="button" data-insert="+">+</button>
+  <button type="button" data-insert="-">−</button>
+  <button type="button" data-insert="*">×</button>
+  <button type="button" id="backspace"
+    aria-label="Backspace">⌫</button>
+  <button type="button" id="clear">Clear</button>
+</div>
+
+<div class="answer-box">
+  <div id="plain-wrap">
+    <input class="entry" id="plain" type="text"
+      autocomplete="off" spellcheck="false"
+      aria-label="Exact solution"
+      placeholder="Enter exact solution">
   </div>
 
-  <div class="fraction" id="fraction">
-    <input id="numerator" type="text"
-      spellcheck="false" autocomplete="off"
-      aria-label="Numerator of exact solution"
-      aria-describedby="entry-hint"
-      placeholder="Numerator">
-
-    <div class="bar" aria-hidden="true"></div>
-
-    <input id="denominator" type="text"
-      spellcheck="false" autocomplete="off"
-      aria-label="Denominator of exact solution"
-      aria-describedby="entry-hint"
-      placeholder="Denominator">
+  <div id="fraction-wrap" hidden>
+    <div class="fraction-entry" role="group"
+      aria-label="Exact solution as a fraction">
+      <input class="entry" id="num" type="text"
+        autocomplete="off" spellcheck="false"
+        aria-label="Fraction numerator"
+        placeholder="Numerator">
+      <div class="fraction-line" aria-hidden="true"></div>
+      <input class="entry" id="den" type="text"
+        autocomplete="off" spellcheck="false"
+        aria-label="Fraction denominator"
+        placeholder="Denominator">
+    </div>
   </div>
+</div>
 
-  <p class="hint" id="entry-hint">
-    Enter logarithmic expressions using ln or log.
-    Use the keyboard or mathematical buttons to
-    construct your exact solution.
-  </p>
+<p class="fraction-help" id="help">
+  Select a/b to enter an answer with a straight
+  horizontal fraction bar. Use ln or log when needed.
+</p>
 
-  <div class="preview-label">Formatted Preview</div>
-  <div class="preview" id="preview"
-    aria-hidden="true"></div>
+<div id="exact-feedback" class="feedback"
+  role="status" aria-live="polite"></div>
 
-  <div class="feedback" id="exact-feedback"
-    role="status" aria-live="polite"></div>
-</section>
+<label class="label" for="decimal">
+  Decimal Approximation (4 decimal places)
+</label>
+<input class="entry" id="decimal" type="text"
+  inputmode="decimal" autocomplete="off"
+  placeholder="0.1234">
 
-<section class="section">
-  <label for="decimal">
-    Decimal Approximation (4 decimal places)
-  </label>
-
-  <input class="decimal" id="decimal" type="text"
-    inputmode="decimal" autocomplete="off"
-    placeholder="e.g. 0.3656"
-    aria-describedby="decimal-hint">
-
-  <p class="hint" id="decimal-hint">
-    Include exactly four digits after the decimal point.
-  </p>
-
-  <div class="feedback" id="decimal-feedback"
-    role="status" aria-live="polite"></div>
-</section>
+<div id="decimal-feedback" class="feedback"
+  role="status" aria-live="polite"></div>
 
 <div class="actions">
   <button id="submit" type="button">Submit</button>
   <button id="next" type="button">Try Similar</button>
-  <button id="toggle" type="button"
+  <button id="show" type="button"
     aria-expanded="false" aria-controls="solution">
     Show Solution
   </button>
 </div>
 
-<section id="solution" class="solution" hidden
-  aria-label="Step-by-step solution"></section>
+<section id="solution" class="solution"
+  aria-label="Step-by-step solution" hidden></section>
 
-<div id="announce" class="sr-only"
-  aria-live="polite"></div>
+<div id="announce" class="sr" aria-live="polite"></div>
 
 </main>
 
@@ -342,88 +298,105 @@ input:focus-visible {
 'use strict';
 
 const $ = id => document.getElementById(id);
-const root = $('practice');
-const n = $('numerator');
-const d = $('denominator');
-const dec = $('decimal');
-
-let active = n;
-let current = null;
-let shown = false;
-let lastKey = '';
+const app = $('app');
+const plain = $('plain');
+const num = $('num');
+const den = $('den');
+const decimal = $('decimal');
 
 const bases = [2,3,5,7,11,13];
+const rand = (a,b) =>
+  Math.floor(Math.random()*(b-a+1))+a;
 
-const rnd = (a,b) =>
-  Math.floor(Math.random() * (b-a+1)) + a;
+let mode = 'plain';
+let active = plain;
+let problem = null;
+let previous = '';
+let showing = false;
 
-const gcd = (a,b) =>
-  b ? gcd(b,a%b) : Math.abs(a);
+function lin(a,b) {
+  return (a===1?'x':a===-1?'-x':a+'x')+
+    (b>0?'+'+b:b<0?b:'');
+}
 
-const fmt = a =>
-  a === 1 ? 'x' : a === -1 ? '-x' : a+'x';
+function gcd(a,b) {
+  return b ? gcd(b,a%b) : Math.abs(a);
+}
 
-const lin = (a,b) =>
-  fmt(a)+(b>0?'+'+b:b<0?b:'');
+function texSigned(k,b) {
+  return (k<0?'-':'')+
+    (Math.abs(k)===1?'':Math.abs(k))+
+    '\\ln('+b+')';
+}
 
-const ln = (k,b) => k+'\\ln('+b+')';
+function texSum(k1,b1,k2,b2) {
+  return texSigned(k1,b1)+
+    (k2<0?'-':'+')+
+    (Math.abs(k2)===1?'':Math.abs(k2))+
+    '\\ln('+b2+')';
+}
 
-function typeset(els) {
+function typeset(elements) {
   if(window.MathJax?.typesetPromise) {
-    MathJax.typesetClear?.(els);
-    MathJax.typesetPromise(els).catch(()=>{});
+    window.MathJax.typesetClear?.(elements);
+    window.MathJax.typesetPromise(elements)
+      .catch(()=>{});
   }
 }
 
-function generate() {
-  for(let t=0;t<3000;t++) {
-    let a=bases[rnd(0,5)];
-    let b=bases[rnd(0,5)];
-    let p=rnd(-6,6);
-    let q=rnd(-8,8);
-    let r=rnd(-6,6);
-    let s=rnd(-8,8);
+function makeProblem() {
+  for(let t=0;t<10000;t++) {
+    const common = Math.random()<.38;
+    let a = bases[rand(0,bases.length-1)];
+    let b = common ? a :
+      bases[rand(0,bases.length-1)];
 
-    if(a===b || !p || !q || !r || !s) continue;
+    if(!common && a===b) continue;
+
+    let p=rand(-7,7), q=rand(-9,9);
+    let r=rand(-7,7), s=rand(-9,9);
+
+    if(!p || !r || p===r || !q || !s)
+      continue;
 
     if(gcd(gcd(gcd(
       Math.abs(p),Math.abs(q)),
-      Math.abs(r)),Math.abs(s))!==1) continue;
+      Math.abs(r)),Math.abs(s))!==1)
+      continue;
 
     let D=p*Math.log(a)-r*Math.log(b);
     let N=s*Math.log(b)-q*Math.log(a);
     let x=N/D;
 
-    if(Math.abs(D)<.2 ||
+    if(Math.abs(D)<.18 ||
        !Number.isFinite(x) ||
        Math.abs(x)>12 ||
-       Math.abs(x)<.08) continue;
+       Math.abs(x)<.05) continue;
 
-    let key=[a,b,p,q,r,s].join(',');
+    const key=[a,b,p,q,r,s].join(',');
+    if(key===previous) continue;
 
-    if(key===lastKey) continue;
-
-    lastKey=key;
-    return {a,b,p,q,r,s,x};
+    previous=key;
+    return {a,b,p,q,r,s,x,common};
   }
 
-  throw Error('Unable to generate problem');
+  throw Error('Problem generation failed');
 }
 
-function parse(src) {
-  let s=src.toLowerCase()
+function parse(input) {
+  const s=input.toLowerCase()
     .replace(/[−–]/g,'-')
     .replace(/×/g,'*')
     .replace(/÷/g,'/')
     .replace(/\s/g,'');
 
-  let i=0, used=false;
+  let i=0, logs=false;
 
   function expression() {
     let v=term();
     while(s[i]==='+' || s[i]==='-') {
-      let op=s[i++];
-      let w=term();
+      const op=s[i++];
+      const w=term();
       v=op==='+'?v+w:v-w;
     }
     return v;
@@ -432,92 +405,98 @@ function parse(src) {
   function term() {
     let v=unary();
     while(s[i]==='*' || s[i]==='/') {
-      let op=s[i++];
-      let w=unary();
+      const op=s[i++];
+      const w=unary();
       v=op==='*'?v*w:v/w;
     }
     return v;
   }
 
   function unary() {
-    if(s[i]==='+') { i++; return unary(); }
-    if(s[i]==='-') { i++; return -unary(); }
+    if(s[i]==='+') {
+      i++;
+      return unary();
+    }
+    if(s[i]==='-') {
+      i++;
+      return -unary();
+    }
     return atom();
   }
 
   function atom() {
     if(s[i]==='(') {
       i++;
-      let v=expression();
-      if(s[i++]!==')') throw Error('Parentheses');
+      const v=expression();
+      if(s[i++]!==')')
+        throw Error('Unclosed parenthesis');
       return v;
     }
 
-    let m=/^(ln|log)/.exec(s.slice(i));
+    const m=/^(ln|log)/.exec(s.slice(i));
 
     if(m) {
       i+=m[0].length;
 
       if(s[i++]!=='(')
-        throw Error('Log parentheses');
+        throw Error('Expected opening parenthesis');
 
-      let v=expression();
+      const v=expression();
 
       if(s[i++]!==')' || v<=0)
-        throw Error('Log domain');
+        throw Error('Invalid logarithm');
 
-      used=true;
+      logs=true;
 
       return m[0]==='ln'
         ? Math.log(v)
         : Math.log10(v);
     }
 
-    let z=/^(?:\d+(?:\.\d*)?|\.\d+)/
+    const z=/^(?:\d+(?:\.\d*)?|\.\d+)/
       .exec(s.slice(i));
 
-    if(!z) throw Error('Invalid character');
+    if(!z) throw Error('Invalid expression');
 
     i+=z[0].length;
     return Number(z[0]);
   }
 
-  let value=expression();
+  const value=expression();
 
   if(i!==s.length || !Number.isFinite(value))
     throw Error('Invalid expression');
 
-  return {value,used};
+  return {value,logs};
 }
 
-function mathTex(src) {
-  let s=src.trim();
+function setMode(next) {
+  if(mode===next) return;
 
-  if(!s) return '\\square';
+  mode=next;
+  $('plain-wrap').hidden=next!=='plain';
+  $('fraction-wrap').hidden=next!=='fraction';
 
-  if(!/^[\d\s()+\-*/.a-zA-Z]+$/.test(s))
-    return '\\text{Enter a valid expression}';
+  $('fraction-toggle').setAttribute(
+    'aria-pressed',String(next==='fraction')
+  );
+  $('fraction-toggle').textContent=
+    next==='fraction'?'a/b ✓':'a/b';
 
-  return s
-    .replace(/\blog\(/gi,'\\log(')
-    .replace(/\bln\(/gi,'\\ln(')
-    .replace(/\*/g,'\\cdot ');
-}
+  if(next==='fraction' && plain.value.trim()) {
+    num.value=plain.value;
+    plain.value='';
+  } else if(next==='plain' &&
+    (num.value || den.value)) {
+    plain.value='('+num.value+')/('+
+      den.value+')';
+    num.value='';
+    den.value='';
+  }
 
-let previewTask=0;
-
-function updatePreview() {
-  let k=++previewTask;
-
-  Promise.resolve().then(()=>{
-    if(k!==previewTask) return;
-
-    $('preview').textContent=
-      '\\[\\frac{'+mathTex(n.value)+'}{'+
-      mathTex(d.value||'1')+'}\\]';
-
-    typeset([$('preview')]);
-  });
+  active=next==='plain'?plain:num;
+  active.focus();
+  clearFeedback();
 }
 
 function clearFeedback() {
@@ -528,100 +507,80 @@ function clearFeedback() {
     $(id).className='feedback';
   }
 
-  for(const el of [n,d,dec])
+  for(const el of [plain,num,den,decimal])
     el.classList.remove(
-      'field-good','field-error'
+      'good-field','bad-field'
     );
 }
 
-function newProblem() {
-  current=generate();
+function reset() {
+  problem=makeProblem();
 
-  n.value='';
-  d.value='';
-  dec.value='';
-
+  setMode('plain');
+  plain.value='';
+  num.value='';
+  den.value='';
+  decimal.value='';
   clearFeedback();
 
-  $('equation').textContent=
-    '\\['+current.a+'^{'+
-    lin(current.p,current.q)+'}='+
-    current.b+'^{'+
-    lin(current.r,current.s)+'}\\]';
+  const v=problem;
 
-  let v=current;
+  $('problem').textContent=
+    '\\['+v.a+'^{'+lin(v.p,v.q)+'}='+
+    v.b+'^{'+lin(v.r,v.s)+'}\\]';
 
-  let N=ln(v.s,v.b)+
-    (v.q<0?'+':'-')+
-    ln(Math.abs(v.q),v.a);
+  let html='';
 
-  let D=ln(v.p,v.a)+
-    (v.r<0?'+':'-')+
-    ln(Math.abs(v.r),v.b);
+  if(v.common) {
+    html=
+      '<p><strong>Step 1:</strong> '+
+      'Since the bases match, equate exponents.</p>'+
+      '\\['+lin(v.p,v.q)+'='+
+      lin(v.r,v.s)+'\\]'+
+      '<p><strong>Step 2:</strong> '+
+      'Collect terms and solve.</p>'+
+      '\\[('+v.p+'-'+v.r+')x='+
+      v.s+'-('+v.q+')\\]';
+  } else {
+    html=
+      '<p><strong>Step 1:</strong> '+
+      'Take natural logarithms.</p>'+
+      '\\[('+lin(v.p,v.q)+')\\ln('+
+      v.a+')=('+lin(v.r,v.s)+
+      ')\\ln('+v.b+')\\]'+
+      '<p><strong>Step 2:</strong> '+
+      'Collect terms and solve.</p>'+
+      '\\[x=\\frac{'+
+      texSum(v.s,v.b,-v.q,v.a)+
+      '}{'+
+      texSum(v.p,v.a,-v.r,v.b)+
+      '}\\]';
+  }
 
-  $('solution').innerHTML=`
-    <strong>Step-by-step solution</strong>
+  $('solution').innerHTML=
+    html+
+    '<p><strong>Decimal approximation:'+
+    '</strong></p>\\[x\\approx '+
+    v.x.toFixed(4)+'\\]';
 
-    <p><strong>Step 1:</strong>
-    Take natural logarithms of both sides.</p>
-
-    \\[
-    \\ln(${v.a}^{${lin(v.p,v.q)}})
-    =
-    \\ln(${v.b}^{${lin(v.r,v.s)}})
-    \\]
-
-    <hr>
-
-    <p><strong>Step 2:</strong>
-    Apply the power property.</p>
-
-    \\[
-    (${lin(v.p,v.q)})\\ln(${v.a})
-    =
-    (${lin(v.r,v.s)})\\ln(${v.b})
-    \\]
-
-    <hr>
-
-    <p><strong>Step 3:</strong>
-    Collect the terms with x and solve.</p>
-
-    \\[
-    x=\\frac{${N}}{${D}}
-    \\]
-
-    <hr>
-
-    <p><strong>Step 4:</strong>
-    Round to four decimal places.</p>
-
-    \\[
-    x\\approx ${v.x.toFixed(4)}
-    \\]
-  `;
-
-  shown=false;
+  showing=false;
   $('solution').hidden=true;
-  $('toggle').textContent='Show Solution';
-  $('toggle').setAttribute(
+  $('show').textContent='Show Solution';
+  $('show').setAttribute(
     'aria-expanded','false'
   );
 
-  updatePreview();
-  typeset([$('equation'),$('solution')]);
+  typeset([$('problem')]);
 
   $('announce').textContent=
     'New exponential equation loaded.';
 }
 
-function feedback(id,ok,text) {
-  let el=$(id);
+function feedback(id,ok,label) {
+  $(id).textContent=
+    (ok?'✓ Correct: ':'✕ Incorrect: ')+label;
 
-  el.textContent=
-    (ok?'✓ Correct: ':'✕ Incorrect: ')+text;
-
-  el.className=
+  $(id).className=
     'feedback '+(ok?'good':'bad');
 }
 
@@ -629,147 +588,192 @@ function submit() {
   let exact=false;
 
   try {
-    let A=parse(n.value);
-    let B=parse(d.value.trim()||'1');
-    let x=A.value/B.value;
+    let answer;
 
-    exact=(A.used||B.used) &&
-      Math.abs(B.value)>1e-12 &&
-      Number.isFinite(x) &&
-      Math.abs(x-current.x)<=
-      1e-8*Math.max(1,Math.abs(current.x));
+    if(mode==='fraction') {
+      if(!num.value.trim() ||
+         !den.value.trim())
+        throw Error('Incomplete fraction');
+
+      const n=parse(num.value);
+      const d=parse(den.value);
+
+      if(Math.abs(d.value)<1e-12)
+        throw Error('Zero denominator');
+
+      answer=n.value/d.value;
+    } else {
+      if(!plain.value.trim())
+        throw Error('Blank');
+
+      answer=parse(plain.value).value;
+    }
+
+    exact=Number.isFinite(answer) &&
+      Math.abs(answer-problem.x)<=
+      1e-9*Math.max(1,Math.abs(problem.x));
 
   } catch(e) {}
 
-  let rounded=current.x.toFixed(4);
+  const s=decimal.value.trim();
+  const rounded=problem.x.toFixed(4);
 
-  let decimal=
+  const decOK=
     /^[+-]?(?:\d+\.\d{4}|\.\d{4})$/
-      .test(dec.value.trim()) &&
+      .test(s) &&
     Math.abs(
-      Number(dec.value)-Number(rounded)
+      Number(s)-Number(rounded)
     )<1e-9;
 
   feedback(
     'exact-feedback',exact,'Exact solution'
   );
-
   feedback(
-    'decimal-feedback',
-    decimal,'Decimal approximation'
+    'decimal-feedback',decOK,
+    'Decimal approximation'
   );
 
-  n.classList.toggle('field-good',exact);
-  n.classList.toggle('field-error',!exact);
+  for(const el of mode==='fraction'
+    ?[num,den]:[plain]) {
+    el.classList.add(
+      exact?'good-field':'bad-field'
+    );
+  }
 
-  d.classList.toggle('field-good',exact);
-  d.classList.toggle('field-error',!exact);
-
-  dec.classList.toggle('field-good',decimal);
-  dec.classList.toggle('field-error',!decimal);
+  decimal.classList.add(
+    decOK?'good-field':'bad-field'
+  );
 
   $('announce').textContent=
-    'Exact answer '+
+    'Exact solution '+
     (exact?'correct':'incorrect')+
-    '. Decimal answer '+
-    (decimal?'correct':'incorrect')+'.';
+    '. Decimal approximation '+
+    (decOK?'correct':'incorrect')+'.';
 }
 
 function insert(text) {
-  let el=active;
-
-  let start=el.selectionStart??el.value.length;
-  let end=el.selectionEnd??start;
+  const el=active;
+  const start=el.selectionStart??el.value.length;
+  const end=el.selectionEnd??start;
 
   el.value=
-    el.value.slice(0,start)+text+
+    el.value.slice(0,start)+
+    text+
     el.value.slice(end);
 
-  let pos=start+text.length-
-    ((text==='ln()' ||
-      text==='log()' ||
-      text==='()')?1:0);
+  const pos=start+text.length-
+    (['ln()','log()','()'].includes(text)
+      ?1:0);
 
   el.focus();
   el.setSelectionRange(pos,pos);
-  updatePreview();
+  clearFeedback();
 }
 
-[n,d].forEach(el=>{
+[plain,num,den].forEach(el=>{
   el.addEventListener('focus',()=>{
     active=el;
   });
 
-  el.addEventListener('input',updatePreview);
+  el.addEventListener('input',clearFeedback);
 
   el.addEventListener('keydown',e=>{
     if(e.key==='Enter') {
       e.preventDefault();
-      (el===n?d:dec).focus();
+
+      if(el===num) den.focus();
+      else if(el===plain || el===den)
+        decimal.focus();
     }
   });
 });
 
-document.querySelectorAll('[data-symbol]')
+decimal.addEventListener(
+  'input',clearFeedback
+);
+
+$('fraction-toggle').addEventListener(
+  'click',()=>{
+    setMode(
+      mode==='plain'?'fraction':'plain'
+    );
+  }
+);
+
+document.querySelectorAll('[data-insert]')
   .forEach(b=>b.addEventListener(
-    'click',()=>insert(b.dataset.symbol)
+    'click',()=>insert(b.dataset.insert)
   ));
 
-$('backspace').addEventListener('click',()=>{
-  let el=active;
-  let start=el.selectionStart;
-  let end=el.selectionEnd;
+$('backspace').addEventListener(
+  'click',()=>{
+    const el=active;
+    let a=el.selectionStart??0;
+    let b=el.selectionEnd??a;
 
-  if(start===end && start>0) start--;
+    if(a===b && a>0) a--;
 
-  el.value=
-    el.value.slice(0,start)+
-    el.value.slice(end);
+    el.value=
+      el.value.slice(0,a)+
+      el.value.slice(b);
 
-  el.focus();
-  el.setSelectionRange(start,start);
-  updatePreview();
-});
+    el.focus();
+    el.setSelectionRange(a,a);
+    clearFeedback();
+  }
+);
 
-$('clear').addEventListener('click',()=>{
-  n.value='';
-  d.value='';
-  updatePreview();
-  n.focus();
-});
+$('clear').addEventListener(
+  'click',()=>{
+    if(mode==='fraction') {
+      num.value='';
+      den.value='';
+      num.focus();
+    } else {
+      plain.value='';
+      plain.focus();
+    }
+    clearFeedback();
+  }
+);
 
-$('submit').addEventListener('click',submit);
-$('next').addEventListener('click',newProblem);
+$('submit').addEventListener(
+  'click',submit
+);
 
-$('toggle').addEventListener('click',()=>{
-  shown=!shown;
+$('next').addEventListener(
+  'click',reset
+);
 
-  $('solution').hidden=!shown;
+$('show').addEventListener(
+  'click',()=>{
+    showing=!showing;
+    $('solution').hidden=!showing;
 
-  $('toggle').textContent=
-    shown?'Hide Solution':'Show Solution';
+    $('show').textContent=
+      showing?'Hide Solution':'Show Solution';
 
-  $('toggle').setAttribute(
-    'aria-expanded',String(shown)
-  );
+    $('show').setAttribute(
+      'aria-expanded',String(showing)
+    );
 
-  if(shown) typeset([$('solution')]);
-});
+    if(showing)
+      typeset([$('solution')]);
+  }
+);
 
-$('theme').addEventListener('click',()=>{
-  let light=root.classList.toggle('light');
+$('theme').addEventListener(
+  'click',()=>{
+    const light=app.classList.toggle(
+      'light'
+    );
 
-  $('theme').textContent=
-    light?'☾ Dark mode':'☀ Light mode';
+    $('theme').textContent=
+      light?'Dark mode':'Light mode';
+  }
+);
 
-  $('theme').setAttribute(
-    'aria-label',
-    light?'Switch to dark mode':
-          'Switch to light mode'
-  );
-});
-
-newProblem();
+reset();
 
 })();
 </script>
