@@ -4,224 +4,337 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Matrix Addition and Subtraction</title>
 
 <script>
 window.MathJax = {
-  tex: {inlineMath: [['\\(', '\\)']]},
-  svg: {fontCache: 'global'}
+  tex: {
+    inlineMath: [["\\(", "\\)"]]
+  },
+  svg: {
+    fontCache: "global"
+  }
 };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<script defer
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
 
 <style>
-* {box-sizing: border-box}
+* {
+  box-sizing: border-box;
+}
 
 :root {
-  --bg:#101827;
-  --panel:#1c2a45;
-  --field:#192841;
-  --text:#f6f7ff;
-  --muted:#b5c4df;
-  --border:#425679;
-  --soft:#2c4165;
-  --good:#86e9b7;
-  --bad:#ff9ea9;
+  --bg: #101827;
+  --panel: #1c2a45;
+  --field: #192841;
+  --text: #f6f7ff;
+  --muted: #b5c4df;
+  --border: #425679;
+  --soft: #2c4165;
+  --good: #86e9b7;
+  --bad: #ff9ea9;
+  --accent: #8772ff;
 }
 
 body.light {
-  --bg:#ffffff;
-  --panel:#eff2ff;
-  --field:#ffffff;
-  --text:#18243c;
-  --muted:#52627e;
-  --border:#c5cfe2;
-  --soft:#e4eafa;
-  --good:#167447;
-  --bad:#b82f45;
+  --bg: #ffffff;
+  --panel: #eff2ff;
+  --field: #ffffff;
+  --text: #18243c;
+  --muted: #52627e;
+  --border: #c5cfe2;
+  --soft: #e4eafa;
+  --good: #167447;
+  --bad: #b82f45;
 }
 
 body {
-  margin:0;
-  padding:12px;
-  background:var(--bg);
-  color:var(--text);
-  font:15px Arial,sans-serif;
+  margin: 0;
+  padding: 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px Arial, sans-serif;
 }
 
-.app {max-width:800px;margin:auto}
+.app {
+  max-width: 800px;
+  margin: auto;
+}
 
 .top {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 button {
-  border:0;
-  border-radius:10px;
-  padding:12px;
-  font:inherit;
-  font-weight:bold;
-  cursor:pointer;
+  border: 0;
+  border-radius: 10px;
+  padding: 11px;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .theme {
-  background:var(--soft);
-  color:var(--text);
-  border:1px solid var(--border);
-  border-radius:25px;
-  font-size:12px;
-  padding:8px 12px;
-  white-space:nowrap;
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 8px 12px;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .problem {
-  background:var(--panel);
-  border:1px solid #8772ff;
-  border-radius:15px;
-  padding:20px 12px;
-  text-align:center;
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 15px;
+  padding: 22px 12px;
+  text-align: center;
 }
 
 .prompt {
-  color:var(--muted);
-  font-size:13px;
-  margin-bottom:12px;
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 12px;
 }
 
-.matrices {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:18px;
-  font-size:18px;
+.matrix-display {
+  font-size: 22px;
+  text-align: center;
+  width: 100%;
+  min-width: 0;
 }
 
-.expression {
-  margin-top:15px;
-  font-size:22px;
+.operation-display {
+  margin-top: 12px;
+  font-size: 24px;
+  text-align: center;
 }
 
-.answer-area {
-  margin:16px 0;
-  text-align:center;
+/* Remove internal scrollbars */
+
+.matrix-display,
+.operation-display,
+.work,
+.problem,
+.solution,
+.step {
+  overflow: visible !important;
 }
 
-.answer-title {
-  font-weight:bold;
-  margin-bottom:12px;
+mjx-container {
+  overflow: visible !important;
 }
 
-.matrix-input {
-  display:grid;
-  gap:7px;
-  width:max-content;
-  max-width:100%;
-  margin:0 auto;
-  padding:8px 12px;
-  border-left:3px solid #8772ff;
-  border-right:3px solid #8772ff;
-  border-radius:12px;
+.matrix-display mjx-container,
+.operation-display mjx-container,
+.work mjx-container {
+  max-width: 100%;
 }
 
-.matrix-input input {
-  width:58px;
-  height:42px;
-  text-align:center;
-  border:1px solid var(--border);
-  border-radius:8px;
-  background:var(--field);
-  color:var(--text);
-  font:inherit;
+/* Keep MathJax SVGs responsive */
+
+.matrix-display mjx-container svg,
+.operation-display mjx-container svg,
+.work mjx-container svg {
+  max-width: 100%;
+  height: auto;
 }
 
-.matrix-input input.correct {
-  border-color:var(--good);
+.answer-section {
+  margin: 18px 0;
 }
 
-.matrix-input input.incorrect {
-  border-color:var(--bad);
+.answer-label {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.matrix-input-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+}
+
+.matrix-bracket {
+  width: 10px;
+  align-self: stretch;
+  border-top: 2px solid var(--text);
+  border-bottom: 2px solid var(--text);
+}
+
+.matrix-bracket.left {
+  border-left: 2px solid var(--text);
+}
+
+.matrix-bracket.right {
+  border-right: 2px solid var(--text);
+}
+
+.matrix-grid {
+  display: grid;
+  gap: 7px;
+  max-width: calc(100% - 34px);
+}
+
+.matrix-cell {
+  width: 65px;
+  min-width: 0;
+  padding: 10px 4px;
+  background: var(--field);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: center;
+  font: 15px Arial, sans-serif;
+  outline: none;
+}
+
+.matrix-cell:focus {
+  border-color: var(--accent);
+}
+
+.matrix-cell:disabled {
+  opacity: 0.4;
 }
 
 .not-possible {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:9px;
-  margin:15px 0 12px;
-  cursor:pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  margin-top: 15px;
+  cursor: pointer;
 }
 
 .not-possible input {
-  width:18px;
-  height:18px;
-  accent-color:#8772ff;
+  width: 17px;
+  height: 17px;
+  accent-color: var(--accent);
 }
 
 .actions {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
 }
 
 .submit {
-  background:linear-gradient(100deg,#905cf6,#6258ed);
-  color:white;
+  background: linear-gradient(
+    100deg, #905cf6, #6258ed
+  );
+  color: white;
 }
 
 .next {
-  background:#31568d;
-  color:white;
+  background: #31568d;
+  color: white;
 }
 
 .reveal {
-  width:100%;
-  margin-top:9px;
-  background:var(--soft);
-  color:var(--text);
-  border:1px solid var(--border);
+  width: 100%;
+  margin-top: 9px;
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 
 .feedback {
-  margin:10px 0;
-  min-height:16px;
-  font-weight:bold;
-  text-align:center;
+  min-height: 18px;
+  margin: 12px 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+.good {
+  color: var(--good);
+}
+
+.bad {
+  color: var(--bad);
 }
 
 .solution {
-  display:none;
-  margin-top:12px;
-  padding:15px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:12px;
-  line-height:1.8;
+  display: none;
+  margin-top: 12px;
+  padding: 15px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.step {
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.step:last-child {
+  border-bottom: 0;
+}
+
+.step-title {
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .work {
-  margin-top:12px;
-  overflow-x:auto;
-  text-align:center;
+  font-size: 19px;
+  text-align: center;
+  padding: 5px 0;
+  width: 100%;
+  min-width: 0;
 }
 
-.good {color:var(--good)}
-.bad {color:var(--bad)}
-
-@media(max-width:480px) {
-  body {padding:8px}
-  .matrices {font-size:15px;gap:10px}
-  .matrix-input {gap:5px;padding:7px 9px}
-  .matrix-input input {
-    width:clamp(39px,11vw,50px);
-    height:39px;
-    font-size:14px;
+@media(max-width: 480px) {
+  body {
+    padding: 8px;
   }
-  button {padding:10px 7px;font-size:13px}
+
+  .problem {
+    padding: 18px 8px;
+  }
+
+  .matrix-display {
+    font-size: 17px;
+  }
+
+  .operation-display {
+    font-size: 20px;
+  }
+
+  .work {
+    font-size: 15px;
+  }
+
+  .matrix-cell {
+    width: 49px;
+    padding: 9px 2px;
+    font-size: 13px;
+  }
+
+  .matrix-grid {
+    gap: 5px;
+  }
+
+  .solution {
+    padding: 10px;
+  }
+
+  button {
+    font-size: 13px;
+  }
 }
 </style>
 </head>
@@ -231,44 +344,70 @@ button {
 
 <div class="top">
   <strong>Perform the indicated matrix operation.</strong>
-  <button id="theme" class="theme">☀ Light mode</button>
+
+  <button id="theme" class="theme">
+    Light mode
+  </button>
 </div>
 
 <div class="problem">
+
   <div class="prompt">
     Evaluate the expression, if possible.
   </div>
 
-  <div class="matrices">
-    <div id="matrixA"></div>
-    <div id="matrixB"></div>
-  </div>
+  <div id="matrixDisplay"
+       class="matrix-display"></div>
 
-  <div id="expression" class="expression"></div>
+  <div id="operationDisplay"
+       class="operation-display"></div>
+
 </div>
 
-<div class="answer-area">
-  <div class="answer-title">
+<div class="answer-section">
+
+  <label class="answer-label">
     Enter the resulting matrix.
+  </label>
+
+  <div class="matrix-input-wrap">
+
+    <span class="matrix-bracket left"></span>
+
+    <div id="matrixGrid"
+         class="matrix-grid"></div>
+
+    <span class="matrix-bracket right"></span>
+
   </div>
 
-  <div id="matrixInput" class="matrix-input"></div>
-
   <label class="not-possible">
-    <input type="checkbox" id="impossible">
+    <input type="checkbox" id="notPossible">
     Not Possible
   </label>
+
 </div>
 
 <div class="actions">
-  <button id="submit" class="submit">Submit</button>
-  <button id="next" class="next">Try Similar</button>
+  <button id="submit" class="submit">
+    Submit
+  </button>
+
+  <button id="next" class="next">
+    Try Similar
+  </button>
 </div>
 
-<button id="reveal" class="reveal">Show Solution</button>
+<button id="reveal" class="reveal">
+  Show Solution
+</button>
 
-<div id="feedback" class="feedback" aria-live="polite"></div>
-<div id="solution" class="solution"></div>
+<div id="feedback"
+     class="feedback"
+     aria-live="polite"></div>
+
+<div id="solution"
+     class="solution"></div>
 
 </main>
 
@@ -276,8 +415,10 @@ button {
 "use strict";
 
 const $ = id => document.getElementById(id);
+
 const rand = (a,b) =>
   Math.floor(Math.random()*(b-a+1))+a;
+
 const tex = s => "\\(" + s + "\\)";
 
 let problems = [];
@@ -285,287 +426,420 @@ let current = null;
 let last = -1;
 let shown = false;
 
+// -------------------------------
+// MATRIX UTILITIES
+// -------------------------------
+
 function randomMatrix(rows,cols) {
-  return Array.from({length:rows},() =>
-    Array.from({length:cols},() => rand(-9,9))
+  return Array.from(
+    {length:rows},
+    () => Array.from(
+      {length:cols},
+      () => rand(-9,9)
+    )
   );
 }
 
 function matrixTex(M) {
-  return "\\begin{bmatrix}" +
-    M.map(row => row.join("&")).join("\\\\") +
+  const rows = M.map(
+    row => row.join("&")
+  ).join("\\\\");
+
+  return "\\begin{bmatrix}"+
+    rows+
     "\\end{bmatrix}";
 }
 
-function compatible(A,B) {
-  return A.length === B.length &&
-    A[0].length === B[0].length;
-}
+function expressionMatrixTex(A,B,operation) {
+  return A.map((row,i)=>
+    row.map((value,j)=>{
+      const other=B[i][j];
 
-function operate(A,B,sign) {
-  return A.map((row,i) =>
-    row.map((value,j) => value+sign*B[i][j])
+      if(operation==="+") {
+        return value+
+          (other<0 ?
+            "+("+other+")" :
+            "+"+other);
+      }
+
+      return value+
+        (other<0 ?
+          "-("+other+")" :
+          "-"+other);
+    })
   );
 }
+
+function sameDimensions(A,B) {
+  return A.length===B.length &&
+    A[0].length===B[0].length;
+}
+
+function calculate(A,B,operation) {
+  if(!sameDimensions(A,B)) {
+    return null;
+  }
+
+  return A.map((row,i)=>
+    row.map((value,j)=>
+      operation==="+" ?
+        value+B[i][j] :
+        value-B[i][j]
+    )
+  );
+}
+
+// -------------------------------
+// GENERATE 50 QUESTIONS
+// -------------------------------
 
 function generate() {
   const seen = new Set();
 
-  while(problems.length < 50) {
-    const rows = rand(2,4);
-    const cols = rand(2,4);
+  while(problems.length<50) {
+    const rowsA=rand(2,4);
+    const colsA=rand(2,4);
 
-    const A = randomMatrix(rows,cols);
+    const incompatible=
+      Math.random()<0.25;
 
-    const makeImpossible = Math.random() < 0.25;
+    let rowsB=rowsA;
+    let colsB=colsA;
 
-    let rowsB = rows;
-    let colsB = cols;
-
-    if(makeImpossible) {
+    if(incompatible) {
       do {
-        rowsB = rand(2,4);
-        colsB = rand(2,4);
-      } while(rowsB === rows && colsB === cols);
+        rowsB=rand(2,4);
+        colsB=rand(2,4);
+      } while(
+        rowsB===rowsA &&
+        colsB===colsA
+      );
     }
 
-    const B = randomMatrix(rowsB,colsB);
-    const sign = Math.random() < 0.5 ? 1 : -1;
+    const A=randomMatrix(rowsA,colsA);
+    const B=randomMatrix(rowsB,colsB);
 
-    const key = JSON.stringify([A,B,sign]);
+    const operation=
+      Math.random()<0.5 ? "+" : "-";
+
+    const key=JSON.stringify({
+      A,B,operation
+    });
+
     if(seen.has(key)) continue;
-
     seen.add(key);
 
-    const possible = compatible(A,B);
-
     problems.push({
-      A,B,sign,possible,
-      answer:possible ? operate(A,B,sign) : null
+      A,B,operation,
+      result:calculate(A,B,operation)
     });
   }
 }
 
-async function typeset(el) {
-  if(!window.MathJax) return;
+// -------------------------------
+// MATHJAX RENDERING
+// -------------------------------
 
-  try {
+let mathQueue = Promise.resolve();
+
+function typeset(el) {
+  mathQueue = mathQueue.then(async()=>{
+    if(!window.MathJax) return;
+
     await MathJax.startup.promise;
+
+    MathJax.typesetClear([el]);
+
     await MathJax.typesetPromise([el]);
-  } catch(e) {
-    console.error(e);
-  }
+
+    fitMath(el);
+  }).catch(console.error);
+
+  return mathQueue;
 }
 
-function buildInputs(rows,cols) {
-  const box = $("matrixInput");
-  box.replaceChildren();
-  box.style.gridTemplateColumns =
+// Scale mathematical expressions
+// without creating scrollbars.
+
+function fitMath(parent) {
+  parent.querySelectorAll("mjx-container")
+    .forEach(container => {
+
+      container.style.transform = "";
+      container.style.width = "";
+      container.style.transformOrigin =
+        "center center";
+
+      const available =
+        parent.clientWidth-16;
+
+      const actual =
+        container.scrollWidth;
+
+      if(
+        actual>available &&
+        available>0
+      ) {
+        const scale=available/actual;
+
+        container.style.transform =
+          "scale("+scale+")";
+
+        container.style.width =
+          (100/scale)+"%";
+      }
+    });
+}
+
+// -------------------------------
+// INPUT GRID
+// -------------------------------
+
+function createGrid(rows,cols) {
+  const grid=$("matrixGrid");
+
+  grid.replaceChildren();
+
+  grid.style.gridTemplateColumns =
     `repeat(${cols},minmax(0,1fr))`;
 
   for(let i=0;i<rows;i++) {
     for(let j=0;j<cols;j++) {
-      const input = document.createElement("input");
+      const input=document.createElement("input");
 
-      input.type = "text";
-      input.inputMode = "numeric";
-      input.autocomplete = "off";
-      input.dataset.row = i;
-      input.dataset.col = j;
+      input.type="text";
+      input.className="matrix-cell";
+      input.autocomplete="off";
+
       input.setAttribute(
         "aria-label",
         `Row ${i+1}, column ${j+1}`
       );
 
-      input.addEventListener("keydown",e => {
-        if(e.key === "Enter") check();
+      input.dataset.row=i;
+      input.dataset.col=j;
+
+      input.addEventListener("keydown",e=>{
+        if(e.key==="Enter") check();
       });
 
-      box.append(input);
+      grid.append(input);
     }
   }
 }
+
+function setInputsDisabled(disabled) {
+  document.querySelectorAll(".matrix-cell")
+    .forEach(input=>{
+      input.disabled=disabled;
+    });
+}
+
+// -------------------------------
+// NEW PROBLEM
+// -------------------------------
 
 function newProblem() {
   let i;
 
   do {
-    i = rand(0,problems.length-1);
-  } while(i === last);
+    i=rand(0,problems.length-1);
+  } while(i===last);
 
-  last = i;
-  current = problems[i];
-  shown = false;
+  last=i;
+  current=problems[i];
+  shown=false;
 
-  $("matrixA").textContent =
-    tex("A="+matrixTex(current.A));
+  $("matrixDisplay").textContent=tex(
+    "A="+matrixTex(current.A)+
+    "\\qquad B="+matrixTex(current.B)
+  );
 
-  $("matrixB").textContent =
-    tex("B="+matrixTex(current.B));
+  $("operationDisplay").textContent=tex(
+    "A"+current.operation+"B"
+  );
 
-  $("expression").textContent =
-    tex(current.sign === 1 ? "A+B" : "A-B");
-
-  buildInputs(
+  createGrid(
     current.A.length,
     current.A[0].length
   );
 
-  $("impossible").checked = false;
-  $("matrixInput").style.opacity = "1";
+  $("notPossible").checked=false;
+  setInputsDisabled(false);
 
-  $("feedback").textContent = "";
-  $("feedback").className = "feedback";
+  $("feedback").textContent="";
+  $("feedback").className="feedback";
 
-  $("solution").style.display = "none";
+  $("solution").style.display="none";
   $("solution").replaceChildren();
-  $("reveal").textContent = "Show Solution";
 
-  typeset(document.querySelector(".problem"));
+  $("reveal").textContent="Show Solution";
+
+  typeset($("matrixDisplay"));
+  typeset($("operationDisplay"));
+}
+
+// -------------------------------
+// ANSWER CHECKING
+// -------------------------------
+
+function parseInteger(raw) {
+  const s=raw.trim();
+
+  if(!/^[+-]?\d+$/.test(s)) {
+    return null;
+  }
+
+  const n=Number(s);
+
+  return Number.isSafeInteger(n) ? n : null;
 }
 
 function check() {
-  const fb = $("feedback");
+  const fb=$("feedback");
 
-  if($("impossible").checked) {
-    const correct = !current.possible;
+  if(current.result===null) {
+    const correct=$("notPossible").checked;
 
-    fb.textContent = correct
-      ? "Correct! The operation is not possible."
-      : "Incorrect. The matrices have matching dimensions.";
-
-    fb.className = "feedback " +
-      (correct ? "good" : "bad");
-
-    return;
-  }
-
-  if(!current.possible) {
-    fb.textContent =
+    fb.textContent=correct ?
+      "Correct! The matrices have different dimensions." :
       "Incorrect. Check the dimensions of both matrices.";
-    fb.className = "feedback bad";
+
+    fb.className=
+      "feedback "+(correct?"good":"bad");
+
     return;
   }
 
-  const inputs = [
-    ...$("matrixInput").querySelectorAll("input")
+  if($("notPossible").checked) {
+    fb.textContent=
+      "Incorrect. These matrices have compatible dimensions.";
+
+    fb.className="feedback bad";
+    return;
+  }
+
+  const inputs=[
+    ...document.querySelectorAll(".matrix-cell")
   ];
 
-  let correctEntries = 0;
-  let completed = true;
+  const correct=inputs.every(input=>{
+    const row=Number(input.dataset.row);
+    const col=Number(input.dataset.col);
 
-  inputs.forEach(input => {
-    const raw = input.value.trim();
-    const i = Number(input.dataset.row);
-    const j = Number(input.dataset.col);
-
-    if(raw === "") completed = false;
-
-    const correct =
-      /^-?\d+$/.test(raw) &&
-      Number(raw) === current.answer[i][j];
-
-    input.classList.remove("correct","incorrect");
-    input.classList.add(
-      correct ? "correct" : "incorrect"
-    );
-
-    if(correct) correctEntries++;
+    return parseInteger(input.value)===
+      current.result[row][col];
   });
 
-  if(!completed) {
-    fb.textContent =
-      "Complete every entry in the matrix.";
-    fb.className = "feedback bad";
-  } else if(correctEntries === inputs.length) {
-    fb.textContent =
-      "Correct! All matrix entries are correct.";
-    fb.className = "feedback good";
-  } else {
-    fb.textContent =
-      `${correctEntries} of ${inputs.length} entries correct.`;
-    fb.className = "feedback bad";
-  }
+  fb.textContent=correct ?
+    "Correct! Every matrix entry is correct." :
+    "Incorrect. Check your matrix calculations.";
+
+  fb.className=
+    "feedback "+(correct?"good":"bad");
+}
+
+// -------------------------------
+// WORKED SOLUTION
+// -------------------------------
+
+function addStep(container,label,math) {
+  const step=document.createElement("div");
+  step.className="step";
+
+  const heading=document.createElement("div");
+  heading.className="step-title";
+  heading.textContent=label;
+
+  const work=document.createElement("div");
+  work.className="work";
+  work.textContent=tex(math);
+
+  step.append(heading,work);
+  container.append(step);
 }
 
 function showSolution() {
-  shown = !shown;
+  shown=!shown;
 
-  const el = $("solution");
-  el.style.display = shown ? "block" : "none";
-  $("reveal").textContent =
-    shown ? "Hide Solution" : "Show Solution";
+  const el=$("solution");
+
+  el.style.display=shown?"block":"none";
+
+  $("reveal").textContent=
+    shown?"Hide Solution":"Show Solution";
 
   if(!shown) return;
 
   el.replaceChildren();
 
-  const heading = document.createElement("strong");
-  heading.textContent = "Step-by-step solution";
+  const heading=document.createElement("strong");
+  heading.textContent="Step-by-step solution";
   el.append(heading);
 
-  const work = document.createElement("div");
-  work.className = "work";
+  const {A,B,operation,result}=current;
 
-  if(!current.possible) {
-    const ar = current.A.length;
-    const ac = current.A[0].length;
-    const br = current.B.length;
-    const bc = current.B[0].length;
-
-    work.textContent =
-      `Matrix A is ${ar} × ${ac}, while matrix B ` +
-      `is ${br} × ${bc}. Addition and subtraction ` +
-      `require matrices with identical dimensions. ` +
-      `Therefore, the operation is not possible.`;
-  } else {
-    const op = current.sign === 1 ? "+" : "-";
-
-    const parts = current.A.map((row,i) =>
-      row.map((a,j) => {
-        const b = current.B[i][j];
-        return `${a}${op}(${b})`;
-      })
+  if(result===null) {
+    addStep(
+      el,
+      "Compare the dimensions.",
+      `A:\\ ${A.length}\\times${A[0].length}
+       \\qquad
+       B:\\ ${B.length}\\times${B[0].length}`
     );
 
-    work.textContent = tex(
-      matrixTex(current.A) + op +
-      matrixTex(current.B) + "=" +
-      matrixTex(parts) + "=" +
-      matrixTex(current.answer)
-    );
+    const note=document.createElement("p");
+
+    note.textContent=
+      "Not Possible. Matrix addition and subtraction require both matrices to have identical dimensions.";
+
+    el.append(note);
+
+    typeset(el);
+    return;
   }
 
-  el.append(work);
+  const expressions=
+    expressionMatrixTex(A,B,operation);
+
+  addStep(
+    el,
+    "Add or subtract corresponding entries.",
+    matrixTex(A)+
+    operation+
+    matrixTex(B)+
+    "="+
+    matrixTex(expressions)+
+    "="+
+    matrixTex(result)
+  );
+
   typeset(el);
 }
 
-$("impossible").onchange = () => {
-  const disabled = $("impossible").checked;
+// -------------------------------
+// EVENTS
+// -------------------------------
 
-  $("matrixInput").style.opacity =
-    disabled ? "0.4" : "1";
-
-  $("matrixInput")
-    .querySelectorAll("input")
-    .forEach(input => input.disabled = disabled);
-};
-
-$("theme").onclick = () => {
-  const light =
+$("theme").onclick=()=>{
+  const light=
     document.body.classList.toggle("light");
 
-  $("theme").textContent = light
-    ? "☾ Dark mode"
-    : "☀ Light mode";
+  $("theme").textContent=
+    light?"Dark mode":"Light mode";
 };
 
-$("submit").onclick = check;
-$("next").onclick = newProblem;
-$("reveal").onclick = showSolution;
+$("notPossible").onchange=()=>{
+  setInputsDisabled($("notPossible").checked);
+};
+
+$("submit").onclick=check;
+$("next").onclick=newProblem;
+$("reveal").onclick=showSolution;
 
 generate();
 newProblem();
+
 </script>
 </body>
 </html>
