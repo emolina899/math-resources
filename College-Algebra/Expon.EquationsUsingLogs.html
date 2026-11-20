@@ -11,390 +11,584 @@ window.MathJax = {
   tex: {
     inlineMath: [['\\(', '\\)']],
     displayMath: [['\\[', '\\]']]
-  }
+  },
+  options: { enableMenu: false }
 };
 </script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<script defer
+ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
 
 <style>
-:root {
-  font-family: Arial, sans-serif;
-  color-scheme: dark;
-}
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
-  padding: 10px;
-  background: #0e1727;
-  color: #f5f7ff;
+  font: 16px/1.5 Arial, sans-serif;
+  background: transparent;
 }
-#app {
+
+#practice {
+  --bg: #101827;
+  --panel: #1c2b43;
+  --field: #142139;
+  --text: #f7f9ff;
+  --muted: #c8d4e8;
+  --border: #7285a6;
+  --button: #334e79;
+  --accent: #7657e9;
+  --good: #7af0b1;
+  --bad: #ff9fa6;
+
+  background: var(--bg);
+  color: var(--text);
   max-width: 780px;
   margin: auto;
   padding: 16px;
   border-radius: 12px;
-  background: #101a2b;
 }
-#app.light {
-  background: #fff;
-  color: #182235;
-  color-scheme: light;
+
+#practice.light {
+  --bg: #ffffff;
+  --panel: #edf2fa;
+  --field: #ffffff;
+  --text: #17243a;
+  --muted: #394b65;
+  --border: #6d7d96;
+  --button: #304c76;
+  --accent: #5a36c8;
+  --good: #08683c;
+  --bad: #a51f30;
 }
+
 button, input { font: inherit; }
+
 button {
-  cursor: pointer;
-  border: 1px solid #526a94;
+  border: 0;
   border-radius: 9px;
-  padding: 11px;
-  background: #30476e;
-  color: white;
-  font-weight: 600;
+  padding: 10px 13px;
+  min-height: 44px;
+  color: #ffffff;
+  background: var(--button);
+  font-weight: 650;
+  cursor: pointer;
 }
+
+button:hover { filter: brightness(1.12); }
+
 button:focus-visible,
-input:focus-visible,
-[contenteditable]:focus-visible {
-  outline: 3px solid #b49bff;
-  outline-offset: 2px;
+input:focus-visible {
+  outline: 3px solid #e9a845;
+  outline-offset: 3px;
 }
+
 .top {
   display: flex;
   justify-content: flex-end;
 }
-.problem {
+
+.equation {
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 14px 10px;
+  margin: 10px 0 14px;
   text-align: center;
   font-size: 1.2rem;
-  background: #1a2b46;
-  padding: 16px;
-  border-radius: 10px;
-  margin: 10px 0;
   overflow-x: auto;
 }
-.light .problem { background: #eaf0fa; }
-label {
+
+.section { margin-top: 12px; }
+
+.section label {
   display: block;
-  font-weight: bold;
-  margin: 14px 0 7px;
+  font-weight: 700;
+  margin-bottom: 6px;
 }
-.toolbar {
+
+.hint {
+  font-size: .83rem;
+  color: var(--muted);
+  margin: 6px 0 8px;
+}
+
+.mathbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin: 8px 0;
+  gap: 5px;
+  margin-bottom: 8px;
 }
-.toolbar button { min-width: 43px; }
-.editor {
-  border: 1px solid #51658b;
+
+.mathbar button {
+  min-width: 44px;
+  padding: 7px 11px;
+}
+
+.mathbar button:last-child {
+  margin-left: auto;
+}
+
+.fraction {
+  display: grid;
+  grid-template-rows: auto 2px auto;
+  gap: 4px;
+  max-width: 460px;
+  margin: auto;
+  padding: 8px 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: #1a2b46;
-  padding: 12px;
-  min-height: 96px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
-.light .editor { background: #f0f4fb; }
-.fraction-part {
-  width: 90%;
-  min-height: 34px;
-  padding: 6px;
+
+.fraction input {
   text-align: center;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-}
-.fraction-part:empty::before {
-  content: attr(data-placeholder);
-  opacity: .55;
-}
-.fraction-line {
-  height: 1px;
-  width: 75%;
-  background: currentColor;
-}
-input {
+  min-height: 42px;
+  padding: 8px;
+  background: var(--field);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 7px;
   width: 100%;
-  padding: 12px;
-  border: 1px solid #51658b;
-  border-radius: 9px;
-  background: #1a2b46;
-  color: inherit;
 }
-.light input { background: #f0f4fb; }
+
+.bar {
+  height: 2px;
+  background: var(--text);
+  margin: 0 12px;
+}
+
+.preview {
+  margin-top: 7px;
+  text-align: center;
+  min-height: 35px;
+  overflow-x: auto;
+}
+
+.preview-label {
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+.decimal {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--field);
+  color: var(--text);
+}
+
+.feedback {
+  min-height: 23px;
+  margin: 6px 0;
+  font-weight: 700;
+  font-size: .9rem;
+}
+
+.good { color: var(--good); }
+.bad { color: var(--bad); }
+
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-top: 14px;
 }
-.actions button:first-child { background: #7453e8; }
-.wide { grid-column: 1 / -1; }
-.feedback {
-  font-weight: bold;
-  min-height: 20px;
-  margin-top: 7px;
-}
-.correct { color: #65e6a0; }
-.incorrect { color: #ff858d; }
-.valid { border-color: #27b86e !important; }
-.invalid { border-color: #e34e60 !important; }
-.light .correct { color: #087c42; }
-.light .incorrect { color: #ba2438; }
+
+.actions #submit { background: var(--accent); }
+.actions #toggle { grid-column: 1 / -1; }
+
 .solution {
-  border: 1px solid #50678f;
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: #1a2b46;
   padding: 14px;
-  margin-top: 14px;
-  line-height: 1.55;
+  margin-top: 12px;
   overflow-x: auto;
 }
-.light .solution { background: #f0f4fb; }
+
+.solution p { margin: 8px 0; }
+
 .solution hr {
   border: 0;
-  border-top: 1px solid #526582;
+  border-top: 1px solid var(--border);
   margin: 12px 0;
 }
-.hint {
-  font-size: .82rem;
-  line-height: 1.4;
-  opacity: .85;
-}
-#live {
+
+.sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
   overflow: hidden;
   clip-path: inset(50%);
 }
-@media(max-width:480px) {
-  #app { padding: 12px; }
-  .toolbar button { padding: 10px; min-width: 37px; }
+
+.field-error {
+  border: 2px solid var(--bad) !important;
+}
+
+.field-good {
+  border: 2px solid var(--good) !important;
+}
+
+@media(max-width:420px) {
+  #practice { padding: 12px; }
+  .mathbar button {
+    min-width: 40px;
+    padding: 7px 9px;
+  }
+  .actions { gap: 6px; }
 }
 </style>
 </head>
 
 <body>
-<main id="app">
+<main id="practice">
 
 <div class="top">
-  <button id="theme" aria-label="Switch to light mode">
+  <button id="theme" type="button"
+    aria-label="Switch to light mode">
     ☀ Light mode
   </button>
 </div>
 
-<div class="problem" id="problem"
-     aria-label="Exponential equation"></div>
+<div id="equation" class="equation"
+  aria-label="Solve the exponential equation"></div>
 
-<label id="exactLabel">Exact Solution</label>
+<section class="section" aria-labelledby="exact-heading">
+  <label id="exact-heading" for="numerator">
+    Exact Solution
+  </label>
 
-<div class="toolbar" aria-label="Math entry tools">
-  <button data-insert="/" aria-label="Division">÷</button>
-  <button data-insert="ln()">ln</button>
-  <button data-insert="log()">log</button>
-  <button data-insert="()">()</button>
-  <button data-insert="+">+</button>
-  <button data-insert="-">−</button>
-  <button data-insert="*">×</button>
-  <button id="back" aria-label="Backspace">⌫</button>
-  <button id="clear">Clear</button>
-</div>
+  <div class="mathbar" role="group"
+    aria-label="Insert mathematical symbols">
+    <button type="button" data-symbol="ln()">ln</button>
+    <button type="button" data-symbol="log()">log</button>
+    <button type="button" data-symbol="()">( )</button>
+    <button type="button" data-symbol="+">+</button>
+    <button type="button" data-symbol="-">−</button>
+    <button type="button" data-symbol="*">×</button>
+    <button type="button" id="backspace"
+      aria-label="Delete previous character">⌫</button>
+    <button type="button" id="clear">Clear</button>
+  </div>
 
-<div class="editor" id="editor" role="group"
-     aria-labelledby="exactLabel">
-  <div id="num" class="fraction-part"
-       contenteditable="true" role="textbox"
-       aria-label="Exact solution numerator"
-       data-placeholder="Numerator"
-       spellcheck="false"></div>
-  <div class="fraction-line"></div>
-  <div id="den" class="fraction-part"
-       contenteditable="true" role="textbox"
-       aria-label="Exact solution denominator"
-       data-placeholder="Denominator"
-       spellcheck="false"></div>
-</div>
+  <div class="fraction" id="fraction">
+    <input id="numerator" type="text"
+      spellcheck="false" autocomplete="off"
+      aria-label="Numerator of exact solution"
+      aria-describedby="entry-hint"
+      placeholder="Numerator">
 
-<p class="hint">
-Enter the exact solution using ln or log.
-Click the numerator or denominator to edit.
-Equivalent logarithmic expressions are accepted.
-</p>
+    <div class="bar" aria-hidden="true"></div>
 
-<div id="exactFeedback" class="feedback"
-     aria-live="polite"></div>
+    <input id="denominator" type="text"
+      spellcheck="false" autocomplete="off"
+      aria-label="Denominator of exact solution"
+      aria-describedby="entry-hint"
+      placeholder="Denominator">
+  </div>
 
-<label for="decimal">
-Decimal Approximation (4 decimal places)
-</label>
-<input id="decimal" inputmode="decimal"
-       autocomplete="off"
-       placeholder="Example: 0.3656">
+  <p class="hint" id="entry-hint">
+    Enter logarithmic expressions using ln or log.
+    Use the keyboard or mathematical buttons to
+    construct your exact solution.
+  </p>
 
-<div id="decimalFeedback" class="feedback"
-     aria-live="polite"></div>
+  <div class="preview-label">Formatted Preview</div>
+  <div class="preview" id="preview"
+    aria-hidden="true"></div>
+
+  <div class="feedback" id="exact-feedback"
+    role="status" aria-live="polite"></div>
+</section>
+
+<section class="section">
+  <label for="decimal">
+    Decimal Approximation (4 decimal places)
+  </label>
+
+  <input class="decimal" id="decimal" type="text"
+    inputmode="decimal" autocomplete="off"
+    placeholder="e.g. 0.3656"
+    aria-describedby="decimal-hint">
+
+  <p class="hint" id="decimal-hint">
+    Include exactly four digits after the decimal point.
+  </p>
+
+  <div class="feedback" id="decimal-feedback"
+    role="status" aria-live="polite"></div>
+</section>
 
 <div class="actions">
-  <button id="submit">Submit</button>
-  <button id="next">Try Similar</button>
-  <button id="toggle" class="wide"
-          aria-expanded="false">Show Solution</button>
+  <button id="submit" type="button">Submit</button>
+  <button id="next" type="button">Try Similar</button>
+  <button id="toggle" type="button"
+    aria-expanded="false" aria-controls="solution">
+    Show Solution
+  </button>
 </div>
 
-<section class="solution" id="solution" hidden></section>
-<div id="live" aria-live="polite"></div>
+<section id="solution" class="solution" hidden
+  aria-label="Step-by-step solution"></section>
+
+<div id="announce" class="sr-only"
+  aria-live="polite"></div>
 
 </main>
 
 <script>
 (() => {
-"use strict";
+'use strict';
 
 const $ = id => document.getElementById(id);
-const app = $("app");
-const num = $("num");
-const den = $("den");
-const decimal = $("decimal");
+const root = $('practice');
+const n = $('numerator');
+const d = $('denominator');
+const dec = $('decimal');
 
-let current;
-let focusPart = num;
-let problemIndex = -1;
-let solutionVisible = false;
+let active = n;
+let current = null;
+let shown = false;
+let lastKey = '';
 
-const bases = [2, 3, 5, 7, 11, 13];
+const bases = [2,3,5,7,11,13];
 
-function gcd(a, b) {
-  return b ? gcd(b, a % b) : Math.abs(a);
+const rnd = (a,b) =>
+  Math.floor(Math.random() * (b-a+1)) + a;
+
+const gcd = (a,b) =>
+  b ? gcd(b,a%b) : Math.abs(a);
+
+const fmt = a =>
+  a === 1 ? 'x' : a === -1 ? '-x' : a+'x';
+
+const lin = (a,b) =>
+  fmt(a)+(b>0?'+'+b:b<0?b:'');
+
+const ln = (k,b) => k+'\\ln('+b+')';
+
+function typeset(els) {
+  if(window.MathJax?.typesetPromise) {
+    MathJax.typesetClear?.(els);
+    MathJax.typesetPromise(els).catch(()=>{});
+  }
 }
 
-function rand(min, max) {
-  return min + Math.floor(
-    Math.random() * (max - min + 1)
-  );
+function generate() {
+  for(let t=0;t<3000;t++) {
+    let a=bases[rnd(0,5)];
+    let b=bases[rnd(0,5)];
+    let p=rnd(-6,6);
+    let q=rnd(-8,8);
+    let r=rnd(-6,6);
+    let s=rnd(-8,8);
+
+    if(a===b || !p || !q || !r || !s) continue;
+
+    if(gcd(gcd(gcd(
+      Math.abs(p),Math.abs(q)),
+      Math.abs(r)),Math.abs(s))!==1) continue;
+
+    let D=p*Math.log(a)-r*Math.log(b);
+    let N=s*Math.log(b)-q*Math.log(a);
+    let x=N/D;
+
+    if(Math.abs(D)<.2 ||
+       !Number.isFinite(x) ||
+       Math.abs(x)>12 ||
+       Math.abs(x)<.08) continue;
+
+    let key=[a,b,p,q,r,s].join(',');
+
+    if(key===lastKey) continue;
+
+    lastKey=key;
+    return {a,b,p,q,r,s,x};
+  }
+
+  throw Error('Unable to generate problem');
 }
 
-function makeBank() {
-  const bank = [];
-  const seen = new Set();
+function parse(src) {
+  let s=src.toLowerCase()
+    .replace(/[−–]/g,'-')
+    .replace(/×/g,'*')
+    .replace(/÷/g,'/')
+    .replace(/\s/g,'');
 
-  for (
-    let attempts = 0;
-    bank.length < 50 && attempts < 20000;
-    attempts++
-  ) {
-    const a = bases[rand(0, bases.length - 1)];
-    const b = bases[rand(0, bases.length - 1)];
+  let i=0, used=false;
 
-    if (a === b) continue;
+  function expression() {
+    let v=term();
+    while(s[i]==='+' || s[i]==='-') {
+      let op=s[i++];
+      let w=term();
+      v=op==='+'?v+w:v-w;
+    }
+    return v;
+  }
 
-    const p = rand(-6, 6);
-    const q = rand(-7, 7);
-    const r = rand(-6, 6);
-    const s = rand(-7, 7);
+  function term() {
+    let v=unary();
+    while(s[i]==='*' || s[i]==='/') {
+      let op=s[i++];
+      let w=unary();
+      v=op==='*'?v*w:v/w;
+    }
+    return v;
+  }
 
-    if (!p || !q || !r || !s) continue;
+  function unary() {
+    if(s[i]==='+') { i++; return unary(); }
+    if(s[i]==='-') { i++; return -unary(); }
+    return atom();
+  }
 
-    // Prevent a common numerical factor in
-    // all coefficients of the exact answer.
-    const common = gcd(
-      gcd(Math.abs(p), Math.abs(q)),
-      gcd(Math.abs(r), Math.abs(s))
+  function atom() {
+    if(s[i]==='(') {
+      i++;
+      let v=expression();
+      if(s[i++]!==')') throw Error('Parentheses');
+      return v;
+    }
+
+    let m=/^(ln|log)/.exec(s.slice(i));
+
+    if(m) {
+      i+=m[0].length;
+
+      if(s[i++]!=='(')
+        throw Error('Log parentheses');
+
+      let v=expression();
+
+      if(s[i++]!==')' || v<=0)
+        throw Error('Log domain');
+
+      used=true;
+
+      return m[0]==='ln'
+        ? Math.log(v)
+        : Math.log10(v);
+    }
+
+    let z=/^(?:\d+(?:\.\d*)?|\.\d+)/
+      .exec(s.slice(i));
+
+    if(!z) throw Error('Invalid character');
+
+    i+=z[0].length;
+    return Number(z[0]);
+  }
+
+  let value=expression();
+
+  if(i!==s.length || !Number.isFinite(value))
+    throw Error('Invalid expression');
+
+  return {value,used};
+}
+
+function mathTex(src) {
+  let s=src.trim();
+
+  if(!s) return '\\square';
+
+  if(!/^[\d\s()+\-*/.a-zA-Z]+$/.test(s))
+    return '\\text{Enter a valid expression}';
+
+  return s
+    .replace(/\blog\(/gi,'\\log(')
+    .replace(/\bln\(/gi,'\\ln(')
+    .replace(/\*/g,'\\cdot ');
+}
+
+let previewTask=0;
+
+function updatePreview() {
+  let k=++previewTask;
+
+  Promise.resolve().then(()=>{
+    if(k!==previewTask) return;
+
+    $('preview').textContent=
+      '\\[\\frac{'+mathTex(n.value)+'}{'+
+      mathTex(d.value||'1')+'}\\]';
+
+    typeset([$('preview')]);
+  });
+}
+
+function clearFeedback() {
+  for(const id of [
+    'exact-feedback','decimal-feedback'
+  ]) {
+    $(id).textContent='';
+    $(id).className='feedback';
+  }
+
+  for(const el of [n,d,dec])
+    el.classList.remove(
+      'field-good','field-error'
     );
-
-    if (common !== 1) continue;
-
-    const denominator =
-      p * Math.log(a) - r * Math.log(b);
-
-    if (Math.abs(denominator) < 0.15) continue;
-
-    const x = (
-      s * Math.log(b) - q * Math.log(a)
-    ) / denominator;
-
-    if (
-      !Number.isFinite(x) ||
-      Math.abs(x) > 12 ||
-      Math.abs(x) < 0.08
-    ) continue;
-
-    const key = [a,b,p,q,r,s].join(",");
-
-    if (seen.has(key)) continue;
-
-    seen.add(key);
-    bank.push({a,b,p,q,r,s,x});
-  }
-
-  return bank;
 }
 
-const bank = makeBank();
+function newProblem() {
+  current=generate();
 
-function linear(p, q) {
-  const first =
-    p === 1 ? "x" :
-    p === -1 ? "-x" : p + "x";
+  n.value='';
+  d.value='';
+  dec.value='';
 
-  return first +
-    (q > 0 ? "+" + q : q < 0 ? q : "");
-}
+  clearFeedback();
 
-function signedLog(k, b) {
-  return (k < 0 ? "-" : "+") +
-    Math.abs(k) + "\\ln(" + b + ")";
-}
+  $('equation').textContent=
+    '\\['+current.a+'^{'+
+    lin(current.p,current.q)+'}='+
+    current.b+'^{'+
+    lin(current.r,current.s)+'}\\]';
 
-function typeset() {
-  if (window.MathJax && MathJax.typesetPromise) {
-    MathJax.typesetPromise().catch(() => {});
-  }
-}
+  let v=current;
 
-function renderProblem() {
-  const v = current;
+  let N=ln(v.s,v.b)+
+    (v.q<0?'+':'-')+
+    ln(Math.abs(v.q),v.a);
 
-  $("problem").textContent =
-    `\\[${v.a}^{${linear(v.p,v.q)}}=` +
-    `${v.b}^{${linear(v.r,v.s)}}\\]`;
+  let D=ln(v.p,v.a)+
+    (v.r<0?'+':'-')+
+    ln(Math.abs(v.r),v.b);
 
-  const numerator =
-    `${v.s}\\ln(${v.b})` +
-    signedLog(-v.q, v.a);
-
-  const denominator =
-    `${v.p}\\ln(${v.a})` +
-    signedLog(-v.r, v.b);
-
-  $("solution").innerHTML = `
+  $('solution').innerHTML=`
     <strong>Step-by-step solution</strong>
 
     <p><strong>Step 1:</strong>
     Take natural logarithms of both sides.</p>
 
     \\[
-    \\ln(${v.a}^{${linear(v.p,v.q)}})
+    \\ln(${v.a}^{${lin(v.p,v.q)}})
     =
-    \\ln(${v.b}^{${linear(v.r,v.s)}})
+    \\ln(${v.b}^{${lin(v.r,v.s)}})
     \\]
 
     <hr>
 
     <p><strong>Step 2:</strong>
-    Apply the Power Property of Logarithms.</p>
+    Apply the power property.</p>
 
     \\[
-    (${linear(v.p,v.q)})\\ln(${v.a})
+    (${lin(v.p,v.q)})\\ln(${v.a})
     =
-    (${linear(v.r,v.s)})\\ln(${v.b})
+    (${lin(v.r,v.s)})\\ln(${v.b})
     \\]
 
     <hr>
 
     <p><strong>Step 3:</strong>
-    Collect terms containing x and isolate x.</p>
+    Collect the terms with x and solve.</p>
 
     \\[
-    x=\\frac{${numerator}}{${denominator}}
+    x=\\frac{${N}}{${D}}
     \\]
 
     <hr>
@@ -407,333 +601,175 @@ function renderProblem() {
     \\]
   `;
 
-  typeset();
+  shown=false;
+  $('solution').hidden=true;
+  $('toggle').textContent='Show Solution';
+  $('toggle').setAttribute(
+    'aria-expanded','false'
+  );
+
+  updatePreview();
+  typeset([$('equation'),$('solution')]);
+
+  $('announce').textContent=
+    'New exponential equation loaded.';
 }
 
-function nextProblem() {
-  problemIndex = (problemIndex + 1) % bank.length;
-  current = bank[problemIndex];
+function feedback(id,ok,text) {
+  let el=$(id);
 
-  num.textContent = "";
-  den.textContent = "";
-  decimal.value = "";
+  el.textContent=
+    (ok?'✓ Correct: ':'✕ Incorrect: ')+text;
 
-  ["editor", "decimal"].forEach(id => {
-    $(id).classList.remove("valid", "invalid");
-  });
-
-  $("exactFeedback").textContent = "";
-  $("decimalFeedback").textContent = "";
-
-  solutionVisible = false;
-  $("solution").hidden = true;
-  $("toggle").textContent = "Show Solution";
-  $("toggle").setAttribute("aria-expanded", "false");
-
-  renderProblem();
+  el.className=
+    'feedback '+(ok?'good':'bad');
 }
 
-// Mathematical expression parser.
-// Supports arithmetic, parentheses, ln, log,
-// division, multiplication, and powers.
-// No eval() or dynamic JavaScript execution.
-
-function parseMath(source) {
-  let s = source.toLowerCase()
-    .replace(/\u2212/g, "-")
-    .replace(/\u00d7/g, "*")
-    .replace(/\u00f7/g, "/")
-    .replace(/\s+/g, "");
-
-  let i = 0;
-  let usedLog = false;
-
-  function expression() {
-    let value = term();
-
-    while (s[i] === "+" || s[i] === "-") {
-      const op = s[i++];
-      const right = term();
-
-      value = op === "+"
-        ? value + right
-        : value - right;
-    }
-
-    return value;
-  }
-
-  function term() {
-    let value = power();
-
-    while (s[i] === "*" || s[i] === "/") {
-      const op = s[i++];
-      const right = power();
-
-      value = op === "*"
-        ? value * right
-        : value / right;
-    }
-
-    return value;
-  }
-
-  function power() {
-    let value = unary();
-
-    if (s[i] === "^") {
-      i++;
-      value = Math.pow(value, power());
-    }
-
-    return value;
-  }
-
-  function unary() {
-    if (s[i] === "+") {
-      i++;
-      return unary();
-    }
-
-    if (s[i] === "-") {
-      i++;
-      return -unary();
-    }
-
-    return atom();
-  }
-
-  function atom() {
-    if (s[i] === "(") {
-      i++;
-      const value = expression();
-
-      if (s[i++] !== ")") {
-        throw Error("Missing parenthesis");
-      }
-
-      return value;
-    }
-
-    const name = /^(ln|log)/.exec(s.slice(i));
-
-    if (name) {
-      i += name[0].length;
-
-      if (s[i++] !== "(") {
-        throw Error("Log requires parentheses");
-      }
-
-      const value = expression();
-
-      if (s[i++] !== ")" || value <= 0) {
-        throw Error("Invalid logarithm");
-      }
-
-      usedLog = true;
-
-      return name[0] === "ln"
-        ? Math.log(value)
-        : Math.log10(value);
-    }
-
-    const match =
-      /^(?:\d+(?:\.\d*)?|\.\d+)/.exec(s.slice(i));
-
-    if (!match) {
-      throw Error("Invalid expression");
-    }
-
-    i += match[0].length;
-    return Number(match[0]);
-  }
-
-  const value = expression();
-
-  if (i !== s.length || !Number.isFinite(value)) {
-    throw Error("Invalid expression");
-  }
-
-  return {value, usedLog};
-}
-
-function setResult(id, feedbackId, correct, label) {
-  $(id).classList.toggle("valid", correct);
-  $(id).classList.toggle("invalid", !correct);
-
-  const feedback = $(feedbackId);
-
-  feedback.className =
-    "feedback " + (correct ? "correct" : "incorrect");
-
-  feedback.textContent =
-    (correct ? "✓ Correct: " : "✕ Incorrect: ") +
-    label;
-}
-
-function submitAnswers() {
-  let exactCorrect = false;
-  let decimalCorrect = false;
+function submit() {
+  let exact=false;
 
   try {
-    const numerator = parseMath(num.textContent.trim());
-    const denominator = parseMath(
-      den.textContent.trim() || "1"
-    );
+    let A=parse(n.value);
+    let B=parse(d.value.trim()||'1');
+    let x=A.value/B.value;
 
-    const value =
-      numerator.value / denominator.value;
+    exact=(A.used||B.used) &&
+      Math.abs(B.value)>1e-12 &&
+      Number.isFinite(x) &&
+      Math.abs(x-current.x)<=
+      1e-8*Math.max(1,Math.abs(current.x));
 
-    exactCorrect =
-      (numerator.usedLog || denominator.usedLog) &&
-      denominator.value !== 0 &&
-      Number.isFinite(value) &&
-      Math.abs(value - current.x) <=
-        1e-8 * Math.max(1, Math.abs(current.x));
+  } catch(e) {}
 
-  } catch (error) {
-    exactCorrect = false;
-  }
+  let rounded=current.x.toFixed(4);
 
-  const enteredDecimal = decimal.value.trim();
+  let decimal=
+    /^[+-]?(?:\d+\.\d{4}|\.\d{4})$/
+      .test(dec.value.trim()) &&
+    Math.abs(
+      Number(dec.value)-Number(rounded)
+    )<1e-9;
 
-  if (
-    /^[+-]?(?:\d+\.\d{4}|\.\d{4})$/.test(
-      enteredDecimal
-    )
-  ) {
-    decimalCorrect =
-      Math.abs(
-        Number(enteredDecimal) -
-        Number(current.x.toFixed(4))
-      ) < 1e-9;
-  }
-
-  setResult(
-    "editor",
-    "exactFeedback",
-    exactCorrect,
-    "Exact Solution"
+  feedback(
+    'exact-feedback',exact,'Exact solution'
   );
 
-  setResult(
-    "decimal",
-    "decimalFeedback",
-    decimalCorrect,
-    "Decimal Approximation"
+  feedback(
+    'decimal-feedback',
+    decimal,'Decimal approximation'
   );
 
-  $("live").textContent =
-    `Exact solution ${exactCorrect ? "correct" : "incorrect"}. ` +
-    `Decimal approximation ${decimalCorrect ? "correct" : "incorrect"}.`;
+  n.classList.toggle('field-good',exact);
+  n.classList.toggle('field-error',!exact);
+
+  d.classList.toggle('field-good',exact);
+  d.classList.toggle('field-error',!exact);
+
+  dec.classList.toggle('field-good',decimal);
+  dec.classList.toggle('field-error',!decimal);
+
+  $('announce').textContent=
+    'Exact answer '+
+    (exact?'correct':'incorrect')+
+    '. Decimal answer '+
+    (decimal?'correct':'incorrect')+'.';
 }
 
-// Insert math symbols at the cursor position.
+function insert(text) {
+  let el=active;
 
-function insertText(text) {
-  const element = focusPart || num;
-  element.focus();
+  let start=el.selectionStart??el.value.length;
+  let end=el.selectionEnd??start;
 
-  const selection = window.getSelection();
+  el.value=
+    el.value.slice(0,start)+text+
+    el.value.slice(end);
 
-  if (
-    !selection ||
-    !selection.rangeCount ||
-    !element.contains(selection.anchorNode)
-  ) {
-    element.append(document.createTextNode(text));
-    return;
-  }
+  let pos=start+text.length-
+    ((text==='ln()' ||
+      text==='log()' ||
+      text==='()')?1:0);
 
-  const range = selection.getRangeAt(0);
-  range.deleteContents();
-
-  const node = document.createTextNode(text);
-  range.insertNode(node);
-
-  const position =
-    ["ln()", "log()", "()"].includes(text)
-      ? text.length - 1
-      : text.length;
-
-  range.setStart(node, position);
-  range.collapse(true);
-
-  selection.removeAllRanges();
-  selection.addRange(range);
+  el.focus();
+  el.setSelectionRange(pos,pos);
+  updatePreview();
 }
 
-[num, den].forEach(element => {
-  element.addEventListener("focus", () => {
-    focusPart = element;
+[n,d].forEach(el=>{
+  el.addEventListener('focus',()=>{
+    active=el;
   });
 
-  element.addEventListener("keydown", event => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      (element === num ? den : decimal).focus();
+  el.addEventListener('input',updatePreview);
+
+  el.addEventListener('keydown',e=>{
+    if(e.key==='Enter') {
+      e.preventDefault();
+      (el===n?d:dec).focus();
     }
   });
-
-  element.addEventListener("paste", event => {
-    event.preventDefault();
-    insertText(event.clipboardData.getData("text/plain"));
-  });
 });
 
-document.querySelectorAll("[data-insert]").forEach(
-  button => {
-    button.addEventListener("click", () => {
-      insertText(button.dataset.insert);
-    });
-  }
-);
+document.querySelectorAll('[data-symbol]')
+  .forEach(b=>b.addEventListener(
+    'click',()=>insert(b.dataset.symbol)
+  ));
 
-$("back").addEventListener("click", () => {
-  focusPart.focus();
-  document.execCommand("delete", false, null);
+$('backspace').addEventListener('click',()=>{
+  let el=active;
+  let start=el.selectionStart;
+  let end=el.selectionEnd;
+
+  if(start===end && start>0) start--;
+
+  el.value=
+    el.value.slice(0,start)+
+    el.value.slice(end);
+
+  el.focus();
+  el.setSelectionRange(start,start);
+  updatePreview();
 });
 
-$("clear").addEventListener("click", () => {
-  num.textContent = "";
-  den.textContent = "";
-  num.focus();
+$('clear').addEventListener('click',()=>{
+  n.value='';
+  d.value='';
+  updatePreview();
+  n.focus();
 });
 
-$("submit").addEventListener("click", submitAnswers);
-$("next").addEventListener("click", nextProblem);
+$('submit').addEventListener('click',submit);
+$('next').addEventListener('click',newProblem);
 
-$("toggle").addEventListener("click", () => {
-  solutionVisible = !solutionVisible;
+$('toggle').addEventListener('click',()=>{
+  shown=!shown;
 
-  $("solution").hidden = !solutionVisible;
-  $("toggle").textContent =
-    solutionVisible ? "Hide Solution" : "Show Solution";
+  $('solution').hidden=!shown;
 
-  $("toggle").setAttribute(
-    "aria-expanded",
-    String(solutionVisible)
+  $('toggle').textContent=
+    shown?'Hide Solution':'Show Solution';
+
+  $('toggle').setAttribute(
+    'aria-expanded',String(shown)
   );
 
-  if (solutionVisible) typeset();
+  if(shown) typeset([$('solution')]);
 });
 
-$("theme").addEventListener("click", () => {
-  const light = app.classList.toggle("light");
+$('theme').addEventListener('click',()=>{
+  let light=root.classList.toggle('light');
 
-  document.documentElement.style.colorScheme =
-    light ? "light" : "dark";
+  $('theme').textContent=
+    light?'☾ Dark mode':'☀ Light mode';
 
-  $("theme").textContent =
-    light ? "☾ Dark mode" : "☀ Light mode";
-
-  $("theme").setAttribute(
-    "aria-label",
-    light ? "Switch to dark mode" : "Switch to light mode"
+  $('theme').setAttribute(
+    'aria-label',
+    light?'Switch to dark mode':
+          'Switch to light mode'
   );
 });
 
-nextProblem();
+newProblem();
 
 })();
 </script>
