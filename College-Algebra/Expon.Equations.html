@@ -3,660 +3,886 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Exponential Equations - Common Bases</title>
 
 <script>
-window.MathJax={
- tex:{inlineMath:[['\\(','\\)']]},
- svg:{fontCache:'global'}
+window.MathJax = {
+  tex: {
+    inlineMath: [["\\(", "\\)"]]
+  },
+  svg: {
+    fontCache: "global"
+  }
 };
 </script>
+
 <script defer
- src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
 </script>
 
 <style>
-*{box-sizing:border-box}
-
-:root{
- --bg:#101827;
- --panel:#1c2a45;
- --field:#192841;
- --text:#f6f7ff;
- --muted:#b5c4df;
- --border:#425679;
- --soft:#2c4165;
- --good:#86e9b7;
- --bad:#ff9ea9;
- --accent:#8772ff;
+* {
+  box-sizing: border-box;
 }
 
-body.light{
- --bg:#fff;
- --panel:#eff2ff;
- --field:#fff;
- --text:#18243c;
- --muted:#52627e;
- --border:#c5cfe2;
- --soft:#e4eafa;
- --good:#167447;
- --bad:#b82f45;
+:root {
+  --bg: #101827;
+  --panel: #1c2a45;
+  --field: #192841;
+  --text: #f6f7ff;
+  --muted: #b5c4df;
+  --border: #425679;
+  --soft: #2c4165;
+  --good: #86e9b7;
+  --bad: #ff9ea9;
+  --accent: #8772ff;
 }
 
-body{
- margin:0;
- padding:12px;
- background:var(--bg);
- color:var(--text);
- font:15px Arial,sans-serif;
+body.light {
+  --bg: #ffffff;
+  --panel: #eff2ff;
+  --field: #ffffff;
+  --text: #18243c;
+  --muted: #52627e;
+  --border: #c5cfe2;
+  --soft: #e4eafa;
+  --good: #167447;
+  --bad: #b82f45;
 }
 
-.app{
- max-width:760px;
- margin:auto;
+body {
+  margin: 0;
+  padding: 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px Arial, sans-serif;
 }
 
-.top{
- display:flex;
- align-items:center;
- justify-content:space-between;
- gap:10px;
- margin-bottom:12px;
+.app {
+  max-width: 760px;
+  margin: auto;
 }
 
-button{
- border:0;
- border-radius:10px;
- padding:12px;
- font:inherit;
- font-weight:bold;
- cursor:pointer;
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
-.theme{
- background:var(--soft);
- color:var(--text);
- border:1px solid var(--border);
- border-radius:25px;
- font-size:12px;
- padding:8px 12px;
- white-space:nowrap;
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-.problem{
- background:var(--panel);
- border:1px solid var(--accent);
- border-radius:15px;
- padding:25px 12px;
- text-align:center;
+.theme {
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 25px;
+  font-size: 12px;
+  padding: 8px 12px;
+  white-space: nowrap;
 }
 
-.prompt{
- color:var(--muted);
- font-size:13px;
- margin-bottom:12px;
+.problem {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 15px;
+  padding: 24px 12px;
+  text-align: center;
+  overflow: visible;
 }
 
-.equation{
- font-size:25px;
- overflow-x:auto;
+.prompt {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 12px;
 }
 
-.answer-area{
- margin:16px 0;
- display:flex;
- align-items:center;
- justify-content:center;
- gap:10px;
+/* No internal scrollbars */
+.equation {
+  font-size: 25px;
+  text-align: center;
+  overflow: visible;
+  max-width: 100%;
 }
 
-.answer-area label{
- font-size:19px;
- font-weight:bold;
+/* Allow MathJax to fit within the container */
+.equation mjx-container {
+  max-width: 100%;
 }
 
-.answer-area input{
- width:180px;
- max-width:70%;
- padding:12px;
- border:1px solid var(--border);
- border-radius:10px;
- background:var(--field);
- color:var(--text);
- font:inherit;
- text-align:center;
+.answer-area {
+  margin: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-.actions{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:9px;
+.answer-area label {
+  font-size: 19px;
+  font-weight: bold;
 }
 
-.submit{
- background:linear-gradient(100deg,#905cf6,#6258ed);
- color:white;
+.answer-area input {
+  width: 180px;
+  max-width: 70%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--field);
+  color: var(--text);
+  font: inherit;
+  text-align: center;
 }
 
-.next{
- background:#31568d;
- color:white;
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
 }
 
-.reveal{
- width:100%;
- margin-top:9px;
- background:var(--soft);
- color:var(--text);
- border:1px solid var(--border);
+.submit {
+  background: linear-gradient(
+    100deg, #905cf6, #6258ed
+  );
+  color: white;
 }
 
-.feedback{
- margin:10px 0;
- min-height:16px;
- font-weight:bold;
- text-align:center;
+.next {
+  background: #31568d;
+  color: white;
 }
 
-.solution{
- display:none;
- margin-top:12px;
- padding:15px;
- background:var(--panel);
- border:1px solid var(--border);
- border-radius:12px;
+.reveal {
+  width: 100%;
+  margin-top: 9px;
+  background: var(--soft);
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 
-.step{
- padding:12px 0;
- border-bottom:1px solid var(--border);
+.feedback {
+  margin: 10px 0;
+  min-height: 16px;
+  font-weight: bold;
+  text-align: center;
 }
 
-.step:last-child{
- border-bottom:0;
+.solution {
+  display: none;
+  margin-top: 12px;
+  padding: 15px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: visible;
 }
 
-.step-title{
- font-weight:bold;
- margin-bottom:9px;
+.step {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
 }
 
-.work{
- text-align:center;
- font-size:18px;
- overflow-x:auto;
+.step:last-child {
+  border-bottom: 0;
 }
 
-.good{color:var(--good)}
-.bad{color:var(--bad)}
+.step-title {
+  font-weight: bold;
+  margin-bottom: 9px;
+}
 
-@media(max-width:480px){
- body{padding:8px}
- .equation{font-size:21px}
- .work{font-size:16px}
- button{
-  padding:10px 7px;
-  font-size:13px;
- }
+/* No scrollbar beside worked solutions */
+.work {
+  text-align: center;
+  font-size: 18px;
+  overflow: visible;
+  max-width: 100%;
+  padding: 2px 0;
+}
+
+.work mjx-container {
+  max-width: 100%;
+}
+
+.good {
+  color: var(--good);
+}
+
+.bad {
+  color: var(--bad);
+}
+
+@media(max-width:480px) {
+  body {
+    padding: 8px;
+  }
+
+  .problem {
+    padding: 20px 8px;
+  }
+
+  .equation {
+    font-size: 20px;
+  }
+
+  .work {
+    font-size: 15px;
+  }
+
+  .solution {
+    padding: 10px;
+  }
+
+  button {
+    padding: 10px 7px;
+    font-size: 13px;
+  }
 }
 </style>
 </head>
 
 <body>
+
 <main class="app">
 
 <div class="top">
- <strong>Solve the exponential equation.</strong>
- <button id="theme" class="theme">
-  ☀ Light mode
- </button>
+  <strong>Solve the exponential equation.</strong>
+
+  <button id="theme" class="theme">
+    Light mode
+  </button>
 </div>
 
 <div class="problem">
- <div class="prompt">
-  Rewrite using a common base and solve for x.
- </div>
- <div id="equation" class="equation"></div>
+
+  <div class="prompt">
+    Rewrite using a common base and solve for x.
+  </div>
+
+  <div id="equation" class="equation"></div>
+
 </div>
 
 <div class="answer-area">
- <label for="answer">x =</label>
- <input
-  id="answer"
-  type="text"
-  placeholder="Integer or fraction"
-  autocomplete="off">
+  <label for="answer">x =</label>
+
+  <input
+    id="answer"
+    type="text"
+    placeholder="Integer or fraction"
+    autocomplete="off">
 </div>
 
 <div class="actions">
- <button id="submit" class="submit">Submit</button>
- <button id="next" class="next">Try Similar</button>
+  <button id="submit" class="submit">
+    Submit
+  </button>
+
+  <button id="next" class="next">
+    Try Similar
+  </button>
 </div>
 
 <button id="reveal" class="reveal">
- Show Solution
+  Show Solution
 </button>
 
 <div id="feedback"
- class="feedback"
- aria-live="polite"></div>
+     class="feedback"
+     aria-live="polite"></div>
 
-<div id="solution" class="solution"></div>
+<div id="solution"
+     class="solution"></div>
 
 </main>
 
 <script>
 "use strict";
 
-const $=id=>document.getElementById(id);
-const rand=(a,b)=>
- Math.floor(Math.random()*(b-a+1))+a;
-const tex=s=>"\\("+s+"\\)";
+const $ = id => document.getElementById(id);
 
-let problems=[];
-let current=null;
-let last=-1;
-let shown=false;
+const rand = (a,b) =>
+  Math.floor(Math.random()*(b-a+1))+a;
 
-// -----------------------------
+const tex = s => "\\(" + s + "\\)";
+
+let problems = [];
+let current = null;
+let last = -1;
+let shown = false;
+
+// --------------------------------
 // FRACTION UTILITIES
-// -----------------------------
+// --------------------------------
 
-function gcd(a,b){
- a=Math.abs(a);
- b=Math.abs(b);
+function gcd(a,b) {
+  a = Math.abs(a);
+  b = Math.abs(b);
 
- while(b!==0){
-  const t=b;
-  b=a%b;
-  a=t;
- }
- return a;
+  while(b!==0) {
+    const t = b;
+    b = a%b;
+    a = t;
+  }
+
+  return a;
 }
 
-function F(n,d=1){
- if(d===0)throw Error("Zero denominator");
+function F(n,d=1) {
+  if(d===0) {
+    throw Error("Zero denominator");
+  }
 
- if(d<0){
-  n=-n;
-  d=-d;
- }
+  if(d<0) {
+    n = -n;
+    d = -d;
+  }
 
- if(n===0)return [0,1];
+  if(n===0) {
+    return [0,1];
+  }
 
- const g=gcd(n,d);
- return [n/g,d/g];
+  const g = gcd(n,d);
+
+  return [n/g,d/g];
 }
 
-function fractionTex(f){
- if(f[1]===1)return String(f[0]);
+function fractionTex(f) {
+  if(f[1]===1) {
+    return String(f[0]);
+  }
 
- return `\\frac{${f[0]}}{${f[1]}}`;
+  return `\\frac{${f[0]}}{${f[1]}}`;
 }
 
-// -----------------------------
+// --------------------------------
 // LINEAR EXPRESSION FORMATTER
-// -----------------------------
+// --------------------------------
 
-function linearTex(a,b){
- let result="";
+function linearTex(a,b) {
+  let result = "";
 
- if(a===1)result="x";
- else if(a===-1)result="-x";
- else result=a+"x";
+  if(a===1) {
+    result = "x";
+  } else if(a===-1) {
+    result = "-x";
+  } else {
+    result = a+"x";
+  }
 
- if(b>0)result+="+"+b;
- if(b<0)result+=b;
+  if(b>0) {
+    result += "+"+b;
+  }
 
- return result;
+  if(b<0) {
+    result += b;
+  }
+
+  return result;
 }
 
-function expandedTex(a,b){
- if(a===0)return String(b);
- return linearTex(a,b);
+function expandedTex(a,b) {
+  if(a===0) {
+    return String(b);
+  }
+
+  return linearTex(a,b);
 }
 
-// -----------------------------
+// --------------------------------
 // BASE FAMILIES
-// -----------------------------
+// --------------------------------
 
-// Every displayed base is a power
-// of a common integer base.
-//
-// Negative powers produce fractions.
-
-const families=[
- {base:2,powers:[-4,-3,-2,-1,1,2,3,4,5,6]},
- {base:3,powers:[-3,-2,-1,1,2,3,4]},
- {base:5,powers:[-2,-1,1,2,3]},
- {base:7,powers:[-2,-1,1,2]}
+const families = [
+  {
+    base:2,
+    powers:[-4,-3,-2,-1,1,2,3,4,5,6]
+  },
+  {
+    base:3,
+    powers:[-3,-2,-1,1,2,3,4]
+  },
+  {
+    base:5,
+    powers:[-2,-1,1,2,3]
+  },
+  {
+    base:7,
+    powers:[-2,-1,1,2]
+  }
 ];
 
-function baseTex(base,power){
- if(power>0){
-  return String(base**power);
- }
+// --------------------------------
+// BASE FORMATTERS
+// --------------------------------
 
- return `\\frac{1}{${base**(-power)}}`;
+function baseTex(base,power) {
+  if(power>0) {
+    return String(base**power);
+  }
+
+  return `\\frac{1}{${base**(-power)}}`;
 }
 
-function commonBaseTex(base,power){
- if(power<0){
-  return `(${base}^{${power}})`;
- }
+// Avoid unnecessary notation such as (5^1).
+// Only use parentheses when mathematically
+// necessary for negative powers.
 
- return `(${base}^{${power}})`;
+function commonBaseTex(base,power) {
+  if(power===1) {
+    return String(base);
+  }
+
+  if(power===-1) {
+    return `\\left(\\frac{1}{${base}}\\right)`;
+  }
+
+  if(power>1) {
+    return `(${base}^{${power}})`;
+  }
+
+  return `\\left(\\frac{1}{${base**(-power)}}\\right)`;
 }
 
-// -----------------------------
+// --------------------------------
 // PROBLEM GENERATION
-// -----------------------------
+// --------------------------------
 
-function generate(){
- const seen=new Set();
- let attempts=0;
+function generate() {
+  const seen = new Set();
+  let attempts = 0;
 
- while(problems.length<50 && attempts<200000){
-  attempts++;
+  while(
+    problems.length<50 &&
+    attempts<200000
+  ) {
+    attempts++;
 
-  const family=
-   families[rand(0,families.length-1)];
+    const family =
+      families[rand(0,families.length-1)];
 
-  const powers=family.powers;
+    const powers = family.powers;
 
-  const p=powers[rand(0,powers.length-1)];
-  const q=powers[rand(0,powers.length-1)];
+    const p =
+      powers[rand(0,powers.length-1)];
 
-  // Never start with identical bases.
-  if(p===q)continue;
+    const q =
+      powers[rand(0,powers.length-1)];
 
-  const a=rand(-5,5);
-  const c=rand(-5,5);
+    // Bases must begin differently.
+    if(p===q) {
+      continue;
+    }
 
-  if(a===0||c===0)continue;
+    const a = rand(-5,5);
+    const c = rand(-5,5);
 
-  // Ensure a unique solution.
-  if(p*a===q*c)continue;
+    if(a===0 || c===0) {
+      continue;
+    }
 
-  const b=rand(-8,8);
-  const d=rand(-8,8);
+    // Guarantee a unique solution.
+    if(p*a===q*c) {
+      continue;
+    }
 
-  // p(ax+b)=q(cx+d)
-  //
-  // (pa-qc)x=qd-pb
+    const b = rand(-8,8);
+    const d = rand(-8,8);
 
-  const numerator=q*d-p*b;
-  const denominator=p*a-q*c;
+    // p(ax+b)=q(cx+d)
 
-  const answer=F(numerator,denominator);
+    const numerator =
+      q*d-p*b;
 
-  if(Math.abs(answer[0])>25)continue;
-  if(answer[1]>12)continue;
+    const denominator =
+      p*a-q*c;
 
-  // Avoid extremely large numbers.
-  const leftValue=family.base**Math.abs(p);
-  const rightValue=family.base**Math.abs(q);
+    const answer =
+      F(numerator,denominator);
 
-  if(leftValue>625||rightValue>625)continue;
+    if(Math.abs(answer[0])>25) {
+      continue;
+    }
 
-  const key=[
-   family.base,p,q,a,b,c,d
-  ].join(",");
+    if(answer[1]>12) {
+      continue;
+    }
 
-  if(seen.has(key))continue;
-  seen.add(key);
+    const leftValue =
+      family.base**Math.abs(p);
 
-  problems.push({
-   base:family.base,
-   p,q,a,b,c,d,
-   answer
-  });
- }
+    const rightValue =
+      family.base**Math.abs(q);
+
+    if(
+      leftValue>625 ||
+      rightValue>625
+    ) {
+      continue;
+    }
+
+    const key = [
+      family.base,p,q,a,b,c,d
+    ].join(",");
+
+    if(seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+
+    problems.push({
+      base:family.base,
+      p,q,a,b,c,d,answer
+    });
+  }
 }
 
-// -----------------------------
-// MATHJAX
-// -----------------------------
+// --------------------------------
+// MATHJAX RENDERING
+// --------------------------------
 
-async function typeset(el){
- if(!window.MathJax)return;
+// Queue MathJax updates so repeatedly
+// selecting Try Similar does not cause
+// overlapping typesetting operations.
 
- try{
-  await MathJax.startup.promise;
-  await MathJax.typesetPromise([el]);
- }catch(e){
-  console.error(e);
- }
+let mathQueue = Promise.resolve();
+
+function typeset(el) {
+  mathQueue = mathQueue.then(async () => {
+    if(!window.MathJax) {
+      return;
+    }
+
+    await MathJax.startup.promise;
+
+    MathJax.typesetClear([el]);
+
+    await MathJax.typesetPromise([el]);
+  }).catch(console.error);
+
+  return mathQueue;
 }
 
-// -----------------------------
+// --------------------------------
 // NEW PROBLEM
-// -----------------------------
+// --------------------------------
 
-function newProblem(){
- let i;
+function newProblem() {
+  if(!problems.length) {
+    return;
+  }
 
- do{
-  i=rand(0,problems.length-1);
- }while(i===last);
+  let i;
 
- last=i;
- current=problems[i];
- shown=false;
+  do {
+    i = rand(0,problems.length-1);
+  } while(
+    problems.length>1 &&
+    i===last
+  );
 
- const p=current;
+  last = i;
+  current = problems[i];
+  shown = false;
 
- const leftBase=baseTex(p.base,p.p);
- const rightBase=baseTex(p.base,p.q);
+  const p = current;
 
- // Fractional bases require parentheses
- // so the exponent applies to the fraction.
- const left=
-  p.p<0?`\\left(${leftBase}\\right)`:
-  leftBase;
+  const leftBase =
+    baseTex(p.base,p.p);
 
- const right=
-  p.q<0?`\\left(${rightBase}\\right)`:
-  rightBase;
+  const rightBase =
+    baseTex(p.base,p.q);
 
- $("equation").textContent=tex(
-  `${left}^{${linearTex(p.a,p.b)}}=
-   ${right}^{${linearTex(p.c,p.d)}}`
- );
+  const left =
+    p.p<0 ?
+    `\\left(${leftBase}\\right)` :
+    leftBase;
 
- $("answer").value="";
- $("feedback").textContent="";
- $("feedback").className="feedback";
+  const right =
+    p.q<0 ?
+    `\\left(${rightBase}\\right)` :
+    rightBase;
 
- $("solution").style.display="none";
- $("solution").replaceChildren();
+  $("equation").textContent = tex(
+    `${left}^{${linearTex(p.a,p.b)}}=
+     ${right}^{${linearTex(p.c,p.d)}}`
+  );
 
- $("reveal").textContent="Show Solution";
+  $("answer").value = "";
 
- typeset($("equation"));
+  $("feedback").textContent = "";
+  $("feedback").className = "feedback";
+
+  $("solution").style.display = "none";
+  $("solution").replaceChildren();
+
+  $("reveal").textContent =
+    "Show Solution";
+
+  typeset($("equation"));
 }
 
-// -----------------------------
+// --------------------------------
 // ANSWER PARSER
-// -----------------------------
+// --------------------------------
 
-function parseFraction(raw){
- const s=raw.trim().replace(/\s+/g,"");
+function parseFraction(raw) {
+  const s = raw
+    .trim()
+    .replace(/\s+/g,"");
 
- if(!/^[+-]?\d+(\/[+-]?\d+)?$/.test(s)){
-  return null;
- }
+  if(
+    !/^[+-]?\d+(\/[+-]?\d+)?$/.test(s)
+  ) {
+    return null;
+  }
 
- const parts=s.split("/").map(Number);
+  const parts =
+    s.split("/").map(Number);
 
- if(!parts.every(Number.isSafeInteger)){
-  return null;
- }
+  if(
+    !parts.every(Number.isSafeInteger)
+  ) {
+    return null;
+  }
 
- const denominator=
-  parts.length===2?parts[1]:1;
+  const denominator =
+    parts.length===2 ?
+    parts[1] : 1;
 
- if(denominator===0)return null;
+  if(denominator===0) {
+    return null;
+  }
 
- return F(parts[0],denominator);
+  return F(
+    parts[0],
+    denominator
+  );
 }
 
-function same(a,b){
- return a!==null &&
-  a[0]===b[0] &&
-  a[1]===b[1];
+function same(a,b) {
+  return a!==null &&
+    a[0]===b[0] &&
+    a[1]===b[1];
 }
 
-// -----------------------------
+// --------------------------------
 // CHECK ANSWER
-// -----------------------------
+// --------------------------------
 
-function check(){
- const user=parseFraction($("answer").value);
- const correct=same(user,current.answer);
+function check() {
+  const user =
+    parseFraction($("answer").value);
 
- const fb=$("feedback");
+  const correct =
+    same(user,current.answer);
 
- if(user===null){
-  fb.textContent=
-   "Enter an integer or fraction, such as -3/4.";
-  fb.className="feedback bad";
-  return;
- }
+  const fb = $("feedback");
 
- fb.textContent=correct?
-  "Correct! Your solution is correct.":
-  "Incorrect. Rewrite both sides using a common base.";
+  if(user===null) {
+    fb.textContent =
+      "Enter an integer or fraction, such as -3/4.";
 
- fb.className="feedback "+
-  (correct?"good":"bad");
+    fb.className =
+      "feedback bad";
+
+    return;
+  }
+
+  fb.textContent = correct ?
+    "Correct! Your solution is correct." :
+    "Incorrect. Rewrite both sides using a common base.";
+
+  fb.className =
+    "feedback " +
+    (correct?"good":"bad");
 }
 
-// -----------------------------
+// --------------------------------
 // WORKED SOLUTION
-// -----------------------------
+// --------------------------------
 
-function addStep(container,label,math){
- const step=document.createElement("div");
- step.className="step";
+function addStep(container,label,math) {
+  const step =
+    document.createElement("div");
 
- const heading=document.createElement("div");
- heading.className="step-title";
- heading.textContent=label;
+  step.className = "step";
 
- const work=document.createElement("div");
- work.className="work";
- work.textContent=tex(math);
+  const heading =
+    document.createElement("div");
 
- step.append(heading,work);
- container.append(step);
+  heading.className = "step-title";
+  heading.textContent = label;
+
+  const work =
+    document.createElement("div");
+
+  work.className = "work";
+  work.textContent = tex(math);
+
+  step.append(heading,work);
+  container.append(step);
 }
 
-function showSolution(){
- shown=!shown;
+function showSolution() {
+  shown = !shown;
 
- const el=$("solution");
+  const el = $("solution");
 
- el.style.display=shown?"block":"none";
+  el.style.display =
+    shown?"block":"none";
 
- $("reveal").textContent=shown?
-  "Hide Solution":"Show Solution";
+  $("reveal").textContent =
+    shown?"Hide Solution":"Show Solution";
 
- if(!shown)return;
+  if(!shown) {
+    return;
+  }
 
- el.replaceChildren();
+  el.replaceChildren();
 
- const heading=document.createElement("strong");
- heading.textContent="Step-by-step solution";
- el.append(heading);
+  const {
+    base,p,q,a,b,c,d,answer
+  } = current;
 
- const {
-  base,p,q,a,b,c,d,answer
- }=current;
+  const leftExp =
+    linearTex(a,b);
 
- const leftExp=linearTex(a,b);
- const rightExp=linearTex(c,d);
+  const rightExp =
+    linearTex(c,d);
 
- // Step 1
- addStep(
-  el,
-  "Step 1: Rewrite each base as a power of the same base.",
-  `(${base}^{${p}})^{${leftExp}}=
-   (${base}^{${q}})^{${rightExp}}`
- );
+  const heading =
+    document.createElement("strong");
 
- // Step 2
- addStep(
-  el,
-  "Step 2: Apply the power-of-a-power property.",
-  `${base}^{${p}(${leftExp})}=
-   ${base}^{${q}(${rightExp})}`
- );
+  heading.textContent =
+    "Step-by-step solution";
 
- // Step 3
- addStep(
-  el,
-  "Step 3: Set the exponents equal.",
-  `${p}(${leftExp})=
-   ${q}(${rightExp})`
- );
+  el.append(heading);
 
- // Step 4
- const leftA=p*a;
- const leftB=p*b;
- const rightA=q*c;
- const rightB=q*d;
+  // Step 1:
+  // Rewrite both bases using
+  // the common integer base.
 
- addStep(
-  el,
-  "Step 4: Distribute and simplify.",
-  `${expandedTex(leftA,leftB)}=
-   ${expandedTex(rightA,rightB)}`
- );
+  addStep(
+    el,
+    "Step 1: Rewrite each base as a power of the same base.",
+    `${commonBaseTex(base,p)}^{${leftExp}}=
+     ${commonBaseTex(base,q)}^{${rightExp}}`
+  );
 
- // Step 5
- const coefficient=leftA-rightA;
- const constant=rightB-leftB;
+  // Step 2:
+  // Apply the power-of-a-power property.
 
- addStep(
-  el,
-  "Step 5: Isolate the variable term.",
-  `${coefficient}x=${constant}`
- );
+  addStep(
+    el,
+    "Step 2: Apply the power-of-a-power property.",
+    `${base}^{${p}(${leftExp})}=
+     ${base}^{${q}(${rightExp})}`
+  );
 
- // Step 6
- addStep(
-  el,
-  "Step 6: Divide to solve for x.",
-  `x=${fractionTex(answer)}`
- );
+  // Step 3:
+  // Equal bases imply equal exponents.
 
- typeset(el);
+  addStep(
+    el,
+    "Step 3: Set the exponents equal.",
+    `${p}(${leftExp})=
+     ${q}(${rightExp})`
+  );
+
+  // Step 4:
+  // Distribute.
+
+  const leftA = p*a;
+  const leftB = p*b;
+
+  const rightA = q*c;
+  const rightB = q*d;
+
+  addStep(
+    el,
+    "Step 4: Distribute and simplify.",
+    `${expandedTex(leftA,leftB)}=
+     ${expandedTex(rightA,rightB)}`
+  );
+
+  // Step 5:
+  // Collect variable terms.
+
+  const coefficient =
+    leftA-rightA;
+
+  const constant =
+    rightB-leftB;
+
+  addStep(
+    el,
+    "Step 5: Isolate the variable term.",
+    `${expandedTex(coefficient,0)}=${constant}`
+  );
+
+  // Step 6:
+  // Solve.
+
+  addStep(
+    el,
+    "Step 6: Divide to solve for x.",
+    `x=${fractionTex(answer)}`
+  );
+
+  typeset(el);
 }
 
-// -----------------------------
+// --------------------------------
 // EVENTS
-// -----------------------------
+// --------------------------------
 
-$("theme").onclick=()=>{
- const light=
-  document.body.classList.toggle("light");
+$("theme").onclick = () => {
+  const light =
+    document.body.classList.toggle("light");
 
- $("theme").textContent=light?
-  "☾ Dark mode":"☀ Light mode";
+  $("theme").textContent = light ?
+    "Dark mode" :
+    "Light mode";
 };
 
-$("submit").onclick=check;
-$("next").onclick=newProblem;
-$("reveal").onclick=showSolution;
+$("submit").onclick = check;
 
-$("answer").addEventListener("keydown",e=>{
- if(e.key==="Enter")check();
-});
+$("next").onclick =
+  newProblem;
+
+$("reveal").onclick =
+  showSolution;
+
+$("answer").addEventListener(
+  "keydown",
+  e => {
+    if(e.key==="Enter") {
+      check();
+    }
+  }
+);
+
+// --------------------------------
+// INITIALIZE
+// --------------------------------
 
 generate();
 newProblem();
+
 </script>
+
 </body>
 </html>
