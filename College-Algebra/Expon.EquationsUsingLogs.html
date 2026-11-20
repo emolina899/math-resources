@@ -40,9 +40,9 @@ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
 }
 
 body.light {
-  --bg: #fff;
+  --bg: #ffffff;
   --panel: #eff2ff;
-  --field: #fff;
+  --field: #ffffff;
   --text: #18243c;
   --muted: #52627e;
   --border: #c5cfe2;
@@ -97,6 +97,7 @@ button {
   border-radius: 15px;
   padding: 24px 12px;
   text-align: center;
+  overflow: visible;
 }
 
 .prompt {
@@ -107,7 +108,23 @@ button {
 
 .equation {
   font-size: 24px;
-  overflow-x: auto;
+  text-align: center;
+  overflow: visible;
+  max-width: 100%;
+}
+
+/* No internal scrollbars */
+
+.equation mjx-container,
+.work mjx-container {
+  overflow: visible !important;
+  max-width: 100%;
+}
+
+.equation mjx-container[jax="SVG"] svg,
+.work mjx-container[jax="SVG"] svg {
+  max-width: 100%;
+  height: auto;
 }
 
 .answers {
@@ -296,11 +313,13 @@ button {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
+  overflow: visible;
 }
 
 .step {
   padding: 12px 0;
   border-bottom: 1px solid var(--border);
+  overflow: visible;
 }
 
 .step:last-child {
@@ -315,7 +334,9 @@ button {
 .work {
   text-align: center;
   font-size: 18px;
-  overflow-x: auto;
+  overflow: visible;
+  max-width: 100%;
+  padding: 3px 0;
 }
 
 .good {
@@ -331,12 +352,20 @@ button {
     padding: 8px;
   }
 
+  .problem {
+    padding: 20px 8px;
+  }
+
   .equation {
-    font-size: 21px;
+    font-size: 20px;
   }
 
   .work {
-    font-size: 16px;
+    font-size: 15px;
+  }
+
+  .solution {
+    padding: 10px;
   }
 
   .tool {
@@ -360,6 +389,7 @@ button {
 
 <div class="top">
   <strong>Solve the exponential equation.</strong>
+
   <button id="theme" class="theme">
     Light mode
   </button>
@@ -554,18 +584,52 @@ function generate() {
 }
 
 // --------------------------------
-// MATHJAX
+// MATHJAX RENDERING
 // --------------------------------
 
-async function typeset(el) {
-  if(!window.MathJax) return;
+let mathQueue = Promise.resolve();
 
-  try {
+function typeset(el) {
+  mathQueue = mathQueue.then(async () => {
+    if(!window.MathJax) return;
+
     await MathJax.startup.promise;
+
+    MathJax.typesetClear([el]);
+
     await MathJax.typesetPromise([el]);
-  } catch(e) {
-    console.error(e);
-  }
+
+    fitMath(el);
+  }).catch(console.error);
+
+  return mathQueue;
+}
+
+// Scale rendered mathematics to fit.
+// No scrollbars are introduced.
+
+function fitMath(parent) {
+  const containers =
+    parent.querySelectorAll("mjx-container");
+
+  containers.forEach(container => {
+    container.style.transform = "";
+    container.style.width = "";
+    container.style.transformOrigin = "center center";
+
+    const available = parent.clientWidth - 12;
+    const actual = container.scrollWidth;
+
+    if(actual > available && available > 0) {
+      const scale = available / actual;
+
+      container.style.transform =
+        `scale(${scale})`;
+
+      container.style.width =
+        `${100/scale}%`;
+    }
+  });
 }
 
 // --------------------------------
@@ -580,6 +644,7 @@ function makeRegion() {
   region.spellcheck = false;
 
   region.setAttribute("role","textbox");
+
   region.setAttribute(
     "aria-label","Mathematical expression"
   );
@@ -721,7 +786,6 @@ function insertFraction() {
     denominator
   );
 
-  // Replace the original empty box.
   if(
     activeRegion &&
     activeRegion.parentNode===root &&
@@ -1073,10 +1137,6 @@ function check() {
 // WORKED SOLUTION FORMATTING
 // --------------------------------
 
-// NEW: Formats logarithmic terms
-// without double negatives or
-// unnecessary coefficients of 1.
-
 function signedLogTerm(
   coefficient,
   logExpression,
@@ -1201,15 +1261,6 @@ function showSolution() {
     `(${leftExp})${L}=
      (${rightExp})${R}`
   );
-
-  // Rearranging:
-  //
-  // (ax+b)ln(L)=(cx+d)ln(R)
-  //
-  // x=(d ln(R)-b ln(L))/
-  //   (a ln(L)-c ln(R))
-  //
-  // Signs are simplified automatically.
 
   const numerator = formatLogSum([
     {coefficient:d,log:R},
