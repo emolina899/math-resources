@@ -8,23 +8,24 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#eef2f7;font-family:Arial,sans-serif}
-#two-set-venn{--bg:#fff;--text:#182235;--muted:#334155;--panel:#edf3ff;--panel2:#f1f5f9;--diagram:#f8fafc;--border:#64748b;--primary:#284bd8;--primaryText:#fff;--secondary:#e2e8f0;--secondaryText:#182235;--field:#fff;--a:#1d4ed8;--b:#9a3412;--correct:#166534;--correctBg:#dcfce7;--incorrect:#991b1b;--incorrectBg:#fee2e2;--focus:#1d4ed8;max-width:850px;margin:12px auto;padding:20px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);font:16px/1.5 Arial,sans-serif}
-#two-set-venn.dark{--bg:#141b29;--text:#f1f5f9;--muted:#cbd5e1;--panel:#263449;--panel2:#202c40;--diagram:#1e293b;--border:#94a3b8;--primary:#bfd0ff;--primaryText:#172554;--secondary:#334155;--secondaryText:#f1f5f9;--field:#243247;--a:#93c5fd;--b:#fdba74;--correct:#86efac;--correctBg:#123c2d;--incorrect:#fca5a5;--incorrectBg:#54242c;--focus:#fbbf24}
-#two-set-venn .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
-#two-set-venn h2{font-size:1.35rem;margin:0}
-#two-set-venn .prompt{background:var(--panel);border-radius:9px;padding:15px;line-height:1.6}
-#two-set-venn .prompt p{margin:9px 0}
-#two-set-venn .data{background:var(--panel2);border-radius:8px;padding:12px;margin:12px 0}
-#two-set-venn .instruction{margin:12px 0}
-#two-set-venn .diagram{position:relative;width:100%;max-width:530px;aspect-ratio:530/315;margin:16px auto;background:var(--diagram);border:2px solid var(--border);border-radius:8px}
-#two-set-venn .circle{position:absolute;top:12%;width:55%;height:75%;border:3px solid;border-radius:50%}
+#two-set-venn{--bg:#fff;--text:#182235;--panel:#edf3ff;--panel2:#f1f5f9;--diagram:#f8fafc;--border:#64748b;--primary:#284bd8;--primaryText:#fff;--secondary:#e2e8f0;--secondaryText:#182235;--field:#fff;--a:#1d4ed8;--b:#9a3412;--correct:#166534;--correctBg:#dcfce7;--incorrect:#991b1b;--incorrectBg:#fee2e2;--focus:#1d4ed8;max-width:850px;margin:12px auto;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);font:16px/1.5 Arial,sans-serif}
+#two-set-venn.dark{--bg:#141b29;--text:#f1f5f9;--panel:#263449;--panel2:#202c40;--diagram:#1e293b;--border:#94a3b8;--primary:#bfd0ff;--primaryText:#172554;--secondary:#334155;--secondaryText:#f1f5f9;--field:#243247;--a:#93c5fd;--b:#fdba74;--correct:#86efac;--correctBg:#123c2d;--incorrect:#fca5a5;--incorrectBg:#54242c;--focus:#fbbf24}
+#two-set-venn .top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+#two-set-venn h2{font-size:1.25rem;margin:0}
+#two-set-venn .prompt{background:var(--panel);border-radius:9px;padding:12px 14px;line-height:1.5}
+#two-set-venn .prompt p{margin:7px 0}
+#two-set-venn .data{background:var(--panel2);border-radius:7px;padding:9px 11px;margin:8px 0}
+#two-set-venn .instruction{margin:9px 0}
+#two-set-venn .diagram-scroll{max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;overscroll-behavior-x:contain}
+#two-set-venn .diagram{position:relative;width:100%;min-width:450px;max-width:530px;aspect-ratio:530/315;margin:10px auto 12px;background:var(--diagram);border:2px solid var(--border);border-radius:8px}
+#two-set-venn .circle{position:absolute;top:12%;width:55%;height:75%;border:3px solid;border-radius:50%;pointer-events:none}
 #two-set-venn .circle.a{left:9%;border-color:var(--a);background:rgba(59,130,246,.13)}
 #two-set-venn .circle.b{right:9%;border-color:var(--b);background:rgba(245,158,11,.12)}
 #two-set-venn .set-label{position:absolute;top:3%;font-weight:700;font-size:18px}
 #two-set-venn .label-a{left:25%;transform:translateX(-50%);color:var(--a)}
 #two-set-venn .label-b{right:25%;transform:translateX(50%);color:var(--b)}
 #two-set-venn .region{position:absolute;width:74px;z-index:2}
-#two-set-venn .region input{width:100%;min-height:44px;padding:8px 3px;text-align:center;font:16px Arial,sans-serif;color:var(--text);background:var(--field);border:2px solid var(--border);border-radius:6px}
+#two-set-venn .region input{width:100%;height:44px;padding:8px 3px;text-align:center;font:16px Arial,sans-serif;color:var(--text);background:var(--field);border:2px solid var(--border);border-radius:6px}
 #two-set-venn .only-a{left:23%;top:49%;transform:translate(-50%,-50%)}
 #two-set-venn .both{left:50%;top:49%;transform:translate(-50%,-50%)}
 #two-set-venn .only-b{left:77%;top:49%;transform:translate(-50%,-50%)}
@@ -32,51 +33,47 @@ body{margin:0;background:#eef2f7;font-family:Arial,sans-serif}
 #two-set-venn .neither-label{position:absolute;right:93px;bottom:20px;font-size:14px;color:var(--text)}
 #two-set-venn input.correct{border-color:var(--correct);background:var(--correctBg)}
 #two-set-venn input.incorrect{border-color:var(--incorrect);background:var(--incorrectBg)}
-#two-set-venn .buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-#two-set-venn button{min-height:44px;padding:10px 14px;border:2px solid transparent;border-radius:7px;background:var(--primary);color:var(--primaryText);font:inherit;cursor:pointer}
+#two-set-venn .buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#two-set-venn button{min-height:44px;padding:9px 12px;border:2px solid transparent;border-radius:7px;background:var(--primary);color:var(--primaryText);font:inherit;cursor:pointer}
 #two-set-venn button.alt{background:var(--secondary);color:var(--secondaryText);border-color:var(--border)}
 #two-set-venn button:hover{filter:brightness(.94)}
 #two-set-venn button:focus-visible,#two-set-venn input:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
-#two-set-venn .feedback{margin-top:12px;font-weight:700}
+#two-set-venn .feedback{margin-top:10px;font-weight:700}
 #two-set-venn .feedback:empty{display:none}
-#two-set-venn .solution{background:var(--panel2);padding:14px;margin-top:12px;border-radius:8px;line-height:1.7}
+#two-set-venn .solution{background:var(--panel2);padding:12px;margin-top:10px;border-radius:8px;line-height:1.6}
 #two-set-venn .solution[hidden]{display:none}
-#two-set-venn .solution p{margin:8px 0}
+#two-set-venn .solution p{margin:6px 0}
 #two-set-venn .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
-#two-set-venn .mobile-fields{display:none}
-#two-set-venn .mobile-fields label{display:block;font-weight:700;margin:10px 0 4px}
-#two-set-venn .mobile-fields input{display:block;width:100%;max-width:220px;min-height:44px;border:2px solid var(--border);border-radius:6px;background:var(--field);color:var(--text);padding:8px;font:16px Arial,sans-serif}
-@media(max-width:570px){#two-set-venn{padding:12px;margin:0}#two-set-venn .region{display:none}#two-set-venn .mobile-fields{display:block}#two-set-venn .diagram{margin-bottom:8px}#two-set-venn .neither-label{right:12px;bottom:10px;font-size:12px}#two-set-venn .set-label{font-size:16px}#two-set-venn .buttons button{flex:1 1 auto}}
+@media(max-width:570px){#two-set-venn{padding:11px;margin:0}#two-set-venn .buttons button{flex:1 1 auto}}
 @media(prefers-reduced-motion:reduce){#two-set-venn *{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <main id="two-set-venn">
- <div class="top"><h2>Two-Set Venn Diagram Practice</h2><button type="button" class="alt" id="venn-theme" aria-pressed="false" aria-label="Dark mode, off">☾ Dark mode</button></div>
- <section class="prompt" aria-labelledby="survey-title"><strong id="survey-title">Campus Activities Survey</strong>
- <p>A community college surveyed students about their participation in two campus activities: tutoring sessions (Set A) and study groups (Set B). Some students participated in both activities, while others participated in neither.</p>
- <div class="data" id="venn-data">Survey information will appear here.</div>
- <p><strong>Question:</strong> How many students attended only tutoring, only study groups, both activities, and neither activity? Enter the number of students in each region of the Venn diagram.</p></section>
- <p class="instruction" id="venn-instruction">Enter nonnegative whole numbers in the four regions.</p>
- <p class="sr-only" id="venn-description">The diagram shows two overlapping circles inside a rectangle. Circle A represents tutoring, circle B represents study groups, their intersection represents both activities, and the area outside both circles represents neither activity. Four answer fields follow in this order: tutoring only, both, study groups only, and neither.</p>
- <div class="diagram" role="group" aria-label="Two-set Venn diagram answer fields" aria-describedby="venn-description venn-instruction">
- <div class="circle a" aria-hidden="true"></div><div class="circle b" aria-hidden="true"></div>
- <span class="set-label label-a" aria-hidden="true">A</span><span class="set-label label-b" aria-hidden="true">B</span>
- <div class="region only-a"><input type="text" inputmode="numeric" data-region="a" aria-label="Only tutoring" autocomplete="off"></div>
- <div class="region both"><input type="text" inputmode="numeric" data-region="both" aria-label="Both tutoring and study groups" autocomplete="off"></div>
- <div class="region only-b"><input type="text" inputmode="numeric" data-region="b" aria-label="Only study groups" autocomplete="off"></div>
- <span class="neither-label" aria-hidden="true">Neither:</span>
- <div class="region neither"><input type="text" inputmode="numeric" data-region="neither" aria-label="Neither tutoring nor study groups" autocomplete="off"></div>
- </div>
- <div class="mobile-fields" id="venn-mobile-fields" role="group" aria-label="Venn diagram answers">
- <label for="venn-mobile-a">Only tutoring</label><input id="venn-mobile-a" data-mobile="a" type="text" inputmode="numeric" autocomplete="off">
- <label for="venn-mobile-both">Both tutoring and study groups</label><input id="venn-mobile-both" data-mobile="both" type="text" inputmode="numeric" autocomplete="off">
- <label for="venn-mobile-b">Only study groups</label><input id="venn-mobile-b" data-mobile="b" type="text" inputmode="numeric" autocomplete="off">
- <label for="venn-mobile-neither">Neither activity</label><input id="venn-mobile-neither" data-mobile="neither" type="text" inputmode="numeric" autocomplete="off">
- </div>
- <div class="buttons"><button type="button" id="venn-check">Check Answers</button><button type="button" class="alt" id="venn-reset">Reset Entries</button><button type="button" class="alt" id="venn-show" aria-controls="venn-solution" aria-expanded="false">Show Solution</button><button type="button" id="venn-new">New Problem</button></div>
- <div class="feedback" id="venn-feedback" role="status" aria-live="polite" aria-atomic="true"></div>
- <div class="solution" id="venn-solution" hidden></div>
+  <div class="top"><h2>Two-Set Venn Diagram Practice</h2><button type="button" class="alt" id="venn-theme" aria-pressed="false">Dark mode: Off</button></div>
+  <section class="prompt" aria-labelledby="survey-title">
+    <strong id="survey-title">Campus Activities Survey</strong>
+    <p>A community college surveyed students about tutoring sessions (Set A) and study groups (Set B).</p>
+    <div class="data" id="venn-data">Survey information will appear here.</div>
+    <p><strong>Question:</strong> How many students attended only tutoring, only study groups, both activities, and neither activity?</p>
+  </section>
+  <p class="instruction" id="venn-instruction">Enter a nonnegative whole number in each region of the Venn diagram.</p>
+  <p class="sr-only" id="venn-description">Two overlapping circles inside a rectangle. Circle A represents tutoring, circle B represents study groups, their intersection represents both activities, and the space outside both circles represents neither. The four answer fields are tutoring only, both activities, study groups only, and neither.</p>
+  <div class="diagram-scroll" role="region" aria-label="Venn diagram, scroll horizontally if necessary">
+    <div class="diagram" role="group" aria-label="Two-set Venn diagram answer fields" aria-describedby="venn-description venn-instruction">
+      <div class="circle a" aria-hidden="true"></div><div class="circle b" aria-hidden="true"></div>
+      <span class="set-label label-a" aria-hidden="true">A</span><span class="set-label label-b" aria-hidden="true">B</span>
+      <div class="region only-a"><input type="text" inputmode="numeric" data-region="a" aria-label="Only tutoring" autocomplete="off"></div>
+      <div class="region both"><input type="text" inputmode="numeric" data-region="both" aria-label="Both tutoring and study groups" autocomplete="off"></div>
+      <div class="region only-b"><input type="text" inputmode="numeric" data-region="b" aria-label="Only study groups" autocomplete="off"></div>
+      <span class="neither-label" aria-hidden="true">Neither:</span>
+      <div class="region neither"><input type="text" inputmode="numeric" data-region="neither" aria-label="Neither tutoring nor study groups" autocomplete="off"></div>
+    </div>
+  </div>
+  <div class="buttons"><button type="button" id="venn-check">Check Answers</button><button type="button" class="alt" id="venn-reset">Reset Entries</button><button type="button" class="alt" id="venn-show" aria-controls="venn-solution" aria-expanded="false">Show Solution</button><button type="button" id="venn-new">New Problem</button></div>
+  <div class="feedback" id="venn-feedback" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div class="solution" id="venn-solution" hidden></div>
+  <div class="sr-only" id="venn-question-status" role="status" aria-live="polite" aria-atomic="true"></div>
 </main>
 <script>
 (function(){
@@ -87,27 +84,23 @@ const $=s=>root.querySelector(s);
 const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 const keys=['a','both','b','neither'];
 const labels={a:'Only tutoring',both:'Both tutoring and study groups',b:'Only study groups',neither:'Neither activity'};
-const desk={},mobile={};
-keys.forEach(k=>{desk[k]=$('[data-region="'+k+'"]');mobile[k]=$('[data-mobile="'+k+'"]');});
+const fields={};keys.forEach(k=>fields[k]=$('[data-region="'+k+'"]'));
 let problems=[],position=0,current;
 function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=rnd(0,i);[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
 function generateProblems(){const used=new Set();problems=[];while(problems.length<40){const aOnly=rnd(12,45),bOnly=rnd(10,40),both=rnd(5,25),neither=rnd(3,25);const key=[aOnly,bOnly,both,neither].join(',');if(used.has(key))continue;used.add(key);problems.push({aOnly,bOnly,both,neither,total:aOnly+bOnly+both+neither,setA:aOnly+both,setB:bOnly+both});}shuffle(problems);}
 function answerKey(){return {a:current.aOnly,b:current.bOnly,both:current.both,neither:current.neither};}
-function isMobile(){return getComputedStyle($('#venn-mobile-fields')).display!=='none';}
-function value(k){return (isMobile()?mobile[k]:desk[k]).value.trim();}
-function setValue(k,v){desk[k].value=v;mobile[k].value=v;}
-function clearState(k){[desk[k],mobile[k]].forEach(f=>{f.classList.remove('correct','incorrect');f.removeAttribute('aria-invalid');});}
-function mark(k,ok){[desk[k],mobile[k]].forEach(f=>{f.classList.toggle('correct',ok);f.classList.toggle('incorrect',!ok);if(ok)f.removeAttribute('aria-invalid');else f.setAttribute('aria-invalid','true');});}
-function reset(){keys.forEach(k=>{setValue(k,'');clearState(k);});$('#venn-feedback').textContent='';$('#venn-solution').hidden=true;$('#venn-solution').replaceChildren();$('#venn-show').setAttribute('aria-expanded','false');}
-function loadProblem(){current=problems[position];$('#venn-data').textContent='A total of '+current.total+' students were surveyed. Of these, '+current.setA+' attended tutoring sessions, '+current.setB+' participated in study groups, and '+current.both+' participated in both activities.';reset();}
+function clearState(k){const f=fields[k];f.classList.remove('correct','incorrect');f.removeAttribute('aria-invalid');}
+function mark(k,ok){const f=fields[k];f.classList.toggle('correct',ok);f.classList.toggle('incorrect',!ok);if(ok)f.removeAttribute('aria-invalid');else f.setAttribute('aria-invalid','true');}
+function reset(){keys.forEach(k=>{fields[k].value='';clearState(k);});$('#venn-feedback').textContent='';$('#venn-solution').hidden=true;$('#venn-solution').replaceChildren();$('#venn-show').setAttribute('aria-expanded','false');}
+function loadProblem(announce){current=problems[position];$('#venn-data').textContent='A total of '+current.total+' students were surveyed. Of these, '+current.setA+' attended tutoring sessions, '+current.setB+' participated in study groups, and '+current.both+' participated in both activities.';reset();$('#venn-question-status').textContent=announce?'New question available. Read the updated survey information.':'';}
 function validWholeNumber(s){return /^\d+$/.test(s)&&Number.isSafeInteger(Number(s));}
-$('#venn-check').addEventListener('click',()=>{const expected=answerKey();let correct=0;const wrong=[];keys.forEach(k=>{const v=value(k),ok=validWholeNumber(v)&&Number(v)===expected[k];mark(k,ok);if(ok)correct++;else wrong.push(labels[k]);});$('#venn-feedback').textContent=correct===4?'Excellent! All four regions are correct.':correct+' of 4 regions are correct. Review: '+wrong.join(', ')+'. Enter nonnegative whole numbers.';});
+$('#venn-check').addEventListener('click',()=>{const expected=answerKey();let correct=0;const wrong=[];keys.forEach(k=>{const v=fields[k].value.trim(),ok=validWholeNumber(v)&&Number(v)===expected[k];mark(k,ok);if(ok)correct++;else wrong.push(labels[k]);});$('#venn-feedback').textContent=correct===4?'Excellent! All four regions are correct.':correct+' of 4 regions are correct. Review: '+wrong.join(', ')+'. Enter nonnegative whole numbers.';});
 $('#venn-reset').addEventListener('click',()=>{reset();$('#venn-feedback').textContent='All entries have been reset.';});
-$('#venn-show').addEventListener('click',()=>{const expected=answerKey();keys.forEach(k=>{setValue(k,expected[k]);mark(k,true);});const lines=['Both activities: '+current.both,'Only tutoring: '+current.setA+' − '+current.both+' = '+current.aOnly,'Only study groups: '+current.setB+' − '+current.both+' = '+current.bOnly,'Neither: '+current.total+' − ('+current.aOnly+' + '+current.bOnly+' + '+current.both+') = '+current.neither];const panel=$('#venn-solution');panel.replaceChildren();const h=document.createElement('strong');h.textContent='Step-by-Step Solution';panel.appendChild(h);lines.forEach(line=>{const p=document.createElement('p');p.textContent=line;panel.appendChild(p);});panel.hidden=false;$('#venn-show').setAttribute('aria-expanded','true');$('#venn-feedback').textContent='Solution displayed. All four answer fields are filled.';});
-$('#venn-new').addEventListener('click',()=>{position++;if(position>=problems.length){generateProblems();position=0;}loadProblem();});
-keys.forEach(k=>{[desk[k],mobile[k]].forEach(f=>{f.addEventListener('input',()=>{(f===desk[k]?mobile[k]:desk[k]).value=f.value;clearState(k);$('#venn-feedback').textContent='';});});});
-$('#venn-theme').addEventListener('click',()=>{const dark=root.classList.toggle('dark');$('#venn-theme').textContent=dark?'☀ Light mode':'☾ Dark mode';$('#venn-theme').setAttribute('aria-pressed',String(dark));$('#venn-theme').setAttribute('aria-label',dark?'Dark mode, on':'Dark mode, off');document.body.style.background=dark?'#0b1220':'#eef2f7';});
-generateProblems();loadProblem();
+$('#venn-show').addEventListener('click',()=>{const expected=answerKey();keys.forEach(k=>{fields[k].value=expected[k];mark(k,true);});const lines=['Both activities: '+current.both,'Only tutoring: '+current.setA+' − '+current.both+' = '+current.aOnly,'Only study groups: '+current.setB+' − '+current.both+' = '+current.bOnly,'Neither: '+current.total+' − ('+current.aOnly+' + '+current.bOnly+' + '+current.both+') = '+current.neither];const panel=$('#venn-solution');panel.replaceChildren();const h=document.createElement('strong');h.textContent='Step-by-Step Solution';panel.appendChild(h);lines.forEach(line=>{const p=document.createElement('p');p.textContent=line;panel.appendChild(p);});panel.hidden=false;$('#venn-show').setAttribute('aria-expanded','true');$('#venn-feedback').textContent='Solution displayed. All four answer fields are filled.';});
+$('#venn-new').addEventListener('click',()=>{position++;if(position>=problems.length){generateProblems();position=0;}loadProblem(true);});
+keys.forEach(k=>fields[k].addEventListener('input',()=>{clearState(k);$('#venn-feedback').textContent='';}));
+$('#venn-theme').addEventListener('click',()=>{const dark=root.classList.toggle('dark');$('#venn-theme').textContent='Dark mode: '+(dark?'On':'Off');$('#venn-theme').setAttribute('aria-pressed',String(dark));document.body.style.background=dark?'#0b1220':'#eef2f7';});
+generateProblems();loadProblem(false);
 })();
 </script>
 </body>
