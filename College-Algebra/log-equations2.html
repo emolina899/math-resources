@@ -1,0 +1,940 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Log Equals Constant Practice</title>
+
+<script>
+window.MathJax={
+  tex:{inlineMath:[["\\(","\\)"]]},
+  svg:{fontCache:"global"}
+};
+</script>
+<script defer
+ src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+
+<style>
+*{box-sizing:border-box}
+
+:root{
+ --bg:#101827;
+ --panel:#1c2a45;
+ --field:#192841;
+ --text:#f6f7ff;
+ --muted:#b5c4df;
+ --border:#425679;
+ --soft:#2c4165;
+ --accent:#8772ff;
+ --good:#86e9b7;
+ --bad:#ff9ea9;
+}
+
+body.light{
+ --bg:#fff;
+ --panel:#eff2ff;
+ --field:#fff;
+ --text:#18243c;
+ --muted:#52627e;
+ --border:#c5cfe2;
+ --soft:#e4eafa;
+ --good:#167447;
+ --bad:#b82f45;
+}
+
+html,body{
+ width:100%;
+ margin:0;
+ overflow-x:hidden;
+}
+
+body{
+ padding:9px;
+ background:var(--bg);
+ color:var(--text);
+ font:14px Arial,sans-serif;
+}
+
+.app{
+ max-width:800px;
+ margin:auto;
+}
+
+.top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:8px;
+ margin-bottom:9px;
+}
+
+.top strong{font-size:13px}
+
+button{
+ border:0;
+ border-radius:8px;
+ padding:10px;
+ font:inherit;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+.theme{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:7px;
+ padding:6px 11px;
+ border:1px solid var(--border);
+ border-radius:20px;
+ background:var(--soft);
+ color:var(--text);
+ font-size:11px;
+ white-space:nowrap;
+}
+
+.theme svg{
+ width:17px;
+ height:17px;
+ flex-shrink:0;
+ stroke:#fbbf24;
+ fill:none;
+ stroke-width:2;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+}
+
+body.light .theme svg{
+ stroke:#4654a5;
+}
+
+.problem{
+ padding:16px 10px;
+ border:1px solid var(--accent);
+ border-radius:12px;
+ background:var(--panel);
+ text-align:center;
+}
+
+.prompt{
+ margin-bottom:9px;
+ color:var(--muted);
+ font-size:12px;
+}
+
+.equation{
+ width:100%;
+ min-width:0;
+ font-size:23px;
+ text-align:center;
+}
+
+.equation mjx-container,
+.math mjx-container{
+ overflow:visible!important;
+}
+
+.answer{
+ margin:14px 0 10px;
+}
+
+.answer label{
+ display:block;
+ margin-bottom:7px;
+ font-weight:bold;
+}
+
+.answer input{
+ width:100%;
+ padding:12px;
+ border:1px solid var(--border);
+ border-radius:8px;
+ outline:none;
+ background:var(--field);
+ color:var(--text);
+ font:15px Arial,sans-serif;
+}
+
+.answer input:focus{
+ border-color:var(--accent);
+}
+
+.hint{
+ margin-top:6px;
+ color:var(--muted);
+ font-size:11px;
+}
+
+.actions{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:8px;
+}
+
+.submit{
+ background:linear-gradient(100deg,#905cf6,#6258ed);
+ color:#fff;
+}
+
+.next{
+ background:#31568d;
+ color:#fff;
+}
+
+.reveal{
+ width:100%;
+ margin-top:8px;
+ border:1px solid var(--border);
+ background:var(--soft);
+ color:var(--text);
+}
+
+.feedback{
+ margin-top:9px;
+ text-align:center;
+ font-weight:bold;
+ line-height:1.5;
+}
+
+.feedback:empty{display:none}
+.good{color:var(--good)}
+.bad{color:var(--bad)}
+
+.solution{
+ display:none;
+ margin-top:11px;
+ padding:12px;
+ border:1px solid var(--border);
+ border-radius:10px;
+ background:var(--panel);
+}
+
+.solution-title{
+ margin-bottom:5px;
+ font-weight:bold;
+}
+
+.step{
+ padding:9px 0;
+ border-bottom:1px solid var(--border);
+}
+
+.step:last-child{
+ border-bottom:0;
+}
+
+.step-title{
+ margin-bottom:7px;
+ font-size:12px;
+ font-weight:bold;
+}
+
+.math{
+ width:100%;
+ min-width:0;
+ font-size:19px;
+ text-align:center;
+}
+
+.note{
+ margin:6px 0 0;
+ color:var(--muted);
+ font-size:12px;
+ line-height:1.5;
+}
+
+@media(max-width:480px){
+ body{padding:6px}
+ .problem{padding:13px 6px}
+ .equation{font-size:19px}
+ .math{font-size:16px}
+
+ button{
+  padding:9px 6px;
+  font-size:12px;
+ }
+}
+</style>
+</head>
+
+<body>
+<main class="app">
+
+<div class="top">
+ <strong>Solve the logarithmic equation.</strong>
+
+ <button class="theme" id="theme" type="button">
+  <svg id="themeIcon" viewBox="0 0 24 24"
+       aria-hidden="true">
+   <circle cx="12" cy="12" r="4"></circle>
+   <path d="M12 2v2 M12 20v2
+            M4.93 4.93l1.42 1.42
+            M17.65 17.65l1.42 1.42
+            M2 12h2 M20 12h2
+            M4.93 19.07l1.42-1.42
+            M17.65 6.35l1.42-1.42">
+   </path>
+  </svg>
+  <span id="themeText">Light mode</span>
+ </button>
+</div>
+
+<div class="problem">
+ <div class="prompt">
+  Solve for x. Check all solutions in the original equation.
+ </div>
+ <div id="equation" class="equation"></div>
+</div>
+
+<div class="answer">
+ <label for="answer">Solution(s) for x</label>
+ <input id="answer" type="text"
+        autocomplete="off"
+        placeholder="Enter integer solution(s)">
+ <div class="hint">
+  Separate multiple solutions with commas.
+  Enter "none" if there is no solution.
+ </div>
+</div>
+
+<div class="actions">
+ <button class="submit" id="submit">Submit</button>
+ <button class="next" id="next">Try Similar</button>
+</div>
+
+<button class="reveal" id="reveal">Show Solution</button>
+
+<div id="feedback" class="feedback" aria-live="polite"></div>
+<div id="solution" class="solution"></div>
+
+</main>
+
+<script>
+"use strict";
+
+const $=id=>document.getElementById(id);
+const rand=(a,b)=>
+ Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[rand(0,a.length-1)];
+const tex=s=>"\\("+s+"\\)";
+
+let bank=[];
+let current=null;
+let last=-1;
+let shown=false;
+let mathQueue=Promise.resolve();
+
+const sunSVG=`
+ <circle cx="12" cy="12" r="4"></circle>
+ <path d="M12 2v2 M12 20v2
+          M4.93 4.93l1.42 1.42
+          M17.65 17.65l1.42 1.42
+          M2 12h2 M20 12h2
+          M4.93 19.07l1.42-1.42
+          M17.65 6.35l1.42-1.42">
+ </path>`;
+
+const moonSVG=`
+ <path d="M20.5 14.5A8.5 8.5 0 0 1
+          9.5 3.5 8.5 8.5 0 1 0
+          20.5 14.5Z">
+ </path>`;
+
+// ----------------------------------
+// ALGEBRA UTILITIES
+// ----------------------------------
+
+function linear(a,b){
+ if(a===0)return String(b);
+
+ const first=a===1?"x":
+  a===-1?"-x":a+"x";
+
+ return b===0?first:
+  first+(b<0?b:"+"+b);
+}
+
+function factor(f){
+ return "\\left("+linear(f[0],f[1])+"\\right)";
+}
+
+function logTerm(arg,base){
+ return base==="e"
+  ?"\\ln\\left("+arg+"\\right)"
+  :"\\log_{"+base+"}\\left("+arg+"\\right)";
+}
+
+function powerTex(p){
+ if(p.base==="e"){
+  return "e^{"+p.c+"}";
+ }
+ return p.base+"^{"+p.c+"}";
+}
+
+function targetTex(p){
+ if(p.Kden===1)return String(p.Knum);
+ return "\\frac{"+p.Knum+"}{"+p.Kden+"}";
+}
+
+function productPoly(factors){
+ let poly=[1];
+
+ for(const [a,b] of factors){
+  const next=Array(poly.length+1).fill(0);
+
+  poly.forEach((v,i)=>{
+   next[i]+=v*b;
+   next[i+1]+=v*a;
+  });
+
+  poly=next;
+ }
+
+ return poly;
+}
+
+function differencePoly(p){
+ const left=productPoly(p.num)
+  .map(v=>v*p.Kden);
+
+ const right=productPoly(p.den)
+  .map(v=>v*p.Knum);
+
+ return Array.from(
+  {length:Math.max(left.length,right.length)},
+  (_,i)=>(left[i]||0)-(right[i]||0)
+ );
+}
+
+function rootsOf(poly){
+ const [c,b=0,a=0]=poly;
+
+ if(Math.abs(a)<1e-10){
+  return Math.abs(b)<1e-10?[]:[-c/b];
+ }
+
+ const d=b*b-4*a*c;
+
+ if(d<0)return [];
+ if(d===0)return [-b/(2*a)];
+
+ return [
+  (-b+Math.sqrt(d))/(2*a),
+  (-b-Math.sqrt(d))/(2*a)
+ ];
+}
+
+function evalFactor(f,x){
+ return f[0]*x+f[1];
+}
+
+function validSolutions(p){
+ return rootsOf(differencePoly(p))
+  .filter(Number.isFinite)
+  .filter(x=>
+   [...p.num,...p.den].every(f=>
+    evalFactor(f,x)>1e-8
+   )
+  )
+  .filter((x,i,a)=>
+   a.findIndex(y=>Math.abs(y-x)<1e-7)===i
+  )
+  .sort((a,b)=>a-b);
+}
+
+// ----------------------------------
+// PROBLEM GENERATION
+// ----------------------------------
+
+function makeProblem(){
+ const base=pick([2,3,5,10,"e"]);
+ const kind=rand(0,5);
+ const x0=rand(-8,10);
+
+ let c,Knum,Kden=1,num,den=[];
+
+ if(base==="e"){
+  // ln(M)=0 has M=1 and integer solutions.
+  c=0;
+  Knum=1;
+ }else{
+  c=rand(-2,3);
+
+  if(c>=0){
+   Knum=base**c;
+  }else{
+   Knum=1;
+   Kden=base**(-c);
+  }
+ }
+
+ if(kind===0){
+  // Direct log of a linear expression.
+  const a=rand(1,3);
+  const t=rand(1,5);
+
+  num=[[
+   a*Kden,
+   Knum*t-a*Kden*x0
+  ]];
+
+  // The argument must equal Knum/Kden.
+  // Choose a multiple that gives integer x.
+  num=[[a*Kden,
+   Knum-a*Kden*x0]];
+
+  // For negative c, use a fractional argument
+  // in a later special display.
+  if(Kden>1){
+   num=[[a,Knum-a*x0]];
+  }
+ }
+
+ else if(kind===1){
+  // Product property, with positive factors.
+  const u=rand(1,8);
+  const v=rand(1,8);
+
+  if(Kden===1){
+   const target=Knum;
+   const divisors=[];
+
+   for(let d=1;d<=target;d++){
+    if(target%d===0)divisors.push(d);
+   }
+
+   const d=pick(divisors);
+   num=[[1,d-x0],[1,target/d-x0]];
+  }else{
+   return null;
+  }
+ }
+
+ else if(kind===2){
+  // Quotient property.
+  const v=rand(2,9);
+  if(Kden===1){
+   num=[[1,Knum*v-x0]];
+   den=[[1,v-x0]];
+  }else{
+   num=[[Kden,Knum*v-Kden*x0]];
+   den=[[1,v-x0]];
+  }
+ }
+
+ else if(kind===3){
+  // Direct logarithm with coefficient.
+  if(Kden>1)return null;
+
+  const a=rand(2,5);
+  num=[[a,Knum-a*x0]];
+ }
+
+ else if(kind===4){
+  // Quotient with a constant denominator.
+  if(Kden>1)return null;
+
+  const d=rand(2,8);
+  num=[[1,Knum*d-x0]];
+  den=[[0,d]];
+ }
+
+ else{
+  // Product with one constant factor.
+  if(Kden>1)return null;
+
+  const divisors=[];
+
+  for(let d=2;d<=Knum;d++){
+   if(Knum%d===0)divisors.push(d);
+  }
+
+  if(!divisors.length)return null;
+
+  const d=pick(divisors);
+  num=[[1,Knum/d-x0],[0,d]];
+ }
+
+ const p={base,kind,c,Knum,Kden,num,den};
+ const roots=validSolutions(p);
+
+ if(!roots.length)return null;
+ if(!roots.every(x=>
+  Math.abs(x-Math.round(x))<1e-7
+ ))return null;
+
+ p.solutions=roots.map(Math.round);
+
+ const L=f=>logTerm(linear(f[0],f[1]),base);
+
+ let lhs=L(num[0]);
+
+ if(num.length===2)lhs+="+"+L(num[1]);
+ if(den.length)lhs+="-"+L(den[0]);
+
+ // Correct fractional argument for
+ // negative logarithmic constants.
+ if(kind===0 && Kden>1){
+  const f=num[0];
+  lhs=logTerm(
+   "\\frac{"+linear(f[0],f[1])+
+   "}{"+Kden+"}",
+   base
+  );
+
+  p.fractionalDirect=true;
+  p.num=[[f[0],f[1]]];
+  p.Knum=1;
+  p.Kden=1;
+  // Equation above is equivalent to
+  // numerator = 1, so the effective
+  // algebraic target is 1.
+  p.effectiveTarget=1;
+ }
+
+ p.equation=lhs+"="+c;
+
+ // Retain the original power target for
+ // the explanatory exponential step.
+ p.originalTarget={
+  num:Knum,den:Kden
+ };
+
+ if(p.fractionalDirect){
+  // numerator / Kden = 1 / Kden
+  // therefore numerator = 1.
+  p.solutions=[x0];
+ }
+
+ return p;
+}
+
+function generate(){
+ const seen=new Set();
+ let attempts=0;
+
+ while(bank.length<50&&attempts++<20000){
+  const p=makeProblem();
+
+  if(!p||seen.has(p.equation))continue;
+
+  seen.add(p.equation);
+  bank.push(p);
+ }
+}
+
+// ----------------------------------
+// RESPONSIVE MATHJAX
+// ----------------------------------
+
+function typeset(el){
+ mathQueue=mathQueue.then(async()=>{
+  await MathJax.startup.promise;
+  MathJax.typesetClear([el]);
+  await MathJax.typesetPromise([el]);
+  fit(el);
+ }).catch(console.error);
+}
+
+function fit(root){
+ const targets=[
+  ...(root.matches?.(".equation,.math")?[root]:[]),
+  ...root.querySelectorAll(".equation,.math")
+ ];
+
+ for(const el of targets){
+  const mj=el.querySelector("mjx-container");
+  if(!mj)continue;
+
+  el.style.fontSize="";
+
+  let size=parseFloat(
+   getComputedStyle(el).fontSize
+  );
+
+  const available=el.clientWidth-10;
+
+  while(
+   mj.getBoundingClientRect().width>available &&
+   size>10
+  ){
+   size-=0.5;
+   el.style.fontSize=size+"px";
+  }
+ }
+}
+
+// ----------------------------------
+// NEW QUESTION
+// ----------------------------------
+
+function newProblem(){
+ let i;
+
+ do{i=rand(0,bank.length-1)}
+ while(i===last&&bank.length>1);
+
+ last=i;
+ current=bank[i];
+ shown=false;
+
+ $("equation").textContent=tex(current.equation);
+ $("answer").value="";
+ $("feedback").textContent="";
+ $("feedback").className="feedback";
+ $("solution").style.display="none";
+ $("solution").replaceChildren();
+ $("reveal").textContent="Show Solution";
+
+ typeset($("equation"));
+}
+
+// ----------------------------------
+// ANSWER CHECKING
+// ----------------------------------
+
+function check(){
+ const raw=$("answer").value.trim();
+
+ if(/^none$/i.test(raw)){
+  const correct=current.solutions.length===0;
+
+  $("feedback").textContent=correct?
+   "Correct! There are no valid solutions.":
+   "Incorrect. There is at least one valid solution.";
+
+  $("feedback").className=
+   "feedback "+(correct?"good":"bad");
+  return;
+ }
+
+ const parts=raw.split(",").map(s=>s.trim());
+
+ if(!raw||parts.some(v=>!/^[+-]?\d+$/.test(v))){
+  $("feedback").textContent=
+   "Enter integer solutions separated by commas.";
+  $("feedback").className="feedback bad";
+  return;
+ }
+
+ const entered=[...new Set(parts.map(Number))]
+  .sort((a,b)=>a-b);
+
+ const expected=current.solutions;
+
+ const correct=
+  entered.length===expected.length &&
+  entered.every((v,i)=>v===expected[i]);
+
+ $("feedback").textContent=correct?
+  "Correct! All valid solutions are included.":
+  "Not quite. Check the exponential equation and logarithm domains.";
+
+ $("feedback").className=
+  "feedback "+(correct?"good":"bad");
+}
+
+// ----------------------------------
+// WORKED SOLUTION
+// ----------------------------------
+
+function addStep(title,math,note){
+ const el=document.createElement("div");
+ el.className="step";
+
+ const h=document.createElement("div");
+ h.className="step-title";
+ h.textContent=title;
+ el.append(h);
+
+ if(math){
+  const m=document.createElement("div");
+  m.className="math";
+  m.textContent=tex(math);
+  el.append(m);
+ }
+
+ if(note){
+  const n=document.createElement("p");
+  n.className="note";
+  n.textContent=note;
+  el.append(n);
+ }
+
+ $("solution").append(el);
+}
+
+function condensed(p){
+ const L=f=>linear(f[0],f[1]);
+
+ if(p.fractionalDirect){
+  return logTerm(
+   "\\frac{"+L(p.num[0])+
+   "}{"+p.originalTarget.den+"}",
+   p.base
+  );
+ }
+
+ if(p.num.length===2){
+  return logTerm(
+   L(p.num[0])+"\\cdot "+L(p.num[1]),
+   p.base
+  );
+ }
+
+ if(p.den.length){
+  return logTerm(
+   "\\frac{"+L(p.num[0])+
+   "}{"+L(p.den[0])+"}",
+   p.base
+  );
+ }
+
+ return logTerm(L(p.num[0]),p.base);
+}
+
+function polynomialTex(poly){
+ const [c,b=0,a=0]=poly;
+ const terms=[];
+
+ if(a)terms.push(
+  (a===1?"":a===-1?"-":a)+"x^2"
+ );
+
+ if(b)terms.push(
+  (b>0&&terms.length?"+":"")+
+  (b===1?"":b===-1?"-":b)+"x"
+ );
+
+ if(c||!terms.length)terms.push(
+  (c>0&&terms.length?"+":"")+c
+ );
+
+ return terms.join("");
+}
+
+function showSolution(){
+ shown=!shown;
+
+ $("solution").style.display=shown?"block":"none";
+ $("reveal").textContent=
+  shown?"Hide Solution":"Show Solution";
+
+ if(!shown)return;
+
+ $("solution").replaceChildren();
+
+ const h=document.createElement("div");
+ h.className="solution-title";
+ h.textContent="Step-by-step solution";
+ $("solution").append(h);
+
+ const p=current;
+
+ if(p.num.length>1||p.den.length){
+  addStep(
+   "Step 1: Condense to one logarithm.",
+   condensed(p)+"="+p.c
+  );
+ }else{
+  addStep(
+   "Step 1: Identify the logarithmic equation.",
+   p.equation
+  );
+ }
+
+ const target=p.originalTarget.den===1?
+  String(p.originalTarget.num):
+  "\\frac{"+p.originalTarget.num+
+  "}{"+p.originalTarget.den+"}";
+
+ addStep(
+  "Step 2: Rewrite in exponential form.",
+  powerTex(p)+"="+target,
+  "The logarithm's argument must equal the base raised to the given constant."
+ );
+
+ let leftExpression;
+
+ if(p.fractionalDirect){
+  leftExpression=
+   "\\frac{"+linear(p.num[0][0],p.num[0][1])+
+   "}{"+p.originalTarget.den+"}";
+ }else if(p.num.length===2){
+  leftExpression=p.num.map(f=>factor(f)).join("");
+ }else{
+  leftExpression=linear(
+   p.num[0][0],p.num[0][1]
+  );
+ }
+
+ let rightExpression=target;
+
+ if(p.den.length){
+  rightExpression=target+factor(p.den[0]);
+ }
+
+ addStep(
+  "Step 3: Solve the exponential equation.",
+  leftExpression+"="+rightExpression
+ );
+
+ if(p.fractionalDirect){
+  addStep(
+   "Step 4: Isolate x.",
+   linear(p.num[0][0],p.num[0][1])+"=1"
+  );
+ }else{
+  addStep(
+   "Step 4: Simplify the algebraic equation.",
+   polynomialTex(differencePoly(p))+"=0"
+  );
+ }
+
+ addStep(
+  "Step 5: Check the original logarithmic arguments.",
+  "x="+p.solutions.join(",\\ "),
+  "Every original logarithmic argument must be positive."
+ );
+
+ addStep(
+  "Valid solution(s):",
+  "x="+p.solutions.join(",\\ ")
+ );
+
+ typeset($("solution"));
+}
+
+// ----------------------------------
+// THEME AND BUTTON EVENTS
+// ----------------------------------
+
+$("theme").onclick=()=>{
+ const light=document.body.classList.toggle("light");
+
+ $("themeIcon").innerHTML=
+  light?moonSVG:sunSVG;
+
+ $("themeText").textContent=
+  light?"Dark mode":"Light mode";
+};
+
+$("submit").onclick=check;
+$("next").onclick=newProblem;
+$("reveal").onclick=showSolution;
+
+$("answer").addEventListener("keydown",e=>{
+ if(e.key==="Enter")check();
+});
+
+window.addEventListener("resize",()=>{
+ fit(document.querySelector(".app"));
+});
+
+generate();
+newProblem();
+</script>
+</body>
+</html>
