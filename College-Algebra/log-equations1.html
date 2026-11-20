@@ -2,524 +2,152 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Logarithm Equals Logarithm</title>
-<script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['\\(','\\)']],
-    displayMath: [['\\[','\\]']]
-  },
-  options: { enableMenu: false }
-};
-</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Logarithmic Equations: Log = Log</title>
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},options:{enableMenu:false}};</script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 <style>
-* { box-sizing:border-box; }
-body { margin:0; font:16px/1.45 system-ui,Arial,sans-serif; }
-#app {
-  --bg:#121b2b; --panel:#223149; --field:#152137;
-  --fg:#f8fafc; --muted:#d1dae8; --border:#91a1ba;
-  --success:#86efac; --error:#ffadb8;
-  background:var(--bg); color:var(--fg);
-  max-width:790px; margin:auto; padding:16px;
-  border-radius:12px;
-}
-#app.light {
-  --bg:#fff; --panel:#edf2fa; --field:#fff;
-  --fg:#18263d; --muted:#3c4b63; --border:#677991;
-  --success:#08683c; --error:#a11b30;
-}
-button,input { font:inherit; }
-button {
-  min-height:44px; border:0; border-radius:8px;
-  background:#36557e; color:#fff; padding:8px 12px;
-  font-weight:650; cursor:pointer;
-}
-button:hover { filter:brightness(1.12); }
-button:focus-visible,input:focus-visible {
-  outline:3px solid #edb34e; outline-offset:2px;
-}
-.top { display:flex; justify-content:flex-end; }
-.problem {
-  background:var(--panel); padding:12px 8px;
-  margin:10px 0; border-radius:9px; text-align:center;
-  font-size:1.14rem; overflow-x:auto;
-}
-.label { display:block; font-weight:700; margin:11px 0 6px; }
-.tools { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:7px; }
-.tools button { min-width:44px; }
-.tools #fraction { background:#6043c9; }
-.answer {
-  border:1px solid var(--border); background:var(--panel);
-  border-radius:9px; padding:8px;
-}
-.entry {
-  width:100%; min-height:44px; padding:9px 11px;
-  background:var(--field); color:var(--fg);
-  border:1px solid var(--border); border-radius:7px;
-}
-.frac { max-width:420px; margin:auto; display:grid; gap:5px; }
-.frac input { text-align:center; }
-.bar { height:2px; background:var(--fg); margin:0 9px; }
-.hint { font-size:.84rem; color:var(--muted); margin:6px 0; }
-.feedback { font-weight:650; min-height:22px; margin:6px 0; }
-.good { color:var(--success); }
-.bad { color:var(--error); }
-.ok-field { border:2px solid var(--success); }
-.bad-field { border:2px solid var(--error); }
-.actions {
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:8px; margin-top:13px;
-}
-.actions #submit { background:#6043c9; }
-.actions #show { grid-column:1/-1; }
-.solution {
-  background:var(--panel); border:1px solid var(--border);
-  padding:13px; border-radius:9px;
-  margin-top:12px; overflow-x:auto;
-}
-.solution p { margin:7px 0; }
-.sr {
-  position:absolute; width:1px; height:1px;
-  overflow:hidden; clip-path:inset(50%);
-}
-[hidden] { display:none!important; }
-@media(max-width:420px) {
-  #app { padding:11px; }
-  .tools button { padding:8px 9px; }
-}
+*{box-sizing:border-box}body{margin:0;font:16px/1.45 Arial,sans-serif}
+#activity{--bg:#121a29;--panel:#202d43;--field:#162237;--ink:#f8fafc;--muted:#d1d9e7;--line:#91a3bd;--ok:#89efb2;--err:#ffabb6;background:var(--bg);color:var(--ink);max-width:760px;margin:auto;padding:16px;border-radius:12px}
+#activity.light{--bg:#fff;--panel:#edf2fa;--field:#fff;--ink:#17253b;--muted:#43536c;--line:#63758e;--ok:#08683c;--err:#a51d30}
+button,input{font:inherit}button{min-height:44px;padding:8px 12px;border:0;border-radius:8px;background:#35547e;color:#fff;font-weight:650;cursor:pointer}button:hover{filter:brightness(1.12)}button:focus-visible,input:focus-visible{outline:3px solid #f2b84b;outline-offset:2px}
+.top{display:flex;justify-content:flex-end}.equation{background:var(--panel);border-radius:10px;padding:12px 8px;margin:10px 0 14px;text-align:center;font-size:1.15rem;overflow-x:auto}.label{display:block;font-weight:700;margin:12px 0 6px}.tools{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}.tools button{min-width:44px}.tools #fraction{background:#6346c9}.answer{border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:9px}.entry{display:block;width:100%;min-height:44px;padding:9px 11px;border:1px solid var(--line);border-radius:7px;background:var(--field);color:var(--ink)}.fraction-entry{max-width:440px;margin:auto;display:grid;gap:5px}.fraction-entry input{text-align:center}.fraction-line{height:2px;background:var(--ink);margin:0 8px}.hint{font-size:.84rem;color:var(--muted);margin:6px 0}.feedback{min-height:22px;font-weight:650;margin:6px 0}.good{color:var(--ok)}.bad{color:var(--err)}.good-field{border:2px solid var(--ok)}.bad-field{border:2px solid var(--err)}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.actions #submit{background:#6346c9}.actions #show{grid-column:1/-1}.solution{margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:9px;background:var(--panel);overflow-x:auto}.solution p{margin:8px 0}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}[hidden]{display:none!important}@media(max-width:440px){#activity{padding:11px}.tools button{padding:8px 9px}}
 </style>
 </head>
 <body>
-<main id="app">
-<div class="top">
-  <button id="theme" type="button"
-    aria-label="Switch to light mode">☾ Dark mode</button>
-</div>
-<div id="problem" class="problem"
-  aria-label="Logarithmic equation"></div>
-
+<main id="activity">
+<div class="top"><button id="theme" type="button" aria-label="Switch to light mode">☾ Dark mode</button></div>
+<div id="equation" class="equation" aria-label="Solve the logarithmic equation"></div>
 <label class="label" for="plain">Exact Solution(s)</label>
 <div class="tools" role="group" aria-label="Mathematical input tools">
-  <button id="fraction" type="button" aria-pressed="false"
-    aria-label="Use fraction entry">a/b</button>
-  <button type="button" data-insert="/">÷</button>
-  <button type="button" data-insert="()">( )</button>
-  <button type="button" data-insert="+">+</button>
-  <button type="button" data-insert="-">−</button>
-  <button type="button" id="back" aria-label="Backspace">⌫</button>
-  <button type="button" id="clear">Clear</button>
+<button id="fraction" type="button" aria-label="Use stacked fraction entry" aria-pressed="false">a/b</button>
+<button type="button" data-insert="/" aria-label="Division slash">÷</button>
+<button type="button" data-insert="()" aria-label="Parentheses">( )</button>
+<button type="button" data-insert="+">+</button><button type="button" data-insert="-">−</button>
+<button id="back" type="button" aria-label="Backspace">⌫</button><button id="clear" type="button">Clear</button>
 </div>
 <div class="answer">
-  <div id="plainWrap">
-    <input id="plain" class="entry" type="text"
-      autocomplete="off" spellcheck="false"
-      aria-describedby="help"
-      placeholder="Enter solution(s), separated by commas">
-  </div>
-  <div id="fracWrap" hidden>
-    <div class="frac" role="group" aria-label="Fraction answer">
-      <input id="num" class="entry" type="text"
-        aria-label="Numerator" placeholder="Numerator">
-      <div class="bar" aria-hidden="true"></div>
-      <input id="den" class="entry" type="text"
-        aria-label="Denominator" placeholder="Denominator">
-    </div>
-  </div>
-</div>
-<p id="help" class="hint">
-  Separate multiple solutions with commas. Use a/b for a
-  straight fraction bar. Enter NONE if there is no real solution.
-</p>
-<div id="exactFeedback" class="feedback"
-  role="status" aria-live="polite"></div>
-
-<label class="label" for="decimal">
-  Decimal Approximation(s) (4 decimal places)
-</label>
-<input id="decimal" class="entry" type="text"
-  autocomplete="off" spellcheck="false"
-  placeholder="0.1234" aria-describedby="decimalHelp">
-<p class="hint" id="decimalHelp">
-  Separate multiple answers with commas.
-  Enter NONE if there is no real solution.
-</p>
-<div id="decimalFeedback" class="feedback"
-  role="status" aria-live="polite"></div>
-
-<div class="actions">
-  <button id="submit" type="button">Submit</button>
-  <button id="next" type="button">Try Similar</button>
-  <button id="show" type="button"
-    aria-controls="solution" aria-expanded="false">
-    Show Solution
-  </button>
-</div>
-<section id="solution" class="solution" hidden
-  aria-label="Step-by-step solution"></section>
-<div id="announce" class="sr" aria-live="polite"></div>
+<div id="plain-wrap"><input id="plain" class="entry" type="text" autocomplete="off" spellcheck="false" aria-describedby="answer-help" placeholder="Enter solution(s)"></div>
+<div id="fraction-wrap" hidden><div class="fraction-entry" role="group" aria-label="Exact answer as a fraction">
+<input id="numerator" class="entry" type="text" aria-label="Fraction numerator" placeholder="Numerator">
+<div class="fraction-line" aria-hidden="true"></div>
+<input id="denominator" class="entry" type="text" aria-label="Fraction denominator" placeholder="Denominator">
+</div></div></div>
+<p class="hint" id="answer-help">Separate multiple solutions with commas. Select a/b for a straight fraction bar. Enter NONE if no real solution is valid.</p>
+<div id="exact-feedback" class="feedback" role="status" aria-live="polite"></div>
+<label class="label" for="decimal">Decimal Approximation(s) (4 decimal places)</label>
+<input id="decimal" class="entry" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="0.1234" aria-describedby="decimal-help">
+<p id="decimal-help" class="hint">Separate multiple answers with commas. Enter NONE if there are no valid solutions.</p>
+<div id="decimal-feedback" class="feedback" role="status" aria-live="polite"></div>
+<div class="actions"><button id="submit" type="button">Submit</button><button id="next" type="button">Try Similar</button><button id="show" type="button" aria-controls="solution" aria-expanded="false">Show Solution</button></div>
+<section id="solution" class="solution" aria-label="Step-by-step solution" hidden></section>
+<div id="announce" class="sr-only" aria-live="polite"></div>
 </main>
-
 <script>
-(() => {
-'use strict';
-
-const KIND='equal';
-const $=id=>document.getElementById(id);
-const app=$('app');
-const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
-const choose=a=>a[rand(0,a.length-1)];
-const bases=[2,3,5,7];
-
-let current,mode='plain',active=$('plain');
-let previous='',showing=false;
-
-const term=(k,x='x')=>k===1?x:k===-1?'-'+x:k+x;
-const plus=(a,b)=>a+(b<0?b:'+'+b);
-
-const rational=(n,d)=>{
-  let a=Math.abs(n),b=Math.abs(d);
-  while(b) [a,b]=[b,a%b];
-  return {n:n/a,d:d/a};
-};
-const fracTex=v=>v.d===1?String(v.n):
-  '\\frac{'+v.n+'}{'+v.d+'}';
-const value=v=>v.n/v.d;
-
-function typeset(els) {
-  if(window.MathJax?.typesetPromise) {
-    window.MathJax.typesetClear?.(els);
-    window.MathJax.typesetPromise(els).catch(()=>{});
-  }
+(()=>{'use strict';
+const $=id=>document.getElementById(id),app=$('activity');
+const random=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[random(0,a.length-1)];
+const bases=[2,3,4,5,7,10];
+let current=null,mode='plain',active=$('plain'),shown=false,last='';
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b)[a,b]=[b,a%b];return a||1}
+function fraction(n,d=1){if(d<0){n=-n;d=-d}const g=gcd(n,d);return {n:n/g,d:d/g}}
+function value(v){return v.n/v.d}
+function asTex(v){return v.d===1?String(v.n):'\\frac{'+v.n+'}{'+v.d+'}'}
+function signed(k){return k<0?String(k):'+'+k}
+function linear(a,b){return (a===1?'x':a===-1?'-x':a+'x')+(b?signed(b):'')}
+function poly(a,b,c){return (a===1?'x^2':a===-1?'-x^2':a+'x^2')+(b?(b>0?'+':'')+(Math.abs(b)===1?(b<0?'-':'')+'x':b+'x'):'')+(c?signed(c):'')}
+function shift(k){return 'x'+signed(-k)}
+function log(base,arg){return '\\log_{'+base+'}\\left('+arg+'\\right)'}
+function typeset(elements){if(window.MathJax?.typesetPromise){MathJax.typesetClear?.(elements);MathJax.typesetPromise(elements).catch(()=>{})}}
+function solveQuadratic(a,b,c){const delta=b*b-4*a*c;if(delta<0)return [];const r=Math.sqrt(delta);if(!Number.isInteger(r))return [];return [fraction(-b-r,2*a),fraction(-b+r,2*a)]}
+function unique(roots){const seen=new Set();return roots.filter(v=>{const key=v.n+'/'+v.d;if(seen.has(key))return false;seen.add(key);return true}).sort((a,b)=>value(a)-value(b))}
+function create(){
+for(let tries=0;tries<3000;tries++){
+const kind=pick(['linear','factor','square','rational','add','subtract']);
+const base=pick(bases);let left,right,raw=[],allowed=()=>true,algebra,method,detail='';
+if(kind==='linear'){
+ const a=pick([-4,-3,-2,2,3,4]),r=random(-5,6),k=random(2,10);
+ const b=k-a*r;left=log(base,linear(a,b));right=log(base,String(k));raw=[fraction(r)];
+ allowed=x=>a*x+b>0;algebra=linear(a,b)+'='+k;method='Solve the linear equation.';
+}else if(kind==='factor'){
+ const a=pick([2,3,4]),c=pick([1,2,3]),u=random(-4,5),v=random(-4,5),K=random(3,12);
+ if(a*v===c*u)continue;
+ const A=a*c,B=-(a*v+c*u),C=u*v;
+ const offset=random(1,5);const leftPoly=poly(A,B,C+K+offset);
+ left=log(base,leftPoly);right=log(base,String(K+offset));raw=[fraction(u,a),fraction(v,c)];
+ allowed=x=>A*x*x+B*x+C+K+offset>0;
+ algebra=leftPoly+'='+(K+offset);method='Subtract '+(K+offset)+' and factor the quadratic with leading coefficient '+A+'.';
+ detail='\\left('+linear(a,-u)+'\\right)\\left('+linear(c,-v)+'\\right)=0';
+}else if(kind==='square'){
+ const h=random(-5,5),k=random(1,5),C=random(2,9);
+ const sq='('+shift(h)+')^2';left=log(base,sq+'+'+C);right=log(base,String(k*k+C));
+ raw=[fraction(h-k),fraction(h+k)];allowed=x=>(x-h)*(x-h)+C>0;
+ algebra=sq+'+'+C+'='+(k*k+C);method='Isolate the squared expression, then use the square root property.';
+ detail=sq+'='+k*k;
+}else if(kind==='rational'){
+ const r=random(-5,6),excluded=random(-5,6),k=pick([2,3,4]);if(r===excluded)continue;
+ const numerator=linear(k,-k*r),denominator=shift(excluded),rhs=linear(k,-k*excluded);
+ // k(x-r)/(x-excluded)=k; leads to r=excluded (no solution), so use constant target t instead.
+ const target=pick([2,3,4,5]);const A=pick([1,2,3,4]);const B=target*(r-excluded)-A*r;
+ const num=linear(A,B),den=shift(excluded);
+ left=log(base,'\\frac{'+num+'}{'+den+'}');right=log(base,String(target));
+ raw=[fraction(r)];allowed=x=>Math.abs(x-excluded)>1e-9&&(A*x+B)/(x-excluded)>0;
+ algebra='\\frac{'+num+'}{'+den+'}='+target;
+ method='Multiply both sides by '+den+', with x \\ne '+excluded+'. Then solve the linear equation.';
+ detail=num+'='+target+'('+den+')';
+}else if(kind==='add'){
+ const r=random(-4,5),s=random(-4,5),a=pick([2,3]),c=pick([1,2,3]);if(r===s)continue;
+ // product (a(x-r))(c(x-s)) = target, ensure factorable resulting quadratic by constructing target and root
+ const U=linear(a,-a*r),V=linear(c,-c*s);
+ const x0=random(-3,5),target=(a*x0-a*r)*(c*x0-c*s);
+ if(target<=0||target>150)continue;
+ const A=a*c,B=-a*c*(r+s),C=a*c*r*s-target;
+ const candidates=solveQuadratic(A,B,C);if(!candidates.length)continue;
+ left=log(base,U)+'+'+log(base,V);right=log(base,String(target));
+ raw=candidates;allowed=x=>(a*x-a*r)>0&&(c*x-c*s)>0;
+ algebra='('+U+')('+V+')='+target;
+ method='Condense using the product property, cancel the logarithms, expand, and factor the resulting quadratic.';
+ detail=poly(A,B,C)+'=0';
+}else{
+ const root=random(-5,6),excluded=random(-5,6),target=pick([2,3,4,5]);if(root===excluded)continue;
+ const a=pick([2,3,4]),b=target*(root-excluded)-a*root;
+ const U=linear(a,b),V=shift(excluded);
+ left=log(base,U)+'-'+log(base,V);right=log(base,String(target));
+ raw=[fraction(root)];allowed=x=>(a*x+b)>0&&(x-excluded)>0;
+ algebra='\\frac{'+U+'}{'+V+'}='+target;
+ method='Condense using the quotient property, cancel the logarithms, then solve the rational equation.';
+ detail=U+'='+target+'('+V+')';
 }
-
-function create() {
-  for(let t=0;t<5000;t++) {
-    const category=choose([
-      'linear','factor','square','rational'
-    ]);
-    const base=choose(bases);
-    const condense=rand(0,1)===1;
-    const subtract=rand(0,1)===1;
-    const K=rand(2,12);
-
-    let F,roots=[],method='',restrictions='';
-
-    if(category==='linear') {
-      const a=choose([-4,-3,-2,2,3,4]);
-      const r=rand(-6,6);
-      F=plus(term(a),-a*r);
-      roots=[{n:r,d:1}];
-      method='Solve the linear equation '+F+'=0.';
-    } else if(category==='factor') {
-      const a=choose([2,3,4]),c=choose([1,2,3]);
-      const m=rand(-7,7),n=rand(-7,7);
-      const u=rational(m,a),v=rational(n,c);
-      if(value(u)===value(v)) continue;
-
-      const f1=plus(term(a),-m);
-      const f2=plus(term(c),-n);
-      F='('+f1+')('+f2+')';
-      roots=[u,v];
-      method='Use the zero-product property on '+F+
-        '=0. The leading coefficient is '+(a*c)+', not 1.';
-    } else if(category==='square') {
-      const h=rand(-5,5),z=rand(1,5);
-      F='(x'+(h<0?'+'+(-h):h>0?'-'+h:'')+
-        ')^2-'+z*z;
-      roots=[{n:h-z,d:1},{n:h+z,d:1}];
-      method='Use the square root property: (x'+
-        (h<0?'+'+(-h):h>0?'-'+h:'')+
-        ')^2='+z*z+'.';
-    } else {
-      const r=rand(-6,6),s=rand(-6,6);
-      const p=rand(-6,6);
-      if(r===s) continue;
-
-      F='\\frac{(x'+(r<0?'+'+(-r):'-'+r)+
-        ')(x'+(s<0?'+'+(-s):'-'+s)+
-        ')}{x'+(p<0?'+'+(-p):'-'+p)+'}';
-
-      roots=[{n:r,d:1},{n:s,d:1}]
-        .filter(v=>v.n!==p);
-
-      restrictions='The original rational expression requires '+
-        'x \\ne '+p+'.';
-      method='Set the rational expression equal to zero. '+
-        'The numerator must be zero and the denominator '+
-        'must not be zero.';
-    }
-
-    roots.sort((u,v)=>value(u)-value(v));
-
-    const key=[category,base,K,F,condense,subtract].join('|');
-    if(key===previous) continue;
-    previous=key;
-
-    const arg='\\left('+F+'+'+K+'\\right)';
-    const left=condense?
-      '\\log_{'+base+'}'+arg+
-      (subtract?'-':'+')+
-      '\\log_{'+base+'}(2)':
-      '\\log_{'+base+'}'+arg;
-
-    const right='\\log_{'+base+'}('+
-      (K*(condense?(subtract?.5:2):1))+')';
-
-    const eq='\\['+left+'='+right+'\\]';
-
-    return {
-      category,base,K,F,roots,method,
-      restrictions,condense,subtract,eq,right
-    };
-  }
-  throw Error('Could not generate a problem');
-}
-
-function clearFeedback() {
-  for(const id of ['exactFeedback','decimalFeedback']) {
-    $(id).textContent='';
-    $(id).className='feedback';
-  }
-  for(const el of [
-    $('plain'),$('num'),$('den'),$('decimal')
-  ]) el.classList.remove('ok-field','bad-field');
-}
-
-function setMode(next) {
-  if(next===mode) return;
-  mode=next;
-  $('plainWrap').hidden=next!=='plain';
-  $('fracWrap').hidden=next!=='fraction';
-  $('fraction').setAttribute(
-    'aria-pressed',String(next==='fraction')
-  );
-
-  if(next==='fraction' &&
-     $('plain').value.trim() &&
-     !$('plain').value.includes(',')) {
-    $('num').value=$('plain').value;
-    $('plain').value='';
-  }
-  if(next==='plain' && ($('num').value||$('den').value)) {
-    $('plain').value='('+$('num').value+')/('+
-      $('den').value+')';
-    $('num').value='';
-    $('den').value='';
-  }
-
-  active=next==='plain'?$('plain'):$('num');
-  active.focus();
-  clearFeedback();
-}
-
-function reset() {
-  current=create();
-  mode='plain';
-  $('plainWrap').hidden=false;
-  $('fracWrap').hidden=true;
-  $('fraction').setAttribute('aria-pressed','false');
-
-  for(const id of ['plain','num','den','decimal'])
-    $(id).value='';
-
-  active=$('plain');
-  clearFeedback();
-  $('problem').textContent=current.eq;
-
-  const c=current;
-  let step='<p><strong>Step 1:</strong> '+
-    (c.condense?
-      'Condense the logarithms using the product or quotient property.':
-      'Use the logarithmic equation.')+'</p>';
-
-  step+='<p><strong>Step 2:</strong> '+
-    'Equate the logarithm arguments because the bases '+
-    'are the same.</p>';
-
-  step+='\\['+c.F+'+'+c.K+'='+c.K+'\\]';
-  step+='<p><strong>Step 3:</strong> Subtract '+
-    c.K+' from both sides and solve:</p>\\['+
-    c.F+'=0\\]';
-  step+='<p>'+c.method+'</p>';
-
-  if(c.restrictions)
-    step+='<p><strong>Excluded values:</strong> \\('+
-      c.restrictions+'\\)</p>';
-
-  step+='<p><strong>Step 4:</strong> Check each candidate '+
-    'in the original logarithmic equation. All logarithm '+
-    'arguments must be positive and denominators nonzero.</p>';
-
-  step+='<p><strong>Exact solution(s):</strong> '+
-    (c.roots.length?
-      '\\('+c.roots.map(fracTex).join(',\\;')+'\\)':
-      'None')+'</p>';
-
-  step+='<p><strong>Decimal approximation(s):</strong> '+
-    (c.roots.length?
-      '\\('+c.roots.map(v=>value(v).toFixed(4))
-        .join(',\\;')+'\\)':
-      'None')+'</p>';
-
-  $('solution').innerHTML=step;
-  $('solution').hidden=true;
-  showing=false;
-  $('show').textContent='Show Solution';
-  $('show').setAttribute('aria-expanded','false');
-  typeset([$('problem')]);
-  $('announce').textContent='New logarithmic equation loaded.';
-}
-
-function parseNumber(raw) {
-  const s=raw.trim().replace(/−/g,'-');
-  if(!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:\s*\/\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+))?$/.test(s))
-    throw Error('Invalid number');
-
-  const parts=s.split('/').map(Number);
-  if(parts.length===2 && parts[1]===0)
-    throw Error('Zero denominator');
-
-  return parts.length===2?parts[0]/parts[1]:parts[0];
-}
-
-function sameAnswers(actual,expected,tol) {
-  return actual.length===expected.length &&
-    actual.every((x,i)=>Math.abs(x-expected[i])<=tol);
-}
-
-function submit() {
-  let exact=false,decOK=false;
-  const targets=current.roots.map(value).sort((a,b)=>a-b);
-
-  try {
-    let vals;
-    if(mode==='fraction') {
-      vals=[parseNumber($('num').value)/
-        parseNumber($('den').value)];
-      if(!Number.isFinite(vals[0]))
-        throw Error('Invalid fraction');
-    } else {
-      const raw=$('plain').value;
-      vals=/^none$/i.test(raw.trim())?
-        []:raw.split(',').map(parseNumber);
-    }
-    vals.sort((a,b)=>a-b);
-    exact=sameAnswers(vals,targets,1e-9);
-  } catch(e) {}
-
-  try {
-    const raw=$('decimal').value.trim();
-    if(/^none$/i.test(raw)) {
-      decOK=targets.length===0;
-    } else {
-      const items=raw.split(',').map(s=>s.trim());
-      if(!items.every(s=>
-        /^[+-]?(?:\d+\.\d{4}|\.\d{4})$/.test(s)))
-        throw Error('Use four decimals');
-
-      const vals=items.map(Number).sort((a,b)=>a-b);
-      const expected=targets.map(x=>Number(x.toFixed(4)));
-      decOK=sameAnswers(vals,expected,1e-10);
-    }
-  } catch(e) {}
-
-  for(const [id,ok,label] of [
-    ['exactFeedback',exact,'Exact solution(s)'],
-    ['decimalFeedback',decOK,'Decimal approximation(s)']
-  ]) {
-    $(id).textContent=
-      (ok?'Correct: ':'Incorrect: ')+label;
-    $(id).className='feedback '+(ok?'good':'bad');
-  }
-
-  for(const el of mode==='fraction'?
-    [$('num'),$('den')]:[$('plain')])
-    el.classList.add(exact?'ok-field':'bad-field');
-
-  $('decimal').classList.add(decOK?'ok-field':'bad-field');
-
-  $('announce').textContent=
-    'Exact answer '+(exact?'correct':'incorrect')+
-    '. Decimal answer '+(decOK?'correct':'incorrect')+'.';
-}
-
-function insert(s) {
-  const el=active;
-  const a=el.selectionStart??el.value.length;
-  const b=el.selectionEnd??a;
-
-  el.value=el.value.slice(0,a)+s+el.value.slice(b);
-  const pos=a+s.length-(s==='()'?1:0);
-
-  el.focus();
-  el.setSelectionRange(pos,pos);
-  clearFeedback();
-}
-
-for(const el of [$('plain'),$('num'),$('den')]) {
-  el.addEventListener('focus',()=>active=el);
-  el.addEventListener('input',clearFeedback);
-  el.addEventListener('keydown',e=>{
-    if(e.key==='Enter') {
-      e.preventDefault();
-      (el===$('num')?$('den'):$('decimal')).focus();
-    }
-  });
-}
-$('decimal').addEventListener('input',clearFeedback);
-
-$('fraction').addEventListener('click',()=>
-  setMode(mode==='plain'?'fraction':'plain')
-);
-document.querySelectorAll('[data-insert]').forEach(b=>
-  b.addEventListener('click',()=>insert(b.dataset.insert))
-);
-
-$('back').addEventListener('click',()=>{
-  const el=active;
-  let a=el.selectionStart??0,b=el.selectionEnd??a;
-  if(a===b && a>0) a--;
-  el.value=el.value.slice(0,a)+el.value.slice(b);
-  el.focus();
-  el.setSelectionRange(a,a);
-  clearFeedback();
-});
-
-$('clear').addEventListener('click',()=>{
-  if(mode==='fraction') {
-    $('num').value='';
-    $('den').value='';
-    $('num').focus();
-  } else {
-    $('plain').value='';
-    $('plain').focus();
-  }
-  clearFeedback();
-});
-
-$('submit').addEventListener('click',submit);
-$('next').addEventListener('click',reset);
-
-$('show').addEventListener('click',()=>{
-  showing=!showing;
-  $('solution').hidden=!showing;
-  $('show').textContent=showing?'Hide Solution':'Show Solution';
-  $('show').setAttribute('aria-expanded',String(showing));
-  if(showing) typeset([$('solution')]);
-});
-
-$('theme').addEventListener('click',()=>{
-  const light=app.classList.toggle('light');
-  $('theme').textContent=light?'☀ Light mode':'☾ Dark mode';
-  $('theme').setAttribute(
-    'aria-label',
-    light?'Switch to dark mode':'Switch to light mode'
-  );
-});
-
+const roots=unique(raw.filter(v=>allowed(value(v))));
+const key=[kind,base,left,right].join('|');if(key===last)continue;last=key;
+return {kind,base,left,right,roots,algebra,method,detail,raw:unique(raw),allowed};
+}throw Error('Unable to generate a question');}
+function clearFeedback(){for(const id of ['exact-feedback','decimal-feedback']){$(id).textContent='';$(id).className='feedback'}for(const id of ['plain','numerator','denominator','decimal'])$(id).classList.remove('good-field','bad-field')}
+function setMode(next){if(next===mode)return;if(next==='fraction'){$('numerator').value=$('plain').value.trim();$('plain').value=''}else if($('numerator').value||$('denominator').value){$('plain').value='('+$('numerator').value+')/('+$('denominator').value+')'}mode=next;$('plain-wrap').hidden=next!=='plain';$('fraction-wrap').hidden=next!=='fraction';$('fraction').setAttribute('aria-pressed',String(next==='fraction'));active=next==='plain'?$('plain'):$('numerator');active.focus();clearFeedback()}
+function reset(){current=create();mode='plain';$('plain-wrap').hidden=false;$('fraction-wrap').hidden=true;$('fraction').setAttribute('aria-pressed','false');for(const id of ['plain','numerator','denominator','decimal'])$(id).value='';active=$('plain');clearFeedback();$('equation').textContent='\\['+current.left+'='+current.right+'\\]';
+const c=current;const text=[];text.push('<p><strong>Step 1:</strong> '+(c.kind==='add'?'Use the product property to condense the left side.':c.kind==='subtract'?'Use the quotient property to condense the left side.':'The logarithms already have the same base.')+'</p>');
+text.push('<p><strong>Step 2:</strong> Equate the logarithm arguments.</p>\\['+c.algebra+'\\]');text.push('<p><strong>Step 3:</strong> '+c.method+'</p>');if(c.detail)text.push('\\['+c.detail+'\\]');
+text.push('<p><strong>Step 4:</strong> Check every candidate in the original equation. Every logarithm argument must be positive, and any denominator must be nonzero.</p>');
+text.push('<p><strong>Exact solution(s):</strong> '+(c.roots.length?'\\('+c.roots.map(asTex).join(',\\;')+'\\)':'NONE')+'</p>');
+text.push('<p><strong>Decimal approximation(s):</strong> '+(c.roots.length?'\\('+c.roots.map(v=>value(v).toFixed(4)).join(',\\;')+'\\)':'NONE')+'</p>');
+$('solution').innerHTML=text.join('');$('solution').hidden=true;shown=false;$('show').textContent='Show Solution';$('show').setAttribute('aria-expanded','false');typeset([$('equation')]);$('announce').textContent='New logarithmic equation loaded.'}
+function number(s){const t=s.trim().replace(/−/g,'-');if(!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:\s*\/\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+))?$/.test(t))throw Error('Invalid number');const p=t.split('/').map(Number);if(p.length===2&&p[1]===0)throw Error('Zero denominator');return p.length===2?p[0]/p[1]:p[0]}
+function compare(a,b,tol){return a.length===b.length&&a.every((v,i)=>Math.abs(v-b[i])<=tol)}
+function submit(){let exact=false,decimalOK=false;const targets=current.roots.map(value).sort((a,b)=>a-b);
+try{let answers;if(mode==='fraction'){if(!$('numerator').value.trim()||!$('denominator').value.trim())throw Error('Incomplete fraction');answers=[number($('numerator').value)/number($('denominator').value)]}else{const raw=$('plain').value.trim();answers=/^none$/i.test(raw)?[]:raw.split(',').map(number)}if(!answers.every(Number.isFinite))throw Error('Invalid answer');answers.sort((a,b)=>a-b);exact=compare(answers,targets,1e-9)}catch(e){}
+try{const raw=$('decimal').value.trim();if(/^none$/i.test(raw)){decimalOK=targets.length===0}else{const pieces=raw.split(',').map(s=>s.trim());if(!pieces.every(s=>/^[+-]?(?:\d+\.\d{4}|\.\d{4})$/.test(s)))throw Error('Four places required');const actual=pieces.map(Number).sort((a,b)=>a-b);const expected=targets.map(v=>Number(v.toFixed(4))).sort((a,b)=>a-b);decimalOK=compare(actual,expected,1e-10)}}catch(e){}
+for(const [id,ok,label] of [['exact-feedback',exact,'Exact solution(s)'],['decimal-feedback',decimalOK,'Decimal approximation(s)']]){$(id).textContent=(ok?'Correct: ':'Incorrect: ')+label;$(id).className='feedback '+(ok?'good':'bad')}
+for(const el of mode==='plain'?[$('plain')]:[$('numerator'),$('denominator')])el.classList.add(exact?'good-field':'bad-field');$('decimal').classList.add(decimalOK?'good-field':'bad-field');$('announce').textContent='Exact answer '+(exact?'correct':'incorrect')+'. Decimal answer '+(decimalOK?'correct':'incorrect')+'.'}
+function insert(s){const el=active,a=el.selectionStart??el.value.length,b=el.selectionEnd??a;el.value=el.value.slice(0,a)+s+el.value.slice(b);const p=a+s.length-(s==='()'?1:0);el.focus();el.setSelectionRange(p,p);clearFeedback()}
+for(const el of [$('plain'),$('numerator'),$('denominator')]){el.addEventListener('focus',()=>active=el);el.addEventListener('input',clearFeedback);el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();(el===$('numerator')?$('denominator'):$('decimal')).focus()}})}$('decimal').addEventListener('input',clearFeedback);
+$('fraction').addEventListener('click',()=>setMode(mode==='plain'?'fraction':'plain'));
+document.querySelectorAll('[data-insert]').forEach(btn=>btn.addEventListener('click',()=>insert(btn.dataset.insert)));
+$('back').addEventListener('click',()=>{const el=active;let a=el.selectionStart??0,b=el.selectionEnd??a;if(a===b&&a>0)a--;el.value=el.value.slice(0,a)+el.value.slice(b);el.focus();el.setSelectionRange(a,a);clearFeedback()});
+$('clear').addEventListener('click',()=>{if(mode==='plain'){$('plain').value='';$('plain').focus()}else{$('numerator').value='';$('denominator').value='';$('numerator').focus()}clearFeedback()});
+$('submit').addEventListener('click',submit);$('next').addEventListener('click',reset);
+$('show').addEventListener('click',()=>{shown=!shown;$('solution').hidden=!shown;$('show').textContent=shown?'Hide Solution':'Show Solution';$('show').setAttribute('aria-expanded',String(shown));if(shown)typeset([$('solution')])});
+$('theme').addEventListener('click',()=>{const light=app.classList.toggle('light');$('theme').textContent=light?'☀ Light mode':'☾ Dark mode';$('theme').setAttribute('aria-label',light?'Switch to dark mode':'Switch to light mode')});
 reset();
 })();
 </script>
