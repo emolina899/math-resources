@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Matrix Addition and Subtraction Practice</title>
+<title>Matrix Scalar Operations</title>
 
 <script>
 window.MathJax = {
@@ -19,9 +19,7 @@ window.MathJax = {
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 :root {
   --bg: #101827;
@@ -76,9 +74,7 @@ body {
   margin-bottom: 7px;
 }
 
-.top strong {
-  font-size: 13px;
-}
+.top strong { font-size: 13px; }
 
 button {
   border: 0;
@@ -240,9 +236,7 @@ button {
   border-color: var(--accent);
 }
 
-.matrix-cell:disabled {
-  opacity: 0.35;
-}
+.matrix-cell:disabled { opacity: 0.35; }
 
 .actions {
   display: grid;
@@ -275,9 +269,7 @@ button {
   line-height: 1.4;
 }
 
-.feedback:empty {
-  display: none;
-}
+.feedback:empty { display: none; }
 
 .good { color: var(--good); }
 .bad { color: var(--bad); }
@@ -341,10 +333,6 @@ button {
   padding: 2px 0;
 }
 
-.arithmetic-matrix {
-  font-size: 15px;
-}
-
 .solution-note {
   font-size: 13px;
   line-height: 1.5;
@@ -353,22 +341,12 @@ button {
 
 @media (max-width: 480px) {
   body { padding: 6px; }
-
   .top strong { font-size: 12px; }
-
   .problem { padding: 10px 6px 8px; }
-
-  .matrix-definitions {
-    column-gap: 12px;
-  }
-
+  .matrix-definitions { column-gap: 12px; }
   .matrix-name { font-size: 18px; }
-
   .operation-display { font-size: 19px; }
-
   .work { font-size: 15px; }
-
-  .arithmetic-matrix { font-size: 13px; }
 
   .matrix-cell {
     width: 43px;
@@ -377,7 +355,6 @@ button {
   }
 
   .matrix-grid { gap: 4px; }
-
   .solution { padding: 9px; }
 
   button {
@@ -461,11 +438,9 @@ button {
 "use strict";
 
 const $ = id => document.getElementById(id);
-
 const rand = (a,b) =>
-  Math.floor(Math.random() * (b-a+1)) + a;
-
-const tex = s => "\\(" + s + "\\)";
+  Math.floor(Math.random()*(b-a+1))+a;
+const tex = s => "\\("+s+"\\)";
 
 let problems = [];
 let current = null;
@@ -497,40 +472,74 @@ function sameDimensions(A,B) {
     A[0].length===B[0].length;
 }
 
-function calculate(A,B,operation) {
+function scaleMatrix(M,k) {
+  return M.map(row=>row.map(v=>k*v));
+}
+
+function combineMatrices(A,B,sign) {
   if(!sameDimensions(A,B)) return null;
 
   return A.map((row,i)=>
-    row.map((value,j)=>
-      operation==="+" ?
-        value+B[i][j] :
-        value-B[i][j]
-    )
+    row.map((v,j)=>v+sign*B[i][j])
   );
 }
 
-function arithmeticEntry(a,b,operation) {
-  if(operation==="+") {
-    return a + (b<0 ? "+("+b+")" : "+"+b);
+function signedTerm(coefficient,name,first=false) {
+  if(coefficient===0) return "";
+
+  const magnitude=Math.abs(coefficient);
+  const body=(magnitude===1?"":magnitude)+name;
+
+  if(first) {
+    return coefficient<0?"-"+body:body;
   }
 
-  return a + (b<0 ? "-("+b+")" : "-"+b);
+  return coefficient<0?"-"+body:"+"+body;
 }
 
-function arithmeticMatrix(A,B,operation) {
-  return A.map((row,i)=>
-    row.map((value,j)=>
-      arithmeticEntry(value,B[i][j],operation)
+function expressionTex(p) {
+  const first=p.swapped?"B":"A";
+  const second=p.swapped?"A":"B";
+
+  if(p.grouped) {
+    const inside=first+
+      (p.sign===1?"+":"-")+second;
+
+    const scalar=p.k===1?"":p.k===-1?"-":p.k;
+
+    return scalar+"("+inside+")";
+  }
+
+  return signedTerm(p.k,first,true)+
+    signedTerm(p.m,second,false);
+}
+
+function evaluateProblem(p) {
+  if(!sameDimensions(p.A,p.B)) return null;
+
+  const first=p.swapped?p.B:p.A;
+  const second=p.swapped?p.A:p.B;
+
+  if(p.grouped) {
+    const inside=combineMatrices(
+      first,second,p.sign
+    );
+    return scaleMatrix(inside,p.k);
+  }
+
+  return first.map((row,i)=>
+    row.map((v,j)=>
+      p.k*v+p.m*second[i][j]
     )
   );
 }
 
 // ----------------------------------
-// GENERATE 50 RANDOM PROBLEMS
+// GENERATE 50 PROBLEMS
 // ----------------------------------
 
 function generate() {
-  const seen = new Set();
+  const seen=new Set();
 
   while(problems.length<50) {
     const rowsA=rand(2,4);
@@ -550,16 +559,32 @@ function generate() {
 
     const A=randomMatrix(rowsA,colsA);
     const B=randomMatrix(rowsB,colsB);
-    const operation=Math.random()<0.5?"+":"-";
 
-    const key=JSON.stringify({A,B,operation});
+    const swapped=Math.random()<0.5;
+    const grouped=Math.random()<0.33;
+
+    const coefficients=[
+      -5,-4,-3,-2,-1,1,2,3,4,5
+    ];
+
+    const k=coefficients[
+      rand(0,coefficients.length-1)
+    ];
+
+    const m=coefficients[
+      rand(0,coefficients.length-1)
+    ];
+
+    const sign=Math.random()<0.5?1:-1;
+
+    const p={A,B,swapped,grouped,k,m,sign};
+
+    const key=JSON.stringify(p);
     if(seen.has(key)) continue;
-    seen.add(key);
 
-    problems.push({
-      A,B,operation,
-      result:calculate(A,B,operation)
-    });
+    seen.add(key);
+    p.result=evaluateProblem(p);
+    problems.push(p);
   }
 }
 
@@ -584,13 +609,13 @@ function typeset(element) {
 }
 
 /*
-  Fit MathJax using font-size only.
+  Fit using font-size only.
   No transform:scale(), no artificial
   widths, and no horizontal scrollbars.
 */
 
 function fitAllMath(parent) {
-  const targets = [];
+  const targets=[];
 
   if(parent.classList &&
      parent.classList.contains("math-line")) {
@@ -609,6 +634,7 @@ function fitMathLine(element) {
   if(!container) return;
 
   element.style.fontSize="";
+
   const initialSize=parseFloat(
     getComputedStyle(element).fontSize
   );
@@ -645,7 +671,6 @@ function createGrid(rows,cols) {
       input.className="matrix-cell";
       input.autocomplete="off";
       input.inputMode="numeric";
-
       input.dataset.row=i;
       input.dataset.col=j;
 
@@ -689,7 +714,7 @@ function newProblem() {
   $("matrixB").textContent=tex(matrixTex(current.B));
 
   $("operationDisplay").textContent=tex(
-    "A"+current.operation+"B"
+    expressionTex(current)
   );
 
   createGrid(
@@ -714,7 +739,7 @@ function newProblem() {
 }
 
 // ----------------------------------
-// ANSWER CHECKING
+// CHECK ANSWERS
 // ----------------------------------
 
 function parseInteger(raw) {
@@ -731,8 +756,8 @@ function check() {
   if(current.result===null) {
     const correct=$("notPossible").checked;
 
-    fb.textContent=correct ?
-      "Correct! The matrices have incompatible dimensions." :
+    fb.textContent=correct?
+      "Correct! The matrices have incompatible dimensions.":
       "Incorrect. Check the matrix dimensions.";
 
     fb.className="feedback "+(correct?"good":"bad");
@@ -741,7 +766,7 @@ function check() {
 
   if($("notPossible").checked) {
     fb.textContent=
-      "Incorrect. These matrices have compatible dimensions.";
+      "Incorrect. The operation is possible.";
     fb.className="feedback bad";
     return;
   }
@@ -758,8 +783,8 @@ function check() {
       current.result[i][j];
   });
 
-  fb.textContent=correct ?
-    "Correct! Every matrix entry is correct." :
+  fb.textContent=correct?
+    "Correct! Every matrix entry is correct.":
     "Incorrect. Check your matrix calculations.";
 
   fb.className="feedback "+(correct?"good":"bad");
@@ -779,13 +804,12 @@ function addStep(container,title) {
 
   step.append(heading);
   container.append(step);
-
   return step;
 }
 
-function addMath(step,latex,className="work") {
+function addMath(step,latex) {
   const line=document.createElement("div");
-  line.className=className+" math-line";
+  line.className="work math-line";
   line.textContent=tex(latex);
   step.append(line);
 }
@@ -844,9 +868,11 @@ function showSolution() {
   heading.textContent="Step-by-step solution";
   el.append(heading);
 
-  const {A,B,operation,result}=current;
+  const p=current;
+  const first=p.swapped?p.B:p.A;
+  const second=p.swapped?p.A:p.B;
 
-  if(result===null) {
+  if(p.result===null) {
     const step=addStep(
       el,
       "Compare the matrix dimensions."
@@ -854,56 +880,92 @@ function showSolution() {
 
     addMath(
       step,
-      `A:\\ ${A.length}\\times${A[0].length}
+      `A:\\ ${p.A.length}\\times${p.A[0].length}
        \\qquad
-       B:\\ ${B.length}\\times${B[0].length}`
+       B:\\ ${p.B.length}\\times${p.B[0].length}`
     );
 
     addNote(
       el,
-      "Not Possible. Matrix addition and subtraction require identical dimensions."
+      "Not Possible. The matrices must have identical dimensions for addition or subtraction."
     );
 
     typeset(el);
     return;
   }
 
-  // Step 1: Show the original matrices
-  // as separate responsive elements.
+  if(p.grouped) {
+    const inside=combineMatrices(
+      first,second,p.sign
+    );
 
-  const step1=addStep(
+    const operation=p.sign===1?"+":"-";
+
+    const step1=addStep(
+      el,
+      "Step 1: Evaluate inside parentheses."
+    );
+
+    addMatrixRow(step1,[
+      {type:"matrix",value:matrixTex(first)},
+      {type:"operator",value:operation},
+      {type:"matrix",value:matrixTex(second)}
+    ]);
+
+    addMath(step1,"="+matrixTex(inside));
+
+    const step2=addStep(
+      el,
+      "Step 2: Multiply every entry by the scalar."
+    );
+
+    addMath(
+      step2,
+      p.k+matrixTex(inside)
+    );
+
+    addMath(
+      step2,
+      "="+matrixTex(p.result)
+    );
+  } else {
+    const firstScaled=scaleMatrix(first,p.k);
+    const secondScaled=scaleMatrix(second,p.m);
+
+    const step1=addStep(
+      el,
+      "Step 1: Multiply each matrix by its scalar."
+    );
+
+    addMath(
+      step1,
+      expressionTex(p)
+    );
+
+    addMath(
+      step1,
+      "="+matrixTex(firstScaled)+
+      "+"+matrixTex(secondScaled)
+    );
+
+    const step2=addStep(
+      el,
+      "Step 2: Add corresponding entries."
+    );
+
+    addMatrixRow(step2,[
+      {type:"matrix",value:matrixTex(firstScaled)},
+      {type:"operator",value:"+"},
+      {type:"matrix",value:matrixTex(secondScaled)}
+    ]);
+  }
+
+  const final=addStep(
     el,
-    "Step 1: Identify corresponding entries."
+    "Final answer:"
   );
 
-  addMatrixRow(step1,[
-    {type:"matrix",value:matrixTex(A)},
-    {type:"operator",value:operation},
-    {type:"matrix",value:matrixTex(B)}
-  ]);
-
-  // Step 2: Show only the arithmetic
-  // matrix, avoiding long expressions.
-
-  const step2=addStep(
-    el,
-    "Step 2: Add or subtract each pair of entries."
-  );
-
-  addMath(
-    step2,
-    matrixTex(arithmeticMatrix(A,B,operation)),
-    "work arithmetic-matrix"
-  );
-
-  // Step 3: Final answer.
-
-  const step3=addStep(
-    el,
-    "Step 3: Simplify to obtain the resulting matrix."
-  );
-
-  addMath(step3,matrixTex(result));
+  addMath(final,matrixTex(p.result));
 
   typeset(el);
 }
