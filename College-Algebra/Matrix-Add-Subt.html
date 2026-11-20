@@ -3,337 +3,325 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Matrix Addition and Subtraction</title>
 
 <script>
 window.MathJax = {
-  tex: {
-    inlineMath: [["\\(", "\\)"]]
-  },
-  svg: {
-    fontCache: "global"
-  }
+  tex: { inlineMath: [["\\(","\\)"]] },
+  svg: { fontCache: "global" }
 };
 </script>
-
-<script defer
-src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
-</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing:border-box; }
 
 :root {
-  --bg: #101827;
-  --panel: #1c2a45;
-  --field: #192841;
-  --text: #f6f7ff;
-  --muted: #b5c4df;
-  --border: #425679;
-  --soft: #2c4165;
-  --good: #86e9b7;
-  --bad: #ff9ea9;
-  --accent: #8772ff;
+  --bg:#101827;
+  --panel:#1c2a45;
+  --field:#192841;
+  --text:#f6f7ff;
+  --muted:#b5c4df;
+  --border:#425679;
+  --soft:#2c4165;
+  --good:#86e9b7;
+  --bad:#ff9ea9;
+  --accent:#8772ff;
 }
 
 body.light {
-  --bg: #ffffff;
-  --panel: #eff2ff;
-  --field: #ffffff;
-  --text: #18243c;
-  --muted: #52627e;
-  --border: #c5cfe2;
-  --soft: #e4eafa;
-  --good: #167447;
-  --bad: #b82f45;
+  --bg:#fff;
+  --panel:#eff2ff;
+  --field:#fff;
+  --text:#18243c;
+  --muted:#52627e;
+  --border:#c5cfe2;
+  --soft:#e4eafa;
+  --good:#167447;
+  --bad:#b82f45;
 }
 
 body {
-  margin: 0;
-  padding: 12px;
-  background: var(--bg);
-  color: var(--text);
-  font: 15px Arial, sans-serif;
+  margin:0;
+  padding:8px;
+  background:var(--bg);
+  color:var(--text);
+  font:14px Arial,sans-serif;
 }
 
 .app {
-  max-width: 800px;
-  margin: auto;
+  max-width:800px;
+  margin:auto;
 }
 
 .top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-bottom:7px;
 }
 
 button {
-  border: 0;
-  border-radius: 10px;
-  padding: 11px;
-  font: inherit;
-  font-weight: bold;
-  cursor: pointer;
+  border:0;
+  border-radius:8px;
+  padding:9px;
+  font:inherit;
+  font-weight:bold;
+  cursor:pointer;
 }
 
 .theme {
-  background: var(--soft);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 8px 12px;
-  font-size: 12px;
-  white-space: nowrap;
+  background:var(--soft);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:6px 10px;
+  font-size:11px;
+  white-space:nowrap;
 }
 
 .problem {
-  background: var(--panel);
-  border: 1px solid var(--accent);
-  border-radius: 15px;
-  padding: 22px 12px;
-  text-align: center;
+  background:var(--panel);
+  border:1px solid var(--accent);
+  border-radius:12px;
+  padding:12px 10px 10px;
+  text-align:center;
 }
 
 .prompt {
-  color: var(--muted);
-  font-size: 13px;
-  margin-bottom: 12px;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:5px;
 }
 
 .matrix-display {
-  font-size: 22px;
-  text-align: center;
-  width: 100%;
-  min-width: 0;
+  font-size:19px;
+  text-align:center;
+  width:100%;
 }
 
 .operation-display {
-  margin-top: 12px;
-  font-size: 24px;
-  text-align: center;
+  font-size:21px;
+  text-align:center;
+  margin-top:5px;
 }
 
-/* Remove internal scrollbars */
-
+/* No internal MathJax scrollbars */
+.problem,
 .matrix-display,
 .operation-display,
-.work,
-.problem,
 .solution,
-.step {
-  overflow: visible !important;
+.step,
+.work {
+  overflow:visible !important;
 }
 
 mjx-container {
-  overflow: visible !important;
+  overflow:visible !important;
 }
 
 .matrix-display mjx-container,
 .operation-display mjx-container,
 .work mjx-container {
-  max-width: 100%;
+  max-width:100%;
 }
 
-/* Keep MathJax SVGs responsive */
-
-.matrix-display mjx-container svg,
-.operation-display mjx-container svg,
-.work mjx-container svg {
-  max-width: 100%;
-  height: auto;
-}
-
+/* Compact answer area */
 .answer-section {
-  margin: 18px 0;
+  margin:10px 0 11px;
+}
+
+.answer-heading {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+  flex-wrap:wrap;
+  margin-bottom:9px;
 }
 
 .answer-label {
-  display: block;
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 12px;
-}
-
-.matrix-input-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 7px;
-  max-width: 100%;
-}
-
-.matrix-bracket {
-  width: 10px;
-  align-self: stretch;
-  border-top: 2px solid var(--text);
-  border-bottom: 2px solid var(--text);
-}
-
-.matrix-bracket.left {
-  border-left: 2px solid var(--text);
-}
-
-.matrix-bracket.right {
-  border-right: 2px solid var(--text);
-}
-
-.matrix-grid {
-  display: grid;
-  gap: 7px;
-  max-width: calc(100% - 34px);
-}
-
-.matrix-cell {
-  width: 65px;
-  min-width: 0;
-  padding: 10px 4px;
-  background: var(--field);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  text-align: center;
-  font: 15px Arial, sans-serif;
-  outline: none;
-}
-
-.matrix-cell:focus {
-  border-color: var(--accent);
-}
-
-.matrix-cell:disabled {
-  opacity: 0.4;
+  font-weight:bold;
+  font-size:13px;
 }
 
 .not-possible {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 9px;
-  margin-top: 15px;
-  cursor: pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  cursor:pointer;
+  white-space:nowrap;
 }
 
 .not-possible input {
-  width: 17px;
-  height: 17px;
-  accent-color: var(--accent);
+  width:15px;
+  height:15px;
+  margin:0;
+  accent-color:var(--accent);
+}
+
+.matrix-input-wrap {
+  display:flex;
+  justify-content:center;
+  align-items:stretch;
+  gap:5px;
+  max-width:100%;
+}
+
+.matrix-bracket {
+  width:8px;
+  flex:0 0 8px;
+  border-top:2px solid var(--text);
+  border-bottom:2px solid var(--text);
+}
+
+.matrix-bracket.left {
+  border-left:2px solid var(--text);
+}
+
+.matrix-bracket.right {
+  border-right:2px solid var(--text);
+}
+
+.matrix-grid {
+  display:grid;
+  gap:5px;
+  max-width:calc(100% - 26px);
+}
+
+.matrix-cell {
+  width:48px;
+  min-width:0;
+  height:35px;
+  padding:5px 2px;
+  background:var(--field);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:6px;
+  text-align:center;
+  font:13px Arial,sans-serif;
+  outline:none;
+}
+
+.matrix-cell:focus {
+  border-color:var(--accent);
+}
+
+.matrix-cell:disabled {
+  opacity:.35;
 }
 
 .actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 9px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
 }
 
 .submit {
-  background: linear-gradient(
-    100deg, #905cf6, #6258ed
-  );
-  color: white;
+  background:linear-gradient(100deg,#905cf6,#6258ed);
+  color:white;
 }
 
 .next {
-  background: #31568d;
-  color: white;
+  background:#31568d;
+  color:white;
 }
 
 .reveal {
-  width: 100%;
-  margin-top: 9px;
-  background: var(--soft);
-  color: var(--text);
-  border: 1px solid var(--border);
+  width:100%;
+  margin-top:7px;
+  background:var(--soft);
+  color:var(--text);
+  border:1px solid var(--border);
 }
 
 .feedback {
-  min-height: 18px;
-  margin: 12px 0;
-  text-align: center;
-  font-weight: bold;
+  min-height:0;
+  margin:8px 0 0;
+  text-align:center;
+  font-weight:bold;
+  line-height:1.4;
 }
 
-.good {
-  color: var(--good);
+.feedback:empty {
+  display:none;
 }
 
-.bad {
-  color: var(--bad);
-}
+.good { color:var(--good); }
+.bad { color:var(--bad); }
 
 .solution {
-  display: none;
-  margin-top: 12px;
-  padding: 15px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  display:none;
+  margin-top:10px;
+  padding:11px 12px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+
+.solution-heading {
+  font-weight:bold;
+  margin-bottom:7px;
 }
 
 .step {
-  padding: 13px 0;
-  border-bottom: 1px solid var(--border);
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
 }
 
 .step:last-child {
-  border-bottom: 0;
+  border-bottom:0;
+  padding-bottom:2px;
 }
 
 .step-title {
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-size:12px;
+  font-weight:bold;
+  margin-bottom:5px;
 }
 
 .work {
-  font-size: 19px;
-  text-align: center;
-  padding: 5px 0;
-  width: 100%;
-  min-width: 0;
+  font-size:17px;
+  text-align:center;
+  width:100%;
+  padding:2px 0;
 }
 
-@media(max-width: 480px) {
-  body {
-    padding: 8px;
-  }
+.solution-note {
+  font-size:13px;
+  line-height:1.5;
+  margin:5px 0 0;
+}
+
+@media(max-width:480px) {
+  body { padding:6px; }
+
+  .top { font-size:12px; }
 
   .problem {
-    padding: 18px 8px;
+    padding:10px 5px 8px;
   }
 
-  .matrix-display {
-    font-size: 17px;
-  }
-
-  .operation-display {
-    font-size: 20px;
-  }
-
-  .work {
-    font-size: 15px;
-  }
+  .matrix-display { font-size:15px; }
+  .operation-display { font-size:18px; }
+  .work { font-size:14px; }
 
   .matrix-cell {
-    width: 49px;
-    padding: 9px 2px;
-    font-size: 13px;
+    width:43px;
+    height:32px;
+    font-size:12px;
   }
 
-  .matrix-grid {
-    gap: 5px;
-  }
+  .matrix-grid { gap:4px; }
 
-  .solution {
-    padding: 10px;
-  }
+  .solution { padding:9px; }
 
   button {
-    font-size: 13px;
+    font-size:12px;
+    padding:8px 6px;
   }
 }
 </style>
@@ -344,70 +332,56 @@ mjx-container {
 
 <div class="top">
   <strong>Perform the indicated matrix operation.</strong>
-
-  <button id="theme" class="theme">
+  <button id="theme" class="theme" type="button">
     Light mode
   </button>
 </div>
 
 <div class="problem">
-
   <div class="prompt">
     Evaluate the expression, if possible.
   </div>
 
-  <div id="matrixDisplay"
-       class="matrix-display"></div>
-
-  <div id="operationDisplay"
-       class="operation-display"></div>
-
+  <div id="matrixDisplay" class="matrix-display"></div>
+  <div id="operationDisplay" class="operation-display"></div>
 </div>
 
 <div class="answer-section">
 
-  <label class="answer-label">
-    Enter the resulting matrix.
-  </label>
+  <div class="answer-heading">
+    <span class="answer-label">
+      Enter the resulting matrix.
+    </span>
 
-  <div class="matrix-input-wrap">
-
-    <span class="matrix-bracket left"></span>
-
-    <div id="matrixGrid"
-         class="matrix-grid"></div>
-
-    <span class="matrix-bracket right"></span>
-
+    <label class="not-possible">
+      <input type="checkbox" id="notPossible">
+      Not Possible
+    </label>
   </div>
 
-  <label class="not-possible">
-    <input type="checkbox" id="notPossible">
-    Not Possible
-  </label>
+  <div class="matrix-input-wrap">
+    <span class="matrix-bracket left"></span>
+    <div id="matrixGrid" class="matrix-grid"></div>
+    <span class="matrix-bracket right"></span>
+  </div>
 
 </div>
 
 <div class="actions">
-  <button id="submit" class="submit">
+  <button id="submit" class="submit" type="button">
     Submit
   </button>
-
-  <button id="next" class="next">
+  <button id="next" class="next" type="button">
     Try Similar
   </button>
 </div>
 
-<button id="reveal" class="reveal">
+<button id="reveal" class="reveal" type="button">
   Show Solution
 </button>
 
-<div id="feedback"
-     class="feedback"
-     aria-live="polite"></div>
-
-<div id="solution"
-     class="solution"></div>
+<div id="feedback" class="feedback" aria-live="polite"></div>
+<div id="solution" class="solution"></div>
 
 </main>
 
@@ -415,20 +389,18 @@ mjx-container {
 "use strict";
 
 const $ = id => document.getElementById(id);
-
 const rand = (a,b) =>
   Math.floor(Math.random()*(b-a+1))+a;
-
-const tex = s => "\\(" + s + "\\)";
+const tex = s => "\\("+s+"\\)";
 
 let problems = [];
 let current = null;
 let last = -1;
 let shown = false;
 
-// -------------------------------
+// ----------------------------------
 // MATRIX UTILITIES
-// -------------------------------
+// ----------------------------------
 
 function randomMatrix(rows,cols) {
   return Array.from(
@@ -441,33 +413,9 @@ function randomMatrix(rows,cols) {
 }
 
 function matrixTex(M) {
-  const rows = M.map(
-    row => row.join("&")
-  ).join("\\\\");
-
-  return "\\begin{bmatrix}"+
-    rows+
+  return "\\begin{bmatrix}" +
+    M.map(row=>row.join("&")).join("\\\\") +
     "\\end{bmatrix}";
-}
-
-function expressionMatrixTex(A,B,operation) {
-  return A.map((row,i)=>
-    row.map((value,j)=>{
-      const other=B[i][j];
-
-      if(operation==="+") {
-        return value+
-          (other<0 ?
-            "+("+other+")" :
-            "+"+other);
-      }
-
-      return value+
-        (other<0 ?
-          "-("+other+")" :
-          "-"+other);
-    })
-  );
 }
 
 function sameDimensions(A,B) {
@@ -476,9 +424,7 @@ function sameDimensions(A,B) {
 }
 
 function calculate(A,B,operation) {
-  if(!sameDimensions(A,B)) {
-    return null;
-  }
+  if(!sameDimensions(A,B)) return null;
 
   return A.map((row,i)=>
     row.map((value,j)=>
@@ -489,19 +435,34 @@ function calculate(A,B,operation) {
   );
 }
 
-// -------------------------------
-// GENERATE 50 QUESTIONS
-// -------------------------------
+function expressionMatrix(A,B,operation) {
+  return A.map((row,i)=>
+    row.map((value,j)=>{
+      const other=B[i][j];
+
+      if(operation==="+") {
+        return value+
+          (other<0?" + ("+other+")":" + "+other);
+      }
+
+      return value+
+        (other<0?" - ("+other+")":" - "+other);
+    })
+  );
+}
+
+// ----------------------------------
+// GENERATE 50 RANDOM PROBLEMS
+// ----------------------------------
 
 function generate() {
-  const seen = new Set();
+  const seen=new Set();
 
   while(problems.length<50) {
     const rowsA=rand(2,4);
     const colsA=rand(2,4);
 
-    const incompatible=
-      Math.random()<0.25;
+    const incompatible=Math.random()<0.25;
 
     let rowsB=rowsA;
     let colsB=colsA;
@@ -511,21 +472,15 @@ function generate() {
         rowsB=rand(2,4);
         colsB=rand(2,4);
       } while(
-        rowsB===rowsA &&
-        colsB===colsA
+        rowsB===rowsA && colsB===colsA
       );
     }
 
     const A=randomMatrix(rowsA,colsA);
     const B=randomMatrix(rowsB,colsB);
+    const operation=Math.random()<0.5?"+":"-";
 
-    const operation=
-      Math.random()<0.5 ? "+" : "-";
-
-    const key=JSON.stringify({
-      A,B,operation
-    });
-
+    const key=JSON.stringify({A,B,operation});
     if(seen.has(key)) continue;
     seen.add(key);
 
@@ -536,20 +491,18 @@ function generate() {
   }
 }
 
-// -------------------------------
+// ----------------------------------
 // MATHJAX RENDERING
-// -------------------------------
+// ----------------------------------
 
-let mathQueue = Promise.resolve();
+let mathQueue=Promise.resolve();
 
 function typeset(el) {
-  mathQueue = mathQueue.then(async()=>{
+  mathQueue=mathQueue.then(async()=>{
     if(!window.MathJax) return;
 
     await MathJax.startup.promise;
-
     MathJax.typesetClear([el]);
-
     await MathJax.typesetPromise([el]);
 
     fitMath(el);
@@ -558,49 +511,38 @@ function typeset(el) {
   return mathQueue;
 }
 
-// Scale mathematical expressions
-// without creating scrollbars.
+// Scale each rendered expression to fit
+// without adding internal scrollbars.
 
 function fitMath(parent) {
   parent.querySelectorAll("mjx-container")
-    .forEach(container => {
+    .forEach(container=>{
+      container.style.transform="";
+      container.style.width="";
+      container.style.transformOrigin="center center";
 
-      container.style.transform = "";
-      container.style.width = "";
-      container.style.transformOrigin =
-        "center center";
+      const available=parent.clientWidth-12;
+      const actual=container.scrollWidth;
 
-      const available =
-        parent.clientWidth-16;
-
-      const actual =
-        container.scrollWidth;
-
-      if(
-        actual>available &&
-        available>0
-      ) {
+      if(actual>available && available>0) {
         const scale=available/actual;
-
-        container.style.transform =
+        container.style.transform=
           "scale("+scale+")";
-
-        container.style.width =
+        container.style.width=
           (100/scale)+"%";
       }
     });
 }
 
-// -------------------------------
-// INPUT GRID
-// -------------------------------
+// ----------------------------------
+// ANSWER GRID
+// ----------------------------------
 
 function createGrid(rows,cols) {
   const grid=$("matrixGrid");
-
   grid.replaceChildren();
 
-  grid.style.gridTemplateColumns =
+  grid.style.gridTemplateColumns=
     `repeat(${cols},minmax(0,1fr))`;
 
   for(let i=0;i<rows;i++) {
@@ -610,14 +552,14 @@ function createGrid(rows,cols) {
       input.type="text";
       input.className="matrix-cell";
       input.autocomplete="off";
+      input.inputMode="numeric";
+      input.dataset.row=i;
+      input.dataset.col=j;
 
       input.setAttribute(
         "aria-label",
         `Row ${i+1}, column ${j+1}`
       );
-
-      input.dataset.row=i;
-      input.dataset.col=j;
 
       input.addEventListener("keydown",e=>{
         if(e.key==="Enter") check();
@@ -635,16 +577,16 @@ function setInputsDisabled(disabled) {
     });
 }
 
-// -------------------------------
-// NEW PROBLEM
-// -------------------------------
+// ----------------------------------
+// NEW QUESTION
+// ----------------------------------
 
 function newProblem() {
   let i;
 
   do {
     i=rand(0,problems.length-1);
-  } while(i===last);
+  } while(i===last && problems.length>1);
 
   last=i;
   current=problems[i];
@@ -679,20 +621,17 @@ function newProblem() {
   typeset($("operationDisplay"));
 }
 
-// -------------------------------
-// ANSWER CHECKING
-// -------------------------------
+// ----------------------------------
+// CHECK ANSWERS
+// ----------------------------------
 
 function parseInteger(raw) {
   const s=raw.trim();
 
-  if(!/^[+-]?\d+$/.test(s)) {
-    return null;
-  }
+  if(!/^[+-]?\d+$/.test(s)) return null;
 
   const n=Number(s);
-
-  return Number.isSafeInteger(n) ? n : null;
+  return Number.isSafeInteger(n)?n:null;
 }
 
 function check() {
@@ -701,20 +640,17 @@ function check() {
   if(current.result===null) {
     const correct=$("notPossible").checked;
 
-    fb.textContent=correct ?
-      "Correct! The matrices have different dimensions." :
-      "Incorrect. Check the dimensions of both matrices.";
+    fb.textContent=correct?
+      "Correct! The matrices have different dimensions.":
+      "Incorrect. Check the matrix dimensions.";
 
-    fb.className=
-      "feedback "+(correct?"good":"bad");
-
+    fb.className="feedback "+(correct?"good":"bad");
     return;
   }
 
   if($("notPossible").checked) {
     fb.textContent=
       "Incorrect. These matrices have compatible dimensions.";
-
     fb.className="feedback bad";
     return;
   }
@@ -724,24 +660,23 @@ function check() {
   ];
 
   const correct=inputs.every(input=>{
-    const row=Number(input.dataset.row);
-    const col=Number(input.dataset.col);
+    const i=Number(input.dataset.row);
+    const j=Number(input.dataset.col);
 
     return parseInteger(input.value)===
-      current.result[row][col];
+      current.result[i][j];
   });
 
-  fb.textContent=correct ?
-    "Correct! Every matrix entry is correct." :
+  fb.textContent=correct?
+    "Correct! Every matrix entry is correct.":
     "Incorrect. Check your matrix calculations.";
 
-  fb.className=
-    "feedback "+(correct?"good":"bad");
+  fb.className="feedback "+(correct?"good":"bad");
 }
 
-// -------------------------------
+// ----------------------------------
 // WORKED SOLUTION
-// -------------------------------
+// ----------------------------------
 
 function addStep(container,label,math) {
   const step=document.createElement("div");
@@ -763,9 +698,7 @@ function showSolution() {
   shown=!shown;
 
   const el=$("solution");
-
   el.style.display=shown?"block":"none";
-
   $("reveal").textContent=
     shown?"Hide Solution":"Show Solution";
 
@@ -773,7 +706,8 @@ function showSolution() {
 
   el.replaceChildren();
 
-  const heading=document.createElement("strong");
+  const heading=document.createElement("div");
+  heading.className="solution-heading";
   heading.textContent="Step-by-step solution";
   el.append(heading);
 
@@ -782,51 +716,50 @@ function showSolution() {
   if(result===null) {
     addStep(
       el,
-      "Compare the dimensions.",
+      "Compare the matrix dimensions.",
       `A:\\ ${A.length}\\times${A[0].length}
        \\qquad
        B:\\ ${B.length}\\times${B[0].length}`
     );
 
     const note=document.createElement("p");
-
+    note.className="solution-note";
     note.textContent=
-      "Not Possible. Matrix addition and subtraction require both matrices to have identical dimensions.";
-
+      "Not Possible. Both matrices must have identical dimensions to add or subtract them.";
     el.append(note);
 
     typeset(el);
     return;
   }
 
-  const expressions=
-    expressionMatrixTex(A,B,operation);
+  const expressions=expressionMatrix(A,B,operation);
+
+  // Two compact steps prevent a single
+  // excessively long expression.
 
   addStep(
     el,
-    "Add or subtract corresponding entries.",
-    matrixTex(A)+
-    operation+
-    matrixTex(B)+
-    "="+
-    matrixTex(expressions)+
-    "="+
-    matrixTex(result)
+    "Step 1: Add or subtract corresponding entries.",
+    matrixTex(A)+operation+matrixTex(B)+
+    "="+matrixTex(expressions)
+  );
+
+  addStep(
+    el,
+    "Step 2: Simplify each entry.",
+    matrixTex(expressions)+"="+matrixTex(result)
   );
 
   typeset(el);
 }
 
-// -------------------------------
+// ----------------------------------
 // EVENTS
-// -------------------------------
+// ----------------------------------
 
 $("theme").onclick=()=>{
-  const light=
-    document.body.classList.toggle("light");
-
-  $("theme").textContent=
-    light?"Dark mode":"Light mode";
+  const light=document.body.classList.toggle("light");
+  $("theme").textContent=light?"Dark mode":"Light mode";
 };
 
 $("notPossible").onchange=()=>{
@@ -839,7 +772,6 @@ $("reveal").onclick=showSolution;
 
 generate();
 newProblem();
-
 </script>
 </body>
 </html>
