@@ -9,1327 +9,733 @@
 <script>
 window.MathJax = {
   tex: {
-    inlineMath: [["\\(", "\\)"]]
-  },
-  svg: {
-    fontCache: "global"
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']]
   }
 };
 </script>
-
-<script defer
-src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
-</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
-
 :root {
-  --bg: #101827;
-  --panel: #1c2a45;
-  --field: #192841;
-  --text: #f6f7ff;
-  --muted: #b5c4df;
-  --border: #425679;
-  --soft: #2c4165;
-  --good: #86e9b7;
-  --bad: #ff9ea9;
-  --accent: #8772ff;
+  font-family: Arial, sans-serif;
+  color-scheme: dark;
 }
-
-body.light {
-  --bg: #ffffff;
-  --panel: #eff2ff;
-  --field: #ffffff;
-  --text: #18243c;
-  --muted: #52627e;
-  --border: #c5cfe2;
-  --soft: #e4eafa;
-  --good: #167447;
-  --bad: #b82f45;
-}
-
+* { box-sizing: border-box; }
 body {
   margin: 0;
-  padding: 12px;
-  background: var(--bg);
-  color: var(--text);
-  font: 15px Arial, sans-serif;
+  padding: 10px;
+  background: #0e1727;
+  color: #f5f7ff;
 }
-
-.app {
-  max-width: 760px;
+#app {
+  max-width: 780px;
   margin: auto;
+  padding: 16px;
+  border-radius: 12px;
+  background: #101a2b;
 }
-
+#app.light {
+  background: #fff;
+  color: #182235;
+  color-scheme: light;
+}
+button, input { font: inherit; }
+button {
+  cursor: pointer;
+  border: 1px solid #526a94;
+  border-radius: 9px;
+  padding: 11px;
+  background: #30476e;
+  color: white;
+  font-weight: 600;
+}
+button:focus-visible,
+input:focus-visible,
+[contenteditable]:focus-visible {
+  outline: 3px solid #b49bff;
+  outline-offset: 2px;
+}
 .top {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
+  justify-content: flex-end;
 }
-
-button {
-  border: 0;
-  border-radius: 10px;
-  padding: 11px;
-  font: inherit;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.theme {
-  background: var(--soft);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 8px 12px;
-  font-size: 12px;
-  white-space: nowrap;
-}
-
 .problem {
-  background: var(--panel);
-  border: 1px solid var(--accent);
-  border-radius: 15px;
-  padding: 24px 12px;
   text-align: center;
-  overflow: visible;
+  font-size: 1.2rem;
+  background: #1a2b46;
+  padding: 16px;
+  border-radius: 10px;
+  margin: 10px 0;
+  overflow-x: auto;
 }
-
-.prompt {
-  color: var(--muted);
-  font-size: 13px;
-  margin-bottom: 12px;
-}
-
-.equation {
-  font-size: 24px;
-  text-align: center;
-  overflow: visible;
-  max-width: 100%;
-}
-
-/* No internal scrollbars */
-
-.equation mjx-container,
-.work mjx-container {
-  overflow: visible !important;
-  max-width: 100%;
-}
-
-.equation mjx-container[jax="SVG"] svg,
-.work mjx-container[jax="SVG"] svg {
-  max-width: 100%;
-  height: auto;
-}
-
-.answers {
-  display: grid;
-  gap: 17px;
-  margin: 18px 0;
-}
-
-.answer-label {
+.light .problem { background: #eaf0fa; }
+label {
   display: block;
   font-weight: bold;
-  margin-bottom: 9px;
+  margin: 14px 0 7px;
 }
-
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
-  margin-bottom: 9px;
+  gap: 6px;
+  margin: 8px 0;
 }
-
-.tool {
-  background: var(--soft);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  min-width: 45px;
-  padding: 9px 12px;
-  font-size: 17px;
-}
-
-.tool:hover {
-  border-color: var(--accent);
-}
-
-.tool:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.fraction-icon {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  width: 32px;
-  line-height: 1;
-}
-
-.fraction-icon span {
-  font-size: 12px;
-}
-
-.fraction-icon .bar {
-  width: 100%;
-  border-top: 2px solid currentColor;
-  margin: 4px 0;
-}
-
+.toolbar button { min-width: 43px; }
 .editor {
-  background: var(--field);
-  border: 1px solid var(--border);
-  border-radius: 11px;
-  padding: 14px;
-  min-height: 95px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow-x: auto;
-}
-
-.expression-root {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  min-width: min-content;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 23px;
-}
-
-.math-region {
-  display: inline-block;
-  min-width: 44px;
-  min-height: 39px;
-  padding: 6px 8px;
-  border: 1px dashed var(--border);
-  border-radius: 5px;
-  background: transparent;
-  color: var(--text);
-  font: inherit;
-  text-align: center;
-  outline: none;
-  white-space: pre;
-}
-
-.math-region:focus {
-  border-color: var(--accent);
-  background: var(--soft);
-}
-
-.math-region:empty::before {
-  content: "□";
-  color: var(--muted);
-}
-
-.fraction {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  min-width: 130px;
-  max-width: 100%;
-  margin: 0 5px;
-  text-align: center;
-}
-
-.numerator,
-.denominator {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 42px;
-}
-
-.fraction-bar {
-  width: 100%;
-  border-top: 2px solid var(--text);
-  margin: 5px 0;
-}
-
-.decimal {
-  width: 100%;
-  padding: 13px;
-  border: 1px solid var(--border);
+  border: 1px solid #51658b;
   border-radius: 10px;
-  background: var(--field);
-  color: var(--text);
-  font: inherit;
+  background: #1a2b46;
+  padding: 12px;
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-
-.hint {
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 7px;
-  line-height: 1.5;
+.light .editor { background: #f0f4fb; }
+.fraction-part {
+  width: 90%;
+  min-height: 34px;
+  padding: 6px;
+  text-align: center;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
-
+.fraction-part:empty::before {
+  content: attr(data-placeholder);
+  opacity: .55;
+}
+.fraction-line {
+  height: 1px;
+  width: 75%;
+  background: currentColor;
+}
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #51658b;
+  border-radius: 9px;
+  background: #1a2b46;
+  color: inherit;
+}
+.light input { background: #f0f4fb; }
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 9px;
+  gap: 8px;
+  margin-top: 14px;
 }
-
-.submit {
-  background: linear-gradient(
-    100deg, #905cf6, #6258ed
-  );
-  color: white;
-}
-
-.next {
-  background: #31568d;
-  color: white;
-}
-
-.reveal {
-  width: 100%;
-  margin-top: 9px;
-  background: var(--soft);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
+.actions button:first-child { background: #7453e8; }
+.wide { grid-column: 1 / -1; }
 .feedback {
-  margin: 12px 0;
-  min-height: 16px;
-  text-align: center;
   font-weight: bold;
-  line-height: 1.8;
+  min-height: 20px;
+  margin-top: 7px;
 }
-
+.correct { color: #65e6a0; }
+.incorrect { color: #ff858d; }
+.valid { border-color: #27b86e !important; }
+.invalid { border-color: #e34e60 !important; }
+.light .correct { color: #087c42; }
+.light .incorrect { color: #ba2438; }
 .solution {
-  display: none;
-  margin-top: 12px;
-  padding: 15px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: visible;
+  border: 1px solid #50678f;
+  border-radius: 10px;
+  background: #1a2b46;
+  padding: 14px;
+  margin-top: 14px;
+  line-height: 1.55;
+  overflow-x: auto;
 }
-
-.step {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-  overflow: visible;
+.light .solution { background: #f0f4fb; }
+.solution hr {
+  border: 0;
+  border-top: 1px solid #526582;
+  margin: 12px 0;
 }
-
-.step:last-child {
-  border-bottom: 0;
+.hint {
+  font-size: .82rem;
+  line-height: 1.4;
+  opacity: .85;
 }
-
-.step-title {
-  font-weight: bold;
-  margin-bottom: 9px;
+#live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
 }
-
-.work {
-  text-align: center;
-  font-size: 18px;
-  overflow: visible;
-  max-width: 100%;
-  padding: 3px 0;
-}
-
-.good {
-  color: var(--good);
-}
-
-.bad {
-  color: var(--bad);
-}
-
 @media(max-width:480px) {
-  body {
-    padding: 8px;
-  }
-
-  .problem {
-    padding: 20px 8px;
-  }
-
-  .equation {
-    font-size: 20px;
-  }
-
-  .work {
-    font-size: 15px;
-  }
-
-  .solution {
-    padding: 10px;
-  }
-
-  .tool {
-    padding: 8px;
-    min-width: 41px;
-  }
-
-  .expression-root {
-    font-size: 19px;
-  }
-
-  button {
-    font-size: 13px;
-  }
+  #app { padding: 12px; }
+  .toolbar button { padding: 10px; min-width: 37px; }
 }
 </style>
 </head>
 
 <body>
-<main class="app">
+<main id="app">
 
 <div class="top">
-  <strong>Solve the exponential equation.</strong>
-
-  <button id="theme" class="theme">
-    Light mode
+  <button id="theme" aria-label="Switch to light mode">
+    ☀ Light mode
   </button>
 </div>
 
-<div class="problem">
-  <div class="prompt">
-    Use logarithms or natural logarithms to solve for x.
-  </div>
+<div class="problem" id="problem"
+     aria-label="Exponential equation"></div>
 
-  <div id="equation" class="equation"></div>
+<label id="exactLabel">Exact Solution</label>
+
+<div class="toolbar" aria-label="Math entry tools">
+  <button data-insert="/" aria-label="Division">÷</button>
+  <button data-insert="ln()">ln</button>
+  <button data-insert="log()">log</button>
+  <button data-insert="()">()</button>
+  <button data-insert="+">+</button>
+  <button data-insert="-">−</button>
+  <button data-insert="*">×</button>
+  <button id="back" aria-label="Backspace">⌫</button>
+  <button id="clear">Clear</button>
 </div>
 
-<div class="answers">
-
-  <div>
-    <label class="answer-label">
-      Exact Solution
-    </label>
-
-    <div class="toolbar"
-         role="toolbar"
-         aria-label="Mathematical input tools">
-
-      <button
-        class="tool"
-        type="button"
-        id="fractionBtn"
-        title="Insert stacked fraction">
-
-        <span class="fraction-icon">
-          <span>□</span>
-          <span class="bar"></span>
-          <span>□</span>
-        </span>
-
-      </button>
-
-      <button class="tool" type="button"
-              data-symbol="ln">ln</button>
-
-      <button class="tool" type="button"
-              data-symbol="log">log</button>
-
-      <button class="tool" type="button"
-              data-symbol="(">( )</button>
-
-      <button class="tool" type="button"
-              data-symbol="+">+</button>
-
-      <button class="tool" type="button"
-              data-symbol="-">−</button>
-
-      <button class="tool" type="button"
-              data-symbol="*">×</button>
-
-      <button class="tool" type="button"
-              id="deleteBtn">⌫</button>
-
-      <button class="tool" type="button"
-              id="clearBtn">Clear</button>
-
-    </div>
-
-    <div class="editor">
-      <div id="expressionRoot"
-           class="expression-root"></div>
-    </div>
-
-    <div class="hint">
-      Click anywhere in the numerator or denominator
-      to edit. Use the arrow keys to move through
-      logarithms and parentheses.
-    </div>
-  </div>
-
-  <div>
-    <label class="answer-label" for="decimal">
-      Decimal Approximation (4 decimal places)
-    </label>
-
-    <input
-      id="decimal"
-      class="decimal"
-      type="text"
-      inputmode="decimal"
-      autocomplete="off"
-      placeholder="Enter decimal answer">
-  </div>
-
+<div class="editor" id="editor" role="group"
+     aria-labelledby="exactLabel">
+  <div id="num" class="fraction-part"
+       contenteditable="true" role="textbox"
+       aria-label="Exact solution numerator"
+       data-placeholder="Numerator"
+       spellcheck="false"></div>
+  <div class="fraction-line"></div>
+  <div id="den" class="fraction-part"
+       contenteditable="true" role="textbox"
+       aria-label="Exact solution denominator"
+       data-placeholder="Denominator"
+       spellcheck="false"></div>
 </div>
 
-<div class="actions">
-  <button id="submit" class="submit">
-    Submit
-  </button>
+<p class="hint">
+Enter the exact solution using ln or log.
+Click the numerator or denominator to edit.
+Equivalent logarithmic expressions are accepted.
+</p>
 
-  <button id="next" class="next">
-    Try Similar
-  </button>
-</div>
-
-<button id="reveal" class="reveal">
-  Show Solution
-</button>
-
-<div id="feedback"
-     class="feedback"
+<div id="exactFeedback" class="feedback"
      aria-live="polite"></div>
 
-<div id="solution"
-     class="solution"></div>
+<label for="decimal">
+Decimal Approximation (4 decimal places)
+</label>
+<input id="decimal" inputmode="decimal"
+       autocomplete="off"
+       placeholder="Example: 0.3656">
+
+<div id="decimalFeedback" class="feedback"
+     aria-live="polite"></div>
+
+<div class="actions">
+  <button id="submit">Submit</button>
+  <button id="next">Try Similar</button>
+  <button id="toggle" class="wide"
+          aria-expanded="false">Show Solution</button>
+</div>
+
+<section class="solution" id="solution" hidden></section>
+<div id="live" aria-live="polite"></div>
 
 </main>
 
 <script>
+(() => {
 "use strict";
 
 const $ = id => document.getElementById(id);
+const app = $("app");
+const num = $("num");
+const den = $("den");
+const decimal = $("decimal");
 
-const rand = (a,b) =>
-  Math.floor(Math.random()*(b-a+1))+a;
+let current;
+let focusPart = num;
+let problemIndex = -1;
+let solutionVisible = false;
 
-const tex = s => "\\(" + s + "\\)";
+const bases = [2, 3, 5, 7, 11, 13];
 
-let problems = [];
-let current = null;
-let last = -1;
-let shown = false;
-let activeRegion = null;
-
-// --------------------------------
-// EQUATION GENERATION
-// --------------------------------
-
-function linearTex(a,b) {
-  let s = a===1 ? "x" :
-          a===-1 ? "-x" : a+"x";
-
-  if(b>0) s += "+"+b;
-  if(b<0) s += b;
-
-  return s;
+function gcd(a, b) {
+  return b ? gcd(b, a % b) : Math.abs(a);
 }
 
-function generate() {
-  const bases = [2,3,5,6,7,10,11,13];
+function rand(min, max) {
+  return min + Math.floor(
+    Math.random() * (max - min + 1)
+  );
+}
+
+function makeBank() {
+  const bank = [];
   const seen = new Set();
 
-  while(problems.length<50) {
-
-    const leftBase =
-      bases[rand(0,bases.length-1)];
-
-    const rightBase =
-      bases[rand(0,bases.length-1)];
-
-    if(leftBase===rightBase) continue;
-
-    const a = rand(-4,4);
-    const c = rand(-4,4);
-
-    if(a===0 || c===0) continue;
-
-    const b = rand(-6,6);
-    const d = rand(-6,6);
-
-    const L = Math.log(leftBase);
-    const R = Math.log(rightBase);
-
-    const denominator = a*L-c*R;
-    const numerator = d*R-b*L;
-
-    if(Math.abs(denominator)<0.15) continue;
-
-    const answer = numerator/denominator;
-
-    if(!Number.isFinite(answer) ||
-       Math.abs(answer)>30) continue;
-
-    const key = [
-      leftBase,a,b,rightBase,c,d
-    ].join(",");
-
-    if(seen.has(key)) continue;
-    seen.add(key);
-
-    problems.push({
-      leftBase,rightBase,a,b,c,d,answer
-    });
-  }
-}
-
-// --------------------------------
-// MATHJAX RENDERING
-// --------------------------------
-
-let mathQueue = Promise.resolve();
-
-function typeset(el) {
-  mathQueue = mathQueue.then(async () => {
-    if(!window.MathJax) return;
-
-    await MathJax.startup.promise;
-
-    MathJax.typesetClear([el]);
-
-    await MathJax.typesetPromise([el]);
-
-    fitMath(el);
-  }).catch(console.error);
-
-  return mathQueue;
-}
-
-// Scale rendered mathematics to fit.
-// No scrollbars are introduced.
-
-function fitMath(parent) {
-  const containers =
-    parent.querySelectorAll("mjx-container");
-
-  containers.forEach(container => {
-    container.style.transform = "";
-    container.style.width = "";
-    container.style.transformOrigin = "center center";
-
-    const available = parent.clientWidth - 12;
-    const actual = container.scrollWidth;
-
-    if(actual > available && available > 0) {
-      const scale = available / actual;
-
-      container.style.transform =
-        `scale(${scale})`;
-
-      container.style.width =
-        `${100/scale}%`;
-    }
-  });
-}
-
-// --------------------------------
-// CONTINUOUS MATH EDITOR
-// --------------------------------
-
-function makeRegion() {
-  const region = document.createElement("span");
-
-  region.className = "math-region";
-  region.contentEditable = "true";
-  region.spellcheck = false;
-
-  region.setAttribute("role","textbox");
-
-  region.setAttribute(
-    "aria-label","Mathematical expression"
-  );
-
-  region.addEventListener("focus",() => {
-    activeRegion = region;
-  });
-
-  region.addEventListener("input",() => {
-    $("feedback").textContent = "";
-  });
-
-  return region;
-}
-
-function resetEditor() {
-  const root = $("expressionRoot");
-  root.replaceChildren();
-
-  const region = makeRegion();
-  root.append(region);
-
-  activeRegion = region;
-}
-
-function setCaret(region,position) {
-  region.focus();
-
-  const selection = window.getSelection();
-  const range = document.createRange();
-
-  const textNode = region.firstChild;
-
-  if(
-    !textNode ||
-    textNode.nodeType !== Node.TEXT_NODE
+  for (
+    let attempts = 0;
+    bank.length < 50 && attempts < 20000;
+    attempts++
   ) {
-    range.selectNodeContents(region);
-    range.collapse(true);
-  } else {
-    const offset = Math.min(
-      position,
-      textNode.textContent.length
+    const a = bases[rand(0, bases.length - 1)];
+    const b = bases[rand(0, bases.length - 1)];
+
+    if (a === b) continue;
+
+    const p = rand(-6, 6);
+    const q = rand(-7, 7);
+    const r = rand(-6, 6);
+    const s = rand(-7, 7);
+
+    if (!p || !q || !r || !s) continue;
+
+    // Prevent a common numerical factor in
+    // all coefficients of the exact answer.
+    const common = gcd(
+      gcd(Math.abs(p), Math.abs(q)),
+      gcd(Math.abs(r), Math.abs(s))
     );
 
-    range.setStart(textNode,offset);
-    range.collapse(true);
+    if (common !== 1) continue;
+
+    const denominator =
+      p * Math.log(a) - r * Math.log(b);
+
+    if (Math.abs(denominator) < 0.15) continue;
+
+    const x = (
+      s * Math.log(b) - q * Math.log(a)
+    ) / denominator;
+
+    if (
+      !Number.isFinite(x) ||
+      Math.abs(x) > 12 ||
+      Math.abs(x) < 0.08
+    ) continue;
+
+    const key = [a,b,p,q,r,s].join(",");
+
+    if (seen.has(key)) continue;
+
+    seen.add(key);
+    bank.push({a,b,p,q,r,s,x});
   }
+
+  return bank;
+}
+
+const bank = makeBank();
+
+function linear(p, q) {
+  const first =
+    p === 1 ? "x" :
+    p === -1 ? "-x" : p + "x";
+
+  return first +
+    (q > 0 ? "+" + q : q < 0 ? q : "");
+}
+
+function signedLog(k, b) {
+  return (k < 0 ? "-" : "+") +
+    Math.abs(k) + "\\ln(" + b + ")";
+}
+
+function typeset() {
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise().catch(() => {});
+  }
+}
+
+function renderProblem() {
+  const v = current;
+
+  $("problem").textContent =
+    `\\[${v.a}^{${linear(v.p,v.q)}}=` +
+    `${v.b}^{${linear(v.r,v.s)}}\\]`;
+
+  const numerator =
+    `${v.s}\\ln(${v.b})` +
+    signedLog(-v.q, v.a);
+
+  const denominator =
+    `${v.p}\\ln(${v.a})` +
+    signedLog(-v.r, v.b);
+
+  $("solution").innerHTML = `
+    <strong>Step-by-step solution</strong>
+
+    <p><strong>Step 1:</strong>
+    Take natural logarithms of both sides.</p>
+
+    \\[
+    \\ln(${v.a}^{${linear(v.p,v.q)}})
+    =
+    \\ln(${v.b}^{${linear(v.r,v.s)}})
+    \\]
+
+    <hr>
+
+    <p><strong>Step 2:</strong>
+    Apply the Power Property of Logarithms.</p>
+
+    \\[
+    (${linear(v.p,v.q)})\\ln(${v.a})
+    =
+    (${linear(v.r,v.s)})\\ln(${v.b})
+    \\]
+
+    <hr>
+
+    <p><strong>Step 3:</strong>
+    Collect terms containing x and isolate x.</p>
+
+    \\[
+    x=\\frac{${numerator}}{${denominator}}
+    \\]
+
+    <hr>
+
+    <p><strong>Step 4:</strong>
+    Round to four decimal places.</p>
+
+    \\[
+    x\\approx ${v.x.toFixed(4)}
+    \\]
+  `;
+
+  typeset();
+}
+
+function nextProblem() {
+  problemIndex = (problemIndex + 1) % bank.length;
+  current = bank[problemIndex];
+
+  num.textContent = "";
+  den.textContent = "";
+  decimal.value = "";
+
+  ["editor", "decimal"].forEach(id => {
+    $(id).classList.remove("valid", "invalid");
+  });
+
+  $("exactFeedback").textContent = "";
+  $("decimalFeedback").textContent = "";
+
+  solutionVisible = false;
+  $("solution").hidden = true;
+  $("toggle").textContent = "Show Solution";
+  $("toggle").setAttribute("aria-expanded", "false");
+
+  renderProblem();
+}
+
+// Mathematical expression parser.
+// Supports arithmetic, parentheses, ln, log,
+// division, multiplication, and powers.
+// No eval() or dynamic JavaScript execution.
+
+function parseMath(source) {
+  let s = source.toLowerCase()
+    .replace(/\u2212/g, "-")
+    .replace(/\u00d7/g, "*")
+    .replace(/\u00f7/g, "/")
+    .replace(/\s+/g, "");
+
+  let i = 0;
+  let usedLog = false;
+
+  function expression() {
+    let value = term();
+
+    while (s[i] === "+" || s[i] === "-") {
+      const op = s[i++];
+      const right = term();
+
+      value = op === "+"
+        ? value + right
+        : value - right;
+    }
+
+    return value;
+  }
+
+  function term() {
+    let value = power();
+
+    while (s[i] === "*" || s[i] === "/") {
+      const op = s[i++];
+      const right = power();
+
+      value = op === "*"
+        ? value * right
+        : value / right;
+    }
+
+    return value;
+  }
+
+  function power() {
+    let value = unary();
+
+    if (s[i] === "^") {
+      i++;
+      value = Math.pow(value, power());
+    }
+
+    return value;
+  }
+
+  function unary() {
+    if (s[i] === "+") {
+      i++;
+      return unary();
+    }
+
+    if (s[i] === "-") {
+      i++;
+      return -unary();
+    }
+
+    return atom();
+  }
+
+  function atom() {
+    if (s[i] === "(") {
+      i++;
+      const value = expression();
+
+      if (s[i++] !== ")") {
+        throw Error("Missing parenthesis");
+      }
+
+      return value;
+    }
+
+    const name = /^(ln|log)/.exec(s.slice(i));
+
+    if (name) {
+      i += name[0].length;
+
+      if (s[i++] !== "(") {
+        throw Error("Log requires parentheses");
+      }
+
+      const value = expression();
+
+      if (s[i++] !== ")" || value <= 0) {
+        throw Error("Invalid logarithm");
+      }
+
+      usedLog = true;
+
+      return name[0] === "ln"
+        ? Math.log(value)
+        : Math.log10(value);
+    }
+
+    const match =
+      /^(?:\d+(?:\.\d*)?|\.\d+)/.exec(s.slice(i));
+
+    if (!match) {
+      throw Error("Invalid expression");
+    }
+
+    i += match[0].length;
+    return Number(match[0]);
+  }
+
+  const value = expression();
+
+  if (i !== s.length || !Number.isFinite(value)) {
+    throw Error("Invalid expression");
+  }
+
+  return {value, usedLog};
+}
+
+function setResult(id, feedbackId, correct, label) {
+  $(id).classList.toggle("valid", correct);
+  $(id).classList.toggle("invalid", !correct);
+
+  const feedback = $(feedbackId);
+
+  feedback.className =
+    "feedback " + (correct ? "correct" : "incorrect");
+
+  feedback.textContent =
+    (correct ? "✓ Correct: " : "✕ Incorrect: ") +
+    label;
+}
+
+function submitAnswers() {
+  let exactCorrect = false;
+  let decimalCorrect = false;
+
+  try {
+    const numerator = parseMath(num.textContent.trim());
+    const denominator = parseMath(
+      den.textContent.trim() || "1"
+    );
+
+    const value =
+      numerator.value / denominator.value;
+
+    exactCorrect =
+      (numerator.usedLog || denominator.usedLog) &&
+      denominator.value !== 0 &&
+      Number.isFinite(value) &&
+      Math.abs(value - current.x) <=
+        1e-8 * Math.max(1, Math.abs(current.x));
+
+  } catch (error) {
+    exactCorrect = false;
+  }
+
+  const enteredDecimal = decimal.value.trim();
+
+  if (
+    /^[+-]?(?:\d+\.\d{4}|\.\d{4})$/.test(
+      enteredDecimal
+    )
+  ) {
+    decimalCorrect =
+      Math.abs(
+        Number(enteredDecimal) -
+        Number(current.x.toFixed(4))
+      ) < 1e-9;
+  }
+
+  setResult(
+    "editor",
+    "exactFeedback",
+    exactCorrect,
+    "Exact Solution"
+  );
+
+  setResult(
+    "decimal",
+    "decimalFeedback",
+    decimalCorrect,
+    "Decimal Approximation"
+  );
+
+  $("live").textContent =
+    `Exact solution ${exactCorrect ? "correct" : "incorrect"}. ` +
+    `Decimal approximation ${decimalCorrect ? "correct" : "incorrect"}.`;
+}
+
+// Insert math symbols at the cursor position.
+
+function insertText(text) {
+  const element = focusPart || num;
+  element.focus();
+
+  const selection = window.getSelection();
+
+  if (
+    !selection ||
+    !selection.rangeCount ||
+    !element.contains(selection.anchorNode)
+  ) {
+    element.append(document.createTextNode(text));
+    return;
+  }
+
+  const range = selection.getRangeAt(0);
+  range.deleteContents();
+
+  const node = document.createTextNode(text);
+  range.insertNode(node);
+
+  const position =
+    ["ln()", "log()", "()"].includes(text)
+      ? text.length - 1
+      : text.length;
+
+  range.setStart(node, position);
+  range.collapse(true);
 
   selection.removeAllRanges();
   selection.addRange(range);
 }
 
-function caretOffset(region) {
-  const selection = window.getSelection();
-
-  if(!selection.rangeCount) {
-    return region.textContent.length;
-  }
-
-  const range = selection.getRangeAt(0).cloneRange();
-
-  range.selectNodeContents(region);
-
-  range.setEnd(
-    selection.anchorNode,
-    selection.anchorOffset
-  );
-
-  return range.toString().length;
-}
-
-function insertAtCaret(text,offsetBack=0) {
-  if(!activeRegion) return;
-
-  const region = activeRegion;
-  const value = region.textContent;
-  const pos = caretOffset(region);
-
-  region.textContent =
-    value.slice(0,pos) +
-    text +
-    value.slice(pos);
-
-  setCaret(
-    region,
-    pos+text.length-offsetBack
-  );
-
-  $("feedback").textContent = "";
-}
-
-function insertLog(kind) {
-  insertAtCaret(kind+"()",1);
-}
-
-function insertSymbol(symbol) {
-  if(symbol==="ln" || symbol==="log") {
-    insertLog(symbol);
-    return;
-  }
-
-  if(symbol==="(") {
-    insertAtCaret("()",1);
-    return;
-  }
-
-  insertAtCaret(symbol);
-}
-
-// --------------------------------
-// FRACTION EDITOR
-// --------------------------------
-
-function insertFraction() {
-  const root = $("expressionRoot");
-
-  const fraction = document.createElement("span");
-  fraction.className = "fraction";
-
-  const numerator = document.createElement("span");
-  numerator.className = "numerator";
-
-  const denominator = document.createElement("span");
-  denominator.className = "denominator";
-
-  const bar = document.createElement("span");
-  bar.className = "fraction-bar";
-
-  const top = makeRegion();
-  const bottom = makeRegion();
-
-  numerator.append(top);
-  denominator.append(bottom);
-
-  fraction.append(
-    numerator,
-    bar,
-    denominator
-  );
-
-  if(
-    activeRegion &&
-    activeRegion.parentNode===root &&
-    activeRegion.textContent.trim()===""
-  ) {
-    activeRegion.replaceWith(fraction);
-  } else if(
-    activeRegion &&
-    activeRegion.parentNode
-  ) {
-    activeRegion.after(fraction);
-  } else {
-    root.append(fraction);
-  }
-
-  activeRegion = top;
-  top.focus();
-}
-
-// --------------------------------
-// DELETE
-// --------------------------------
-
-function deleteCharacter() {
-  if(!activeRegion) return;
-
-  const region = activeRegion;
-  const value = region.textContent;
-  const pos = caretOffset(region);
-
-  if(pos===0) return;
-
-  region.textContent =
-    value.slice(0,pos-1) +
-    value.slice(pos);
-
-  setCaret(region,pos-1);
-}
-
-// --------------------------------
-// READ EDITOR
-// --------------------------------
-
-function editorToExpression() {
-  const root = $("expressionRoot");
-
-  function readChildren(node) {
-    return [...node.childNodes]
-      .map(read)
-      .join("");
-  }
-
-  function read(node) {
-    if(node.nodeType===Node.TEXT_NODE) {
-      return node.textContent;
-    }
-
-    if(node.classList?.contains("math-region")) {
-      return node.textContent.trim();
-    }
-
-    if(node.classList?.contains("fraction")) {
-      const numerator =
-        node.querySelector(".numerator");
-
-      const denominator =
-        node.querySelector(".denominator");
-
-      return "((" +
-        readChildren(numerator) +
-        ")/(" +
-        readChildren(denominator) +
-        "))";
-    }
-
-    return readChildren(node);
-  }
-
-  return readChildren(root);
-}
-
-// --------------------------------
-// EXPRESSION EVALUATOR
-// --------------------------------
-
-function tokenize(input) {
-  const s = input
-    .replace(/\s+/g,"")
-    .toLowerCase();
-
-  const tokens = [];
-  let i = 0;
-
-  while(i<s.length) {
-    const rest = s.slice(i);
-
-    const number =
-      rest.match(/^\d+(\.\d+)?/);
-
-    if(number) {
-      tokens.push({
-        type:"number",
-        value:Number(number[0])
-      });
-
-      i += number[0].length;
-      continue;
-    }
-
-    if(rest.startsWith("ln")) {
-      tokens.push({
-        type:"fn",
-        value:"ln"
-      });
-
-      i += 2;
-      continue;
-    }
-
-    if(rest.startsWith("log")) {
-      tokens.push({
-        type:"fn",
-        value:"log"
-      });
-
-      i += 3;
-      continue;
-    }
-
-    const ch = s[i];
-
-    if("+-*/()".includes(ch)) {
-      tokens.push({
-        type:ch,
-        value:ch
-      });
-
-      i++;
-      continue;
-    }
-
-    return null;
-  }
-
-  return tokens;
-}
-
-function evaluateExpression(input) {
-  const tokens = tokenize(input);
-
-  if(!tokens || !tokens.length) {
-    return null;
-  }
-
-  let pos = 0;
-
-  function peek() {
-    return tokens[pos]?.type;
-  }
-
-  function eat(type) {
-    if(peek()!==type) {
-      throw Error("Syntax");
-    }
-
-    return tokens[pos++];
-  }
-
-  function primary() {
-    if(peek()==="number") {
-      return eat("number").value;
-    }
-
-    if(peek()==="fn") {
-      const fn = eat("fn").value;
-
-      eat("(");
-      const value = expression();
-      eat(")");
-
-      if(value<=0) {
-        throw Error("Log domain");
-      }
-
-      return fn==="ln" ?
-        Math.log(value) :
-        Math.log10(value);
-    }
-
-    if(peek()==="(") {
-      eat("(");
-
-      const value = expression();
-
-      eat(")");
-
-      return value;
-    }
-
-    throw Error("Syntax");
-  }
-
-  function unary() {
-    if(peek()==="+") {
-      eat("+");
-      return unary();
-    }
-
-    if(peek()==="-") {
-      eat("-");
-      return -unary();
-    }
-
-    return primary();
-  }
-
-  function product() {
-    let value = unary();
-
-    while(
-      peek()==="*" ||
-      peek()==="/"
-    ) {
-      const op = eat(peek()).type;
-      const right = unary();
-
-      value = op==="*" ?
-        value*right :
-        value/right;
-    }
-
-    return value;
-  }
-
-  function expression() {
-    let value = product();
-
-    while(
-      peek()==="+" ||
-      peek()==="-"
-    ) {
-      const op = eat(peek()).type;
-      const right = product();
-
-      value = op==="+" ?
-        value+right :
-        value-right;
-    }
-
-    return value;
-  }
-
-  try {
-    const result = expression();
-
-    if(pos!==tokens.length) {
-      return null;
-    }
-
-    return Number.isFinite(result) ?
-      result :
-      null;
-  } catch(e) {
-    return null;
-  }
-}
-
-// --------------------------------
-// NEW PROBLEM
-// --------------------------------
-
-function newProblem() {
-  let i;
-
-  do {
-    i = rand(0,problems.length-1);
-  } while(i===last);
-
-  last = i;
-  current = problems[i];
-  shown = false;
-
-  const p = current;
-
-  $("equation").textContent = tex(
-    `${p.leftBase}^{${linearTex(p.a,p.b)}}=
-     ${p.rightBase}^{${linearTex(p.c,p.d)}}`
-  );
-
-  resetEditor();
-
-  $("decimal").value = "";
-  $("feedback").textContent = "";
-  $("feedback").className = "feedback";
-
-  $("solution").style.display = "none";
-  $("solution").replaceChildren();
-
-  $("reveal").textContent = "Show Solution";
-
-  typeset($("equation"));
-}
-
-// --------------------------------
-// CHECK ANSWERS
-// --------------------------------
-
-function check() {
-  const expression = editorToExpression();
-
-  const exactValue =
-    evaluateExpression(expression);
-
-  const hasLog =
-    /\b(?:ln|log)\s*\(/i.test(expression);
-
-  const exactCorrect =
-    hasLog &&
-    exactValue!==null &&
-    Math.abs(
-      exactValue-current.answer
-    )<1e-8;
-
-  const decimalRaw =
-    $("decimal").value.trim();
-
-  const decimalCorrect =
-    /^-?\d+\.\d{4}$/.test(decimalRaw) &&
-    Number(decimalRaw) ===
-      Number(current.answer.toFixed(4));
-
-  const fb = $("feedback");
-
-  if(exactCorrect && decimalCorrect) {
-    fb.textContent =
-      "Correct! Both answers are correct.";
-
-    fb.className = "feedback good";
-  } else {
-    fb.textContent =
-      `Exact: ${exactCorrect?"Correct":"Incorrect"} | `+
-      `Decimal: ${decimalCorrect?"Correct":"Incorrect"}`;
-
-    fb.className = "feedback bad";
-  }
-}
-
-// --------------------------------
-// WORKED SOLUTION FORMATTING
-// --------------------------------
-
-function signedLogTerm(
-  coefficient,
-  logExpression,
-  first=false
-) {
-  if(coefficient===0) {
-    return "";
-  }
-
-  const magnitude =
-    Math.abs(coefficient);
-
-  const coefficientText =
-    magnitude===1 ? "" : magnitude;
-
-  const term =
-    coefficientText+logExpression;
-
-  if(first) {
-    return coefficient<0 ?
-      "-"+term :
-      term;
-  }
-
-  return coefficient<0 ?
-    "-"+term :
-    "+"+term;
-}
-
-function formatLogSum(terms) {
-  let result = "";
-
-  for(const term of terms) {
-    if(term.coefficient===0) {
-      continue;
-    }
-
-    result += signedLogTerm(
-      term.coefficient,
-      term.log,
-      result===""
-    );
-  }
-
-  return result || "0";
-}
-
-function addStep(container,label,math) {
-  const step =
-    document.createElement("div");
-
-  step.className = "step";
-
-  const heading =
-    document.createElement("div");
-
-  heading.className = "step-title";
-  heading.textContent = label;
-
-  const work =
-    document.createElement("div");
-
-  work.className = "work";
-  work.textContent = tex(math);
-
-  step.append(heading,work);
-  container.append(step);
-}
-
-// --------------------------------
-// WORKED SOLUTION
-// --------------------------------
-
-function showSolution() {
-  shown = !shown;
-
-  const el = $("solution");
-
-  el.style.display =
-    shown ? "block" : "none";
-
-  $("reveal").textContent =
-    shown ? "Hide Solution" :
-            "Show Solution";
-
-  if(!shown) return;
-
-  el.replaceChildren();
-
-  const p = current;
-
-  const {
-    leftBase,
-    rightBase,
-    a,b,c,d,answer
-  } = p;
-
-  const L = `\\ln(${leftBase})`;
-  const R = `\\ln(${rightBase})`;
-
-  const leftExp = linearTex(a,b);
-  const rightExp = linearTex(c,d);
-
-  const heading =
-    document.createElement("strong");
-
-  heading.textContent =
-    "Step-by-step solution";
-
-  el.append(heading);
-
-  addStep(
-    el,
-    "Step 1: Take natural logarithms of both sides.",
-    `\\ln(${leftBase}^{${leftExp}})=
-     \\ln(${rightBase}^{${rightExp}})`
-  );
-
-  addStep(
-    el,
-    "Step 2: Apply the logarithm power property.",
-    `(${leftExp})${L}=
-     (${rightExp})${R}`
-  );
-
-  const numerator = formatLogSum([
-    {coefficient:d,log:R},
-    {coefficient:-b,log:L}
-  ]);
-
-  const denominator = formatLogSum([
-    {coefficient:a,log:L},
-    {coefficient:-c,log:R}
-  ]);
-
-  addStep(
-    el,
-    "Step 3: Isolate x.",
-    `x=\\frac{${numerator}}{${denominator}}`
-  );
-
-  addStep(
-    el,
-    "Step 4: Round to four decimal places.",
-    `x\\approx ${answer.toFixed(4)}`
-  );
-
-  typeset(el);
-}
-
-// --------------------------------
-// EVENTS
-// --------------------------------
-
-$("fractionBtn").onclick =
-  insertFraction;
-
-document.querySelectorAll("[data-symbol]")
-  .forEach(button => {
-    button.onclick = () =>
-      insertSymbol(button.dataset.symbol);
+[num, den].forEach(element => {
+  element.addEventListener("focus", () => {
+    focusPart = element;
   });
 
-$("deleteBtn").onclick =
-  deleteCharacter;
-
-$("clearBtn").onclick =
-  resetEditor;
-
-$("theme").onclick = () => {
-  const light =
-    document.body.classList.toggle("light");
-
-  $("theme").textContent =
-    light ? "Dark mode" : "Light mode";
-};
-
-$("submit").onclick = check;
-$("next").onclick = newProblem;
-$("reveal").onclick = showSolution;
-
-$("decimal").addEventListener(
-  "keydown",
-  e => {
-    if(e.key==="Enter") {
-      check();
+  element.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      (element === num ? den : decimal).focus();
     }
+  });
+
+  element.addEventListener("paste", event => {
+    event.preventDefault();
+    insertText(event.clipboardData.getData("text/plain"));
+  });
+});
+
+document.querySelectorAll("[data-insert]").forEach(
+  button => {
+    button.addEventListener("click", () => {
+      insertText(button.dataset.insert);
+    });
   }
 );
 
-generate();
-newProblem();
+$("back").addEventListener("click", () => {
+  focusPart.focus();
+  document.execCommand("delete", false, null);
+});
 
+$("clear").addEventListener("click", () => {
+  num.textContent = "";
+  den.textContent = "";
+  num.focus();
+});
+
+$("submit").addEventListener("click", submitAnswers);
+$("next").addEventListener("click", nextProblem);
+
+$("toggle").addEventListener("click", () => {
+  solutionVisible = !solutionVisible;
+
+  $("solution").hidden = !solutionVisible;
+  $("toggle").textContent =
+    solutionVisible ? "Hide Solution" : "Show Solution";
+
+  $("toggle").setAttribute(
+    "aria-expanded",
+    String(solutionVisible)
+  );
+
+  if (solutionVisible) typeset();
+});
+
+$("theme").addEventListener("click", () => {
+  const light = app.classList.toggle("light");
+
+  document.documentElement.style.colorScheme =
+    light ? "light" : "dark";
+
+  $("theme").textContent =
+    light ? "☾ Dark mode" : "☀ Light mode";
+
+  $("theme").setAttribute(
+    "aria-label",
+    light ? "Switch to dark mode" : "Switch to light mode"
+  );
+});
+
+nextProblem();
+
+})();
 </script>
 </body>
 </html>
