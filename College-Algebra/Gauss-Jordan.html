@@ -4,106 +4,241 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Gauss-Jordan Elimination</title>
+<title>Gauss-Jordan Elimination Practice</title>
 
 <script>
 window.MathJax = {
   tex: {
-    inlineMath: [['\\(','\\)']],
-    displayMath: [['\\[','\\]']]
+    inlineMath: [["\\(","\\)"]]
   },
-  svg: {fontCache:'global'}
+  svg: {
+    fontCache: "global"
+  }
 };
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
 <style>
-*{box-sizing:border-box}
-:root{
- --bg:#101827;--panel:#1c2a45;--field:#192841;
- --text:#f6f7ff;--muted:#b5c4df;--border:#425679;
- --soft:#2c4165;--good:#86e9b7;--bad:#ff9ea9
+* { box-sizing: border-box; }
+
+:root {
+  --bg:#101827;
+  --panel:#1c2a45;
+  --field:#192841;
+  --text:#f6f7ff;
+  --muted:#b5c4df;
+  --border:#425679;
+  --soft:#2c4165;
+  --good:#86e9b7;
+  --bad:#ff9ea9;
+  --accent:#8772ff;
 }
-body.light{
- --bg:#fff;--panel:#eff2ff;--field:#fff;
- --text:#18243c;--muted:#52627e;--border:#c5cfe2;
- --soft:#e4eafa;--good:#167447;--bad:#b82f45
+
+body.light {
+  --bg:#ffffff;
+  --panel:#eff2ff;
+  --field:#ffffff;
+  --text:#18243c;
+  --muted:#52627e;
+  --border:#c5cfe2;
+  --soft:#e4eafa;
+  --good:#167447;
+  --bad:#b82f45;
 }
-body{
- margin:0;padding:12px;background:var(--bg);
- color:var(--text);font:15px Arial,sans-serif
+
+body {
+  margin:0;
+  padding:12px;
+  background:var(--bg);
+  color:var(--text);
+  font:15px Arial,sans-serif;
 }
-.app{max-width:780px;margin:auto}
-.top{
- display:flex;justify-content:space-between;
- align-items:center;gap:10px;margin-bottom:12px
+
+.app {
+  max-width:760px;
+  margin:auto;
 }
-button{
- border:0;border-radius:10px;padding:12px;
- font:inherit;font-weight:bold;cursor:pointer
+
+.top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
 }
-.theme{
- background:var(--soft);color:var(--text);
- border:1px solid var(--border);font-size:12px;
- padding:8px 12px;border-radius:25px;white-space:nowrap
+
+button {
+  border:0;
+  border-radius:10px;
+  padding:11px;
+  font:inherit;
+  font-weight:bold;
+  cursor:pointer;
 }
-.problem{
- background:var(--panel);border:1px solid #8772ff;
- border-radius:15px;padding:25px 12px;text-align:center
+
+.theme {
+  background:var(--soft);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:8px 12px;
+  font-size:12px;
+  white-space:nowrap;
 }
-.equations{font-size:23px;overflow-x:auto}
-.answers{
- display:grid;grid-template-columns:1fr 1fr;
- gap:12px;margin:15px 0
+
+.problem {
+  background:var(--panel);
+  border:1px solid var(--accent);
+  border-radius:15px;
+  padding:22px 12px;
+  text-align:center;
 }
-label{display:block;font-weight:bold;margin-bottom:7px}
-input{
- width:100%;padding:12px;border:1px solid var(--border);
- border-radius:10px;background:var(--field);
- color:var(--text);font:inherit
+
+.equation {
+  font-size:25px;
+  text-align:center;
 }
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.submit{
- background:linear-gradient(100deg,#905cf6,#6258ed);
- color:white
+
+/* Remove MathJax internal scrolling */
+.equation,
+.work,
+.problem,
+.solution,
+.step {
+  overflow:visible !important;
 }
-.next{background:#31568d;color:white}
-.reveal{
- margin-top:9px;width:100%;background:var(--soft);
- color:var(--text);border:1px solid var(--border)
+
+.equation mjx-container,
+.work mjx-container {
+  overflow:visible !important;
+  max-width:100%;
 }
-.feedback{
- margin:10px 0;font-weight:bold;min-height:16px
+
+.equation mjx-container svg,
+.work mjx-container svg {
+  max-width:100%;
+  height:auto;
 }
-.solution{
- display:none;margin-top:12px;padding:15px;
- background:var(--panel);border:1px solid var(--border);
- border-radius:12px
+
+.answer-section {
+  margin:18px 0;
+  text-align:center;
 }
-.step{
- padding:14px 0;border-bottom:1px solid var(--border)
+
+.answer-label {
+  display:block;
+  font-weight:bold;
+  margin-bottom:12px;
 }
-.step:last-child{border-bottom:0}
-.step-label{
- font-weight:bold;line-height:1.6;margin-bottom:10px
+
+.ordered-pair {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
 }
-.operation{
- text-align:center;font-size:19px;margin:8px 0;
- overflow-x:auto
+
+.pair-symbol {
+  font:normal 29px Georgia,serif;
 }
-.step-matrix{
- text-align:center;padding:6px 0;font-size:19px;
- overflow-x:auto;overflow-y:visible
+
+.pair-input {
+  width:130px;
+  max-width:35%;
+  padding:12px 8px;
+  background:var(--field);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--text);
+  font:16px Arial,sans-serif;
+  text-align:center;
+  outline:none;
 }
-.step-matrix mjx-container{
- margin:8px 0!important
+
+.pair-input:focus {
+  border-color:var(--accent);
 }
-.good{color:var(--good)}.bad{color:var(--bad)}
-@media(max-width:480px){
- body{padding:8px}
- .equations{font-size:19px}
- .step-matrix,.operation{font-size:16px}
- button{padding:10px 7px;font-size:13px}
+
+.hint {
+  color:var(--muted);
+  font-size:12px;
+  margin-top:9px;
+}
+
+.actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+
+.submit {
+  background:linear-gradient(100deg,#905cf6,#6258ed);
+  color:white;
+}
+
+.next {
+  background:#31568d;
+  color:white;
+}
+
+.reveal {
+  width:100%;
+  margin-top:9px;
+  background:var(--soft);
+  color:var(--text);
+  border:1px solid var(--border);
+}
+
+.feedback {
+  min-height:18px;
+  margin:12px 0;
+  text-align:center;
+  font-weight:bold;
+}
+
+.good { color:var(--good); }
+.bad { color:var(--bad); }
+
+.solution {
+  display:none;
+  margin-top:12px;
+  padding:15px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+
+.step {
+  padding:13px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.step:last-child {
+  border-bottom:0;
+}
+
+.step-title {
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.work {
+  text-align:center;
+  font-size:18px;
+  padding:5px 0;
+}
+
+.row-operation {
+  margin-bottom:12px;
+}
+
+@media(max-width:480px) {
+  body { padding:8px; }
+  .equation { font-size:20px; }
+  .work { font-size:15px; }
+  .pair-input { width:105px; }
+  .solution { padding:10px; }
+  button { font-size:13px; }
 }
 </style>
 </head>
@@ -112,33 +247,45 @@ input{
 <main class="app">
 
 <div class="top">
- <strong>Solve using Gauss–Jordan elimination.</strong>
- <button id="theme" class="theme">☀ Light mode</button>
+  <strong>Solve using Gauss–Jordan elimination.</strong>
+  <button id="theme" class="theme">Light mode</button>
 </div>
 
 <div class="problem">
- <div id="equations" class="equations"></div>
+  <div id="equation" class="equation"></div>
 </div>
 
-<div class="answers">
- <div>
-  <label for="xAnswer">Value of x</label>
-  <input id="xAnswer"
-   placeholder="Integer or fraction" autocomplete="off">
- </div>
- <div>
-  <label for="yAnswer">Value of y</label>
-  <input id="yAnswer"
-   placeholder="Integer or fraction" autocomplete="off">
- </div>
+<div class="answer-section">
+  <label class="answer-label">
+    Enter the solution as an ordered pair.
+  </label>
+
+  <div class="ordered-pair">
+    <span class="pair-symbol">(</span>
+    <input id="xAnswer" class="pair-input"
+           type="text" inputmode="text"
+           autocomplete="off" aria-label="x-coordinate"
+           placeholder="x">
+    <span class="pair-symbol">,</span>
+    <input id="yAnswer" class="pair-input"
+           type="text" inputmode="text"
+           autocomplete="off" aria-label="y-coordinate"
+           placeholder="y">
+    <span class="pair-symbol">)</span>
+  </div>
+
+  <div class="hint">
+    Enter integers or simplified fractions.
+  </div>
 </div>
 
 <div class="actions">
- <button id="submit" class="submit">Submit</button>
- <button id="next" class="next">Try Similar</button>
+  <button id="submit" class="submit">Submit</button>
+  <button id="next" class="next">Try Similar</button>
 </div>
 
 <button id="reveal" class="reveal">Show Solution</button>
+
 <div id="feedback" class="feedback" aria-live="polite"></div>
 <div id="solution" class="solution"></div>
 
@@ -147,366 +294,485 @@ input{
 <script>
 "use strict";
 
-const $=id=>document.getElementById(id);
-const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const $ = id => document.getElementById(id);
+const rand = (a,b) =>
+  Math.floor(Math.random()*(b-a+1))+a;
+const tex = s => "\\("+s+"\\)";
 
-function gcd(a,b){
- return b?gcd(b,a%b):Math.abs(a);
+let problems = [];
+let current = null;
+let last = -1;
+let shown = false;
+
+// -----------------------------
+// EXACT FRACTION ARITHMETIC
+// -----------------------------
+
+function gcd(a,b) {
+  a=Math.abs(a);
+  b=Math.abs(b);
+  while(b) {
+    [a,b]=[b,a%b];
+  }
+  return a;
 }
 
-function F(n,d=1){
- if(d===0)throw Error("Zero denominator");
- if(d<0){n=-n;d=-d}
- if(n===0)return [0,1];
- const g=gcd(n,d);
- return [n/g,d/g];
+function F(n,d=1) {
+  if(d===0) throw Error("Zero denominator");
+  if(d<0) { n=-n; d=-d; }
+  if(n===0) return [0,1];
+  const g=gcd(n,d);
+  return [n/g,d/g];
 }
 
-const add=(a,b)=>F(
- a[0]*b[1]+b[0]*a[1],a[1]*b[1]
-);
-const sub=(a,b)=>F(
- a[0]*b[1]-b[0]*a[1],a[1]*b[1]
-);
-const mul=(a,b)=>F(a[0]*b[0],a[1]*b[1]);
-const div=(a,b)=>F(a[0]*b[1],a[1]*b[0]);
-
-function fmt(a){
- return a[1]===1?
-  String(a[0]):
-  `\\frac{${a[0]}}{${a[1]}}`;
+function add(u,v) {
+  return F(u[0]*v[1]+v[0]*u[1],u[1]*v[1]);
 }
 
-function wrap(s){
- return "\\("+s+"\\)";
+function sub(u,v) {
+  return F(u[0]*v[1]-v[0]*u[1],u[1]*v[1]);
 }
 
-function matrixTex(M){
- return `\\left[
- \\begin{array}{cc|c}
- ${fmt(M[0][0])}&${fmt(M[0][1])}&${fmt(M[0][2])}\\\\
- ${fmt(M[1][0])}&${fmt(M[1][1])}&${fmt(M[1][2])}
- \\end{array}
- \\right]`;
+function mul(u,v) {
+  return F(u[0]*v[0],u[1]*v[1]);
 }
 
-function eqTex(a,b,c){
- const first=a===1?"x":a===-1?"-x":`${a}x`;
- const sign=b<0?"-":"+";
- const mag=Math.abs(b);
- const second=mag===1?"y":`${mag}y`;
- return `${first}${sign}${second}=${c}`;
+function div(u,v) {
+  return F(u[0]*v[1],u[1]*v[0]);
 }
 
-let problems=[];
-let current=null;
-let last=-1;
-let shown=false;
+function neg(u) {
+  return F(-u[0],u[1]);
+}
 
-function generate(){
- const seen=new Set();
- let attempts=0;
+function fractionTex(f) {
+  if(f[1]===1) return String(f[0]);
+  if(f[0]<0) {
+    return "-\\frac{"+Math.abs(f[0])+"}{"+f[1]+"}";
+  }
+  return "\\frac{"+f[0]+"}{"+f[1]+"}";
+}
 
- while(problems.length<50 && attempts<100000){
-  attempts++;
+function same(u,v) {
+  return u && u[0]===v[0] && u[1]===v[1];
+}
 
-  const a=rand(-7,7);
-  const b=rand(-7,7);
-  const c=rand(-7,7);
-  const d=rand(-7,7);
+// -----------------------------
+// EQUATION FORMATTER
+// -----------------------------
 
-  if(!a||!b||!c||!d)continue;
-  if(a*d-b*c===0)continue;
+function linearTerm(a,variable,first=false) {
+  if(a===0) return "";
 
-  let x,y;
+  const sign=a<0?"-":"+";
+  const mag=Math.abs(a);
+  const body=(mag===1?"":mag)+variable;
 
-  if(Math.random()<0.35){
-   const denominator=rand(2,5);
-   x=F(rand(-12,12),denominator);
-   y=F(rand(-12,12),denominator);
-  }else{
-   x=F(rand(-6,6));
-   y=F(rand(-6,6));
+  if(first) return a<0?"-"+body:body;
+  return sign+body;
+}
+
+function equationTex(a,b,c) {
+  let left="";
+
+  if(a!==0) left=linearTerm(a,"x",true);
+
+  if(b!==0) {
+    left+=linearTerm(b,"y",left==="");
   }
 
-  const e=add(mul(F(a),x),mul(F(b),y));
-  const f=add(mul(F(c),x),mul(F(d),y));
-
-  if(e[1]!==1||f[1]!==1)continue;
-
-  const key=[a,b,e[0],c,d,f[0]].join(",");
-  if(seen.has(key))continue;
-
-  seen.add(key);
-  problems.push({
-   a,b,c,d,e:e[0],f:f[0],x,y
-  });
- }
-
- if(problems.length<50){
-  throw Error("Unable to generate enough systems");
- }
+  return left+"="+c;
 }
 
-function copyMatrix(M){
- return M.map(row=>row.map(v=>[...v]));
+// -----------------------------
+// AUGMENTED MATRIX
+// -----------------------------
+
+function matrixTex(M) {
+  const rows=M.map(row =>
+    row.slice(0,2).map(fractionTex).join("&")+
+    "&\\vline&"+fractionTex(row[2])
+  ).join("\\\\");
+
+  return "\\left[\\begin{array}{rr|r}"+
+    M.map(row=>row.map(fractionTex).join("&")).join("\\\\")+
+    "\\end{array}\\right]";
 }
 
-function isOne(v){
- return v[0]===1&&v[1]===1;
+function copyMatrix(M) {
+  return M.map(row=>row.map(f=>[...f]));
 }
 
-function isZero(v){
- return v[0]===0;
-}
+// -----------------------------
+// ROW OPERATIONS
+// -----------------------------
 
-// Format addition notation with destination row last.
-// Example: -4R1 + R2 -> R2
-function addNotation(k,source,target){
- const coefficient=fmt(k);
- const prefix=isOne(k)?"":(
-  k[0]===-1&&k[1]===1?"-":coefficient
- );
- return `${prefix}R_{${source}}+R_{${target}}
- \\rightarrow R_{${target}}`;
-}
-
-function scaleNotation(k,row){
- const coefficient=fmt(k);
- return `${coefficient}R_{${row}}
- \\rightarrow R_{${row}}`;
-}
-
-function solveSteps(p){
- let M=[
-  [F(p.a),F(p.b),F(p.e)],
-  [F(p.c),F(p.d),F(p.f)]
- ];
-
- const steps=[];
-
- function save(label,operation=null){
-  steps.push({
-   label,operation,matrix:copyMatrix(M)
-  });
- }
-
- function swapRows(){
-  [M[0],M[1]]=[M[1],M[0]];
-  save(
-   "Swap rows",
-   "R_{1}\\leftrightarrow R_{2}"
-  );
- }
-
- function scaleRow(row,k){
+function scaleRow(M,row,k) {
   M[row]=M[row].map(v=>mul(k,v));
-  save(
-   `Multiply row ${row+1}`,
-   scaleNotation(k,row+1)
-  );
- }
+}
 
- function addRows(source,target,k){
+function addRows(M,target,source,k) {
   M[target]=M[target].map((v,j)=>
-   add(v,mul(k,M[source][j]))
+    add(v,mul(k,M[source][j]))
   );
-  save(
-   `Add a multiple of row ${source+1} to row ${target+1}`,
-   addNotation(k,source+1,target+1)
+}
+
+function rowLabel(i) {
+  return "R_{"+(i+1)+"}";
+}
+
+function scalarRowTex(k,row) {
+  const scalar=fractionTex(k);
+  return scalar+rowLabel(row)+
+    "\\rightarrow "+rowLabel(row);
+}
+
+function addRowTex(k,source,target) {
+  const coefficient=fractionTex(k);
+  return coefficient+rowLabel(source)+
+    "+"+rowLabel(target)+
+    "\\rightarrow "+rowLabel(target);
+}
+
+// -----------------------------
+// GAUSS-JORDAN SOLUTION
+// -----------------------------
+
+function gaussJordan(p) {
+  const M=[
+    [F(p.a),F(p.b),F(p.e)],
+    [F(p.c),F(p.d),F(p.f)]
+  ];
+
+  const steps=[{
+    title:"Step 1: Initial augmented matrix",
+    operation:null,
+    matrix:copyMatrix(M)
+  }];
+
+  let count=1;
+
+  function record(title,operation) {
+    count++;
+    steps.push({
+      title:"Step "+count+": "+title,
+      operation,
+      matrix:copyMatrix(M)
+    });
+  }
+
+  // Ensure first pivot is nonzero.
+  if(M[0][0][0]===0) {
+    [M[0],M[1]]=[M[1],M[0]];
+    record(
+      "Interchange rows",
+      "R_1\\leftrightarrow R_2"
+    );
+  }
+
+  // First pivot becomes 1.
+  const pivot1=M[0][0];
+
+  if(!same(pivot1,F(1))) {
+    const k=div(F(1),pivot1);
+    scaleRow(M,0,k);
+    record(
+      "Multiply row 1",
+      scalarRowTex(k,0)
+    );
+  }
+
+  // Eliminate first entry of row 2.
+  if(M[1][0][0]!==0) {
+    const k=neg(M[1][0]);
+    addRows(M,1,0,k);
+    record(
+      "Add a multiple of row 1 to row 2",
+      addRowTex(k,0,1)
+    );
+  }
+
+  // Second pivot becomes 1.
+  const pivot2=M[1][1];
+
+  if(!same(pivot2,F(1))) {
+    const k=div(F(1),pivot2);
+    scaleRow(M,1,k);
+    record(
+      "Multiply row 2",
+      scalarRowTex(k,1)
+    );
+  }
+
+  // Eliminate second entry of row 1.
+  if(M[0][1][0]!==0) {
+    const k=neg(M[0][1]);
+    addRows(M,0,1,k);
+    record(
+      "Add a multiple of row 2 to row 1",
+      addRowTex(k,1,0)
+    );
+  }
+
+  return {steps,answer:[M[0][2],M[1][2]]};
+}
+
+// -----------------------------
+// GENERATE 50 SYSTEMS
+// -----------------------------
+
+function generate() {
+  const seen=new Set();
+  let attempts=0;
+
+  while(problems.length<50 && attempts<200000) {
+    attempts++;
+
+    const a=rand(-8,8);
+    const b=rand(-8,8);
+    const c=rand(-8,8);
+    const d=rand(-8,8);
+
+    if(a===0 || b===0 || c===0 || d===0) {
+      continue;
+    }
+
+    const determinant=a*d-b*c;
+    if(determinant===0) continue;
+
+    // Choose rational solutions.
+    const x=F(rand(-9,9),rand(1,4));
+    const y=F(rand(-9,9),rand(1,4));
+
+    const e=add(mul(F(a),x),mul(F(b),y));
+    const f=add(mul(F(c),x),mul(F(d),y));
+
+    // Keep equation constants integers.
+    if(e[1]!==1 || f[1]!==1) continue;
+
+    if(Math.abs(e[0])>60 || Math.abs(f[0])>60) {
+      continue;
+    }
+
+    const key=[a,b,c,d,e[0],f[0]].join(",");
+    if(seen.has(key)) continue;
+
+    seen.add(key);
+
+    problems.push({
+      a,b,c,d,e:e[0],f:f[0],
+      x,y
+    });
+  }
+}
+
+// -----------------------------
+// MATHJAX WITHOUT SCROLLBARS
+// -----------------------------
+
+let mathQueue=Promise.resolve();
+
+function typeset(el) {
+  mathQueue=mathQueue.then(async()=>{
+    if(!window.MathJax) return;
+
+    await MathJax.startup.promise;
+    MathJax.typesetClear([el]);
+    await MathJax.typesetPromise([el]);
+
+    fitMath(el);
+  }).catch(console.error);
+
+  return mathQueue;
+}
+
+function fitMath(parent) {
+  parent.querySelectorAll("mjx-container").forEach(el=>{
+    el.style.transform="";
+    el.style.width="";
+    el.style.transformOrigin="center center";
+
+    const available=parent.clientWidth-16;
+    const actual=el.scrollWidth;
+
+    if(actual>available && available>0) {
+      const scale=available/actual;
+      el.style.transform="scale("+scale+")";
+      el.style.width=(100/scale)+"%";
+    }
+  });
+}
+
+// -----------------------------
+// NEW PROBLEM
+// -----------------------------
+
+function newProblem() {
+  if(!problems.length) return;
+
+  let i;
+  do {
+    i=rand(0,problems.length-1);
+  } while(i===last && problems.length>1);
+
+  last=i;
+  current=problems[i];
+  shown=false;
+
+  $("equation").textContent=tex(
+    "\\begin{cases}"+
+    equationTex(current.a,current.b,current.e)+
+    "\\\\"+
+    equationTex(current.c,current.d,current.f)+
+    "\\end{cases}"
   );
- }
 
- save("Initial augmented matrix");
+  $("xAnswer").value="";
+  $("yAnswer").value="";
 
- // Choose a convenient first pivot.
- // Swap if row 2 begins with 1 or -1
- // and row 1 does not.
- if(
-  Math.abs(M[1][0][0])===1 &&
-  M[1][0][1]===1 &&
-  !(Math.abs(M[0][0][0])===1&&M[0][0][1]===1)
- ){
-  swapRows();
- }
+  $("feedback").textContent="";
+  $("feedback").className="feedback";
 
- // Create the first leading 1.
- if(!isOne(M[0][0])){
-  scaleRow(0,div(F(1),M[0][0]));
- }
+  $("solution").style.display="none";
+  $("solution").replaceChildren();
 
- // Eliminate the first entry in row 2.
- if(!isZero(M[1][0])){
-  const k=mul(F(-1),M[1][0]);
-  addRows(0,1,k);
- }
+  $("reveal").textContent="Show Solution";
 
- // Create the second leading 1.
- if(!isOne(M[1][1])){
-  scaleRow(1,div(F(1),M[1][1]));
- }
-
- // Eliminate the second entry in row 1.
- if(!isZero(M[0][1])){
-  const k=mul(F(-1),M[0][1]);
-  addRows(1,0,k);
- }
-
- return steps;
+  typeset($("equation"));
 }
 
-async function typeset(el){
- if(!window.MathJax)return;
- try{
-  if(MathJax.startup?.promise){
-   await MathJax.startup.promise;
+// -----------------------------
+// ANSWER CHECKING
+// -----------------------------
+
+function parseFraction(raw) {
+  const s=raw.trim().replace(/\s+/g,"");
+
+  if(!/^[+-]?\d+(\/[+-]?\d+)?$/.test(s)) {
+    return null;
   }
-  if(MathJax.typesetPromise){
-   await MathJax.typesetPromise([el]);
+
+  const parts=s.split("/").map(Number);
+  if(!parts.every(Number.isSafeInteger)) return null;
+
+  const denominator=parts.length===2?parts[1]:1;
+  if(denominator===0) return null;
+
+  return F(parts[0],denominator);
+}
+
+function check() {
+  const x=parseFraction($("xAnswer").value);
+  const y=parseFraction($("yAnswer").value);
+
+  const fb=$("feedback");
+
+  if(!x || !y) {
+    fb.textContent=
+      "Enter both coordinates as integers or fractions.";
+    fb.className="feedback bad";
+    return;
   }
- }catch(err){
-  console.error("MathJax error:",err);
- }
+
+  const correct=
+    same(x,current.x) &&
+    same(y,current.y);
+
+  fb.textContent=correct?
+    "Correct! The ordered pair satisfies both equations.":
+    "Incorrect. Check your row operations and coordinate order.";
+
+  fb.className="feedback "+(correct?"good":"bad");
 }
 
-function newProblem(){
- let i;
- do{
-  i=rand(0,problems.length-1);
- }while(i===last);
+// -----------------------------
+// WORKED SOLUTION
+// -----------------------------
 
- last=i;
- current=problems[i];
- shown=false;
+function showSolution() {
+  shown=!shown;
 
- const p=current;
+  const el=$("solution");
+  el.style.display=shown?"block":"none";
+  $("reveal").textContent=
+    shown?"Hide Solution":"Show Solution";
 
- $("equations").textContent=wrap(
-  `\\begin{cases}
-  ${eqTex(p.a,p.b,p.e)}\\\\[8pt]
-  ${eqTex(p.c,p.d,p.f)}
-  \\end{cases}`
- );
+  if(!shown) return;
 
- $("xAnswer").value="";
- $("yAnswer").value="";
- $("feedback").textContent="";
- $("feedback").className="feedback";
- $("solution").style.display="none";
- $("solution").replaceChildren();
- $("reveal").textContent="Show Solution";
+  el.replaceChildren();
 
- typeset($("equations"));
-}
+  const heading=document.createElement("strong");
+  heading.textContent=
+    "Step-by-step Gauss–Jordan elimination";
+  el.append(heading);
 
-function parseFraction(raw){
- const s=raw.trim();
+  const result=gaussJordan(current);
 
- if(!/^-?\d+(\/[1-9]\d*)?$/.test(s)){
-  return null;
- }
+  result.steps.forEach(stepData=>{
+    const step=document.createElement("div");
+    step.className="step";
 
- const parts=s.split("/").map(Number);
- if(!parts.every(Number.isSafeInteger))return null;
+    const title=document.createElement("div");
+    title.className="step-title";
+    title.textContent=stepData.title;
+    step.append(title);
 
- return F(parts[0],parts[1]||1);
-}
+    if(stepData.operation) {
+      const op=document.createElement("div");
+      op.className="work row-operation";
+      op.textContent=tex(stepData.operation);
+      step.append(op);
+    }
 
-function same(a,b){
- return a!==null &&
-  a[0]===b[0] &&
-  a[1]===b[1];
-}
+    const matrix=document.createElement("div");
+    matrix.className="work";
+    matrix.textContent=tex(matrixTex(stepData.matrix));
+    step.append(matrix);
 
-function check(){
- const x=parseFraction($("xAnswer").value);
- const y=parseFraction($("yAnswer").value);
+    el.append(step);
+  });
 
- const xc=same(x,current.x);
- const yc=same(y,current.y);
- const feedback=$("feedback");
-
- if(xc&&yc){
-  feedback.textContent=
-   "Correct! Both values are correct.";
-  feedback.className="feedback good";
- }else{
-  feedback.textContent=
-   `x: ${xc?"Correct":"Incorrect"} | `+
-   `y: ${yc?"Correct":"Incorrect"}`;
-  feedback.className="feedback bad";
- }
-}
-
-function showSolution(){
- shown=!shown;
-
- const el=$("solution");
- el.style.display=shown?"block":"none";
- $("reveal").textContent=
-  shown?"Hide Solution":"Show Solution";
-
- if(!shown)return;
-
- el.replaceChildren();
-
- const heading=document.createElement("strong");
- heading.textContent=
-  "Step-by-step Gauss–Jordan elimination";
- el.append(heading);
-
- const steps=solveSteps(current);
-
- steps.forEach((step,i)=>{
-  const section=document.createElement("div");
-  section.className="step";
+  const final=document.createElement("div");
+  final.className="step";
 
   const label=document.createElement("div");
-  label.className="step-label";
-  label.textContent=`Step ${i+1}: ${step.label}`;
+  label.className="step-title";
+  label.textContent="Final solution";
 
-  section.append(label);
+  const answer=document.createElement("div");
+  answer.className="work";
+  answer.textContent=tex(
+    "(x,y)=\\left("+
+    fractionTex(result.answer[0])+","+
+    fractionTex(result.answer[1])+
+    "\\right)"
+  );
 
-  if(step.operation){
-   const op=document.createElement("div");
-   op.className="operation";
-   op.textContent=wrap(step.operation);
-   section.append(op);
-  }
+  final.append(label,answer);
+  el.append(final);
 
-  const matrix=document.createElement("div");
-  matrix.className="step-matrix";
-  matrix.textContent=wrap(matrixTex(step.matrix));
-  section.append(matrix);
-
-  el.append(section);
- });
-
- const final=document.createElement("div");
- final.className="good";
- final.style.marginTop="16px";
- final.style.fontWeight="bold";
- final.textContent=
-  wrap(`x=${fmt(current.x)},\\quad y=${fmt(current.y)}`);
-
- el.append(final);
- typeset(el);
+  typeset(el);
 }
 
+// -----------------------------
+// EVENTS
+// -----------------------------
+
 $("theme").onclick=()=>{
- const light=document.body.classList.toggle("light");
- $("theme").textContent=
-  light?"☾ Dark mode":"☀ Light mode";
+  const light=document.body.classList.toggle("light");
+  $("theme").textContent=light?"Dark mode":"Light mode";
 };
 
 $("submit").onclick=check;
 $("next").onclick=newProblem;
 $("reveal").onclick=showSolution;
 
-["xAnswer","yAnswer"].forEach(id=>{
- $(id).onkeydown=e=>{
-  if(e.key==="Enter")check();
- };
+$("xAnswer").addEventListener("keydown",e=>{
+  if(e.key==="Enter") $("yAnswer").focus();
+});
+
+$("yAnswer").addEventListener("keydown",e=>{
+  if(e.key==="Enter") check();
 });
 
 generate();
